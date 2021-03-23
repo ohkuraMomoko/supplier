@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Language" content="zh-TW">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
+    <meta charset="utf-8" />
+    <title>供應商平台 - @ViewBag.Title</title>
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+TC" rel="stylesheet">
+    <!-- Load required Bootstrap and BootstrapVue CSS -->
+    <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
+    @Styles.Render("~/Content/css")
+    @RenderSection("header", required: false)
+</head>
+<body>
+    <main>
+        @RenderBody()
+    </main>
+
+    <!-- Load polyfills to support older browsers -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.8.7/polyfill.js"></script>
+    <script src="~/Scripts/vendor/babel.min.js"></script>
+    <script src="~/Scripts/vendor/vue.js"></script>
+    <script src="~/Scripts/vendor/bootstrap-vue.min.js"></script>
+    <script src="~/Scripts/vendor/es6-promise.auto.js"></script>
+    <script src="~/Scripts/vendor/axios.min.js"></script>
+    <script src="~/Scripts/vendor/vuex.js"></script>
+    <script src="~/Scripts/common/mixins.js"></script>
+    <script src="~/Scripts/common/filter.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

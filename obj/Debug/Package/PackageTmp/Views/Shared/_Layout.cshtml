@@ -1,0 +1,760 @@
+﻿@using SupplierPlatform.Entities;
+@using SupplierPlatform.Services;
+@{
+    var session = DependencyResolver.Current.GetService<IOperatorContext>();
+    var inApp = ((VendorOperator)session.Operator).MobileType;
+}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Language" content="zh-TW">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
+    <meta charset="utf-8" />
+    <title>供應商平台 - @ViewBag.Title</title>
+    <link href="//fonts.googleapis.com/css?family=Noto+Sans+TC" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="~/Content/vendor/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="~/Content/vendor/bootstrap-vue.min.css" />
+    @Styles.Render("~/Content/css")
+    @RenderSection("header", required: false)
+</head>
+
+<body>
+    <div id="app">
+        <div class="menu-bar">
+            <div v-if="inApp == 1 || inApp == 2">
+                <a class="backapp" v-bind:href="inApp == 1 ? 'javascript:window.close()' : 'CCFAPPVENDER://'">
+                    <img src="@Url.Content("~/Content/images/icon-back-arrow-white.svg")" alt="">
+                    <span>返回APP</span>
+                </a>
+            </div>
+            <div class="burger" v-else v-on:click="showMobileMenu()"></div>
+        </div>
+        <div class="menu" v-bind:class="{ active: showMobileMenuFlag }">
+            <div class="menu-group">
+                <div class="btn-mobileclose" v-on:click="closeMobileMenu">
+                    <img src="@Url.Content("~/Content/images/icon-navigation-close-white.svg")" alt="">
+                </div>
+
+                <div class="menu-user">
+                    <img src="@Url.Content("~/Content/images/icon-my-account-white-66-px.svg")" alt=""
+                        class="menu-user--icon">
+                    <div class="menu-user--profile">
+                        <p class="profile-name" v-text="userProfile.name"></p>
+                        <p class="profile-shop" v-text="userProfile.shop"></p>
+                        <p class="profile-shop2" v-cloak>> &nbsp; {{ userProfile.shop2 }}</p>
+                    </div>
+                </div>
+                <div class="menu--header">
+                    <img src="@Url.Content("~/Content/images/icon-logo-vendor-dark.svg")" alt="" class="menu-logo">
+                </div>
+
+                <div class="menu--body">
+                    <a href="@Url.Content("~/vendor/index")" class="menu-item"
+                        v-bind:class="currentPage.VendorIndex ? 'active' : '' ">
+                        <img src="@Url.Content("~/Content/images/menu-icon-home.svg")" alt="" class="menu-item--icon">
+                        <span class="menu-item--title">首頁</span>
+                    </a>
+                    <a href="@Url.Content("~/case/fillin")" class="menu-item"
+                        v-bind:class="currentPage.FillIn ? 'active' : '' ">
+                        <img src="@Url.Content("~/Content/images/menu-icon-send-transaction.svg")" alt=""
+                            class="menu-item--icon">
+                        <span class="menu-item--title">線上填單</span>
+                    </a>
+                    <b-button v-b-toggle="'collapse-1'" :aria-expanded="collapse1_isVisible ? 'true' : 'false'"
+                        aria-controls="collapse-1">
+                        <div class="menu-item menu-item--collapse" v-bind:class="collapse1_isVisible ? 'active' : '' ">
+                            <img src="@Url.Content("~/Content/images/menu-icon-manage-transaction.svg")" alt=""
+                                class="menu-item--icon">
+                            <span class="menu-item--title">管理交易</span>
+                        </div>
+                    </b-button>
+                    <b-collapse id="collapse-1" v-model="collapse1_isVisible">
+                        <b-card class="menu-card">
+                            <a href="@Url.Content("~/case/caseinquiry")" class="collapse--link"
+                                v-bind:class="currentPage.CaseInquiry ? 'active' : '' ">訂單/案件查詢</a>
+                            <a href="@Url.Content("~/billing/askpayment")" class="collapse--link"
+                                v-bind:class="currentPage.AskPayment ? 'active' : '' ">線上請款</a>
+                        </b-card>
+                    </b-collapse>
+                    <a href="@Url.Content("~/billing/appropriationInquiry")" class="menu-item"
+                        v-bind:class="currentPage.AppropriationInquiry ? 'active' : '' ">
+                        <img src="@Url.Content("~/Content/images/menu-icon-appropriation.svg")" alt=""
+                            class="menu-item--icon">
+                        <span class="menu-item--title">查詢撥款</span>
+                    </a>
+                    <b-button v-b-toggle="'collapse-2'" :aria-expanded="collapse2_isVisible ? 'true' : 'false'"
+                        aria-controls="collapse-2">
+                        <div class="menu-item menu-item--collapse">
+                            <img src="@Url.Content("~/Content/images/menu-icon-ecommerce.svg")" alt=""
+                                class="menu-item--icon">
+                            <span class="menu-item--title">一頁電商</span>
+                        </div>
+                    </b-button>
+                    <b-collapse id="collapse-2" v-model="collapse2_isVisible">
+                        <b-card class="menu-card">
+                            <a href="@Url.Content("~/ecommerce/productManage")" class="collapse--link"
+                                v-bind:class="currentPage.productManage ? 'active' : '' ">商品管理</a>
+                            <a href="@Url.Content("~/ecommerce/orderManage")" class="collapse--link"
+                                v-bind:class="currentPage.orderManage ? 'active' : '' ">訂單管理</a>
+                        </b-card>
+                    </b-collapse>
+                    <b-button v-b-toggle="'collapse-3'" :aria-expanded="collapse3_isVisible ? 'true' : 'false'"
+                        aria-controls="collapse-3">
+                        <div class="menu-item menu-item--collapse" v-bind:class="currentPage.ChangePW ? 'active' : '' ">
+                            <img src="@Url.Content("~/Content/images/menu-icon-setting.svg")" alt=""
+                                class="menu-item--icon">
+                            <span class="menu-item--title">帳號管理</span>
+                        </div>
+                    </b-button>
+                    <b-collapse id="collapse-3" v-model="collapse3_isVisible">
+                        <b-card class="menu-card">
+                            <a href="@Url.Content("~/account/ChangePW")" class="collapse--link"
+                                v-bind:class="currentPage.ChangePW ? 'active' : '' ">修改密碼</a>
+                        </b-card>
+                    </b-collapse>
+                </div>
+                <div class="menu-mobile-control">
+                    <div class="menu-mobile-control--item" @@click="showNotificationCenter">通知中心</div>
+                    <div class="menu-mobile-control--item" @@click="showContactCenter">客服中心</div>
+                    <a href="@Url.Content("~/home/logout")" class="menu-mobile-control--logout">登出</a>
+                </div>
+            </div>
+            <div class="menu--footer">
+                <p>&copy; @DateTime.Now.Year 仲信資融股份有限公司 Chailease Consumer Finance Co., Ltd. All Right Reserved.</p>
+            </div>
+        </div>
+        <header class="header">
+            <div class="header-back" v-if="showBackBtn" @@click="pageBack">
+                <img src="@Url.Content("~/Content/images/icon-back-arrow.svg")" alt="">
+                <span>返回上一頁</span>
+            </div>
+            <div class="header-back" v-if="showBackBtn_case" @@click="pageBack">
+                <img src="@Url.Content("~/Content/images/icon-back-arrow.svg")" alt="">
+                <span>返回案件明細</span>
+            </div>
+            <div class="header-user">
+                <img src="@Url.Content("~/Content/images/icon-my-account-pink-66-px.svg")" alt=""
+                    class="header-user--icon">
+                <div class="header-user--profile">
+                    <div class="profile-name">
+                        <span v-cloak>{{ userProfile.name }}</span>
+                        <a href="@Url.Content("~/home/logout")" class="header-logout">登出</a>
+                    </div>
+                    <p class="profile-shop" v-cloak>{{ userProfile.shop }} > &nbsp; {{ userProfile.shop2 }}</p>
+                </div>
+            </div>
+            <div class="header-control">
+                <div id="BtnCustomerService" class="header-control--item" @@click="showContactCenter">
+                    <img src="@Url.Content("~/Content/images/btn-customer-service-default.svg")" alt="">
+                </div>
+                <b-tooltip target="BtnCustomerService" triggers="hover">
+                    客服中心
+                </b-tooltip>
+                <div id="BtnNotification" class="header-control--item" @@click="showNotificationCenter">
+                    <img src="@Url.Content("~/Content/images/btn-notification-default.svg")" alt="">
+                </div>
+                <b-tooltip target="BtnNotification" triggers="hover">
+                    通知中心
+                </b-tooltip>
+            </div>
+        </header>
+        <!-- 客服中心 -->
+        <transition name="fade" v-on:after-enter="afterEnter">
+            <div id="contactCenter" class="contact-container" v-cloak v-if="contactCenter_isShow">
+                <div class="contact">
+                    <div class="contact-top">
+                        <p class="contact-top--title">客服中心</p>
+                        <div class="contact-top--close" @@click="contactCenter_isShow = false">
+                            <img src="@Url.Content("~/Content/images/icon-navigation-close-black.svg")" alt="">
+                        </div>
+                        <p class="contact-top--text">
+                            <span class="text-bold">客服小幫手服務時間</span>
+                            <br>週一 ~ 週五 : 09:00~20:00&nbsp;&nbsp;|&nbsp;&nbsp;週六/日、國定假日：09:00~17:00
+                        </p>
+                    </div>
+                    <div class="contact-body">
+                        <div class="contact-body--default" v-if="contactIsNull">
+                            <div>
+                                <img src="@Url.Content("~/Content/images/icon-dialog-default-status.svg")" alt="">
+                                <p class="text">請填寫您的問題<br>小幫手將於服務時間內回覆</p>
+                            </div>
+                        </div>
+                        <div class="contact-body--msg" id="contactMsgBox" v-else>
+                            <contact-item v-for="(data,index) in message" :key="'contact'+index" v-bind:message="data">
+                            </contact-item>
+                        </div>
+                    </div>
+                    <div class="contact-footer">
+                        <div class="contact-msg">
+                            <div class="clear-btn" v-if="showContact_clearBtn" @@click="userSendMessage = '' ">
+                                <img src="@Url.Content("~/Content/images/icon-dialog-close-black.svg")" alt="">
+                            </div>
+                            <input type="text" name="contactMessage" id="contactMessage"
+                                placeholder="留言給客服你的問題 ( 50字內 )" :maxlength="50" v-model.trim="userSendMessage"
+                                v-on:keyup.enter="sendSendMessage">
+                        </div>
+                        <div class="send-msg" @@click="sendSendMessage">
+                            <img src="@Url.Content("~/Content/images/icon_send_pink.svg")" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </transition>
+        <!-- 通知中心 -->
+        <transition name="fade">
+            <div id="notificationCenter" class="notification-container" v-cloak v-if="notificationCenter_isShow">
+                <div class="notification">
+                    <div class="notification-top">
+                        <p class="notification-top--title">通知中心</p>
+                        <div class="notification-top--close" @@click="notificationCenter_isShow = false">
+                            <img src="@Url.Content("~/Content/images/icon-navigation-close-black.svg")" alt="">
+                        </div>
+                        <div class="notification-top--text">
+                            <span>最新</span>
+                            <span @@click="readAllNoti()" v-if="notification_ReturnMsg != 0">全部標記為已讀</span>
+                            <span @@click="deleteAllNoti_isShow= true" v-else>全部刪除</span>
+                        </div>
+                    </div>
+                    <div class="notification-body">
+                        <div class="notification-body--default" v-if="notificationIsNull">
+                            <div>
+                                <img src="@Url.Content("~/Content/images/icon-dialog-default-status.svg")" alt="">
+                                <p class="text">沒有任何通知</p>
+                            </div>
+                        </div>
+                        <div class="notification-body--msg" id="notificationMsgBox" @@scroll.prevent="onScroll" v-else>
+                            <notification-item v-for="(data,index) in notification" :key="'notification'+index"
+                                :noti_data="data" @@delete-noti="deleteNoti" @@send-read="sendNotiIsReaded">
+                            </notification-item>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </transition>
+        <b-modal id="deleteAllNotiModal" v-model="deleteAllNoti_isShow" v-bind:centered="true" v-bind:hide-footer="true"
+            v-bind:title="'確定要刪除全部訊息？'" v-bind:hide-header-close="true" v-bind:dialog-class="'modal-custome'">
+            <div class="modal-custome--footer">
+                <div class="modal-custome-btn btn--cancel" @@click="deleteAllNoti_isShow = false">取消</div>
+                <div class="modal-custome-btn btn--ok" @@click="deleteAllNoti()">確定</div>
+            </div>
+        </b-modal>
+    </div>
+    <main id="main" class="main">
+        @RenderBody()
+    </main>
+
+    <!-- <script src="~/Scripts/vendor/jquery-3.4.1.min.js"></script> -->
+    @*<script src="//cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/locales/zh_TW/faker.zh_TW.min.js"></script>*@
+    <script src="~/Scripts/vendor/polyfill.js"></script>
+    <script src="~/Scripts/vendor/babel.min.js"></script>
+    <script src="~/Scripts/vendor/vue.js"></script>
+    <script src="~/Scripts/vendor/bootstrap-vue.min.js"></script>
+    <script src="~/Scripts/vendor/es6-promise.auto.js"></script>
+    <script src="~/Scripts/vendor/axios.min.js"></script>
+    <script src="~/Scripts/vendor/vuex.js"></script>
+    <script src="~/Scripts/vendor/moment.min.js"></script>
+    <script src="~/Scripts/common/mixins.js"></script>
+    <script src="~/Scripts/common/filter.js"></script>
+    <script>
+        window.axios.interceptors.response.use(function (response) {
+            return response;
+        }, function (error) {
+            console.log(error);
+            if (401 === error.response.status) {
+                location.reload();
+            } else {
+                return Promise.reject(error);
+            }
+        });
+    </script>
+    <script type="text/babel">
+        const store = new Vuex.Store({
+            state: {
+                breakPoint: 1024,
+                window: {
+                    width: 0,
+                    height: 0
+                },
+            },
+            mutations: {
+                updateWindowWidth: function (state, payload) {
+                    return state.window.width = payload
+                },
+                updateWindowHeight: function (state, payload) {
+                    return state.window.height = payload;
+                },
+            },
+            getters: {
+                getBreakpoint: state => {
+                    return state.breakPoint
+                },
+                getWindowWidth: state => {
+                    return state.window.width
+                },
+                getWindowHeight: state => {
+                    return state.window.height
+                },
+            }
+        });
+        const contactItem = Vue.component("contact-item", {
+            props: ["message"],
+            data: function () {
+                return {};
+            },
+            created: function () { },
+            template: `<transition name="fade">
+                    <div class="contact-item"
+                        v-bind:class="[message.who == 1 ? 'contact-item--staff' : 'contact-item--user']">
+                        <div class="contact-item--icon"></div>
+                        <div class="contact-item--content">
+                            <span class="desc" v-text="message.reply"></span>
+                            <p class="time" v-text="message.reply_date"></p>
+                        </div>
+                    </div>
+                </transition>`,
+        });
+
+        const notificationItem = Vue.component("notification-item", {
+            props: ["noti_data"],
+            data: function () {
+                return {
+                    isOpen: false
+                };
+            },
+            created: function () {
+
+            },
+            methods: {
+                openNotiContent: function () {
+                    this.isOpen = !this.isOpen
+                    // 若為未讀狀態且user打開，則傳送已讀至api
+                    if (this.isOpen && !this.noti_data.is_ready) {
+                        this.$emit("send-read", this.noti_data.id)
+                    }
+                },
+                removeNoti: function () {
+                    this.$emit("delete-noti", this.noti_data.id)
+                }
+            },
+            template: `<transition name="fade">
+                    <div class="notification-item"
+                        v-bind:id="'noti'+noti_data.id"
+                        v-bind:class="isOpen ? 'open' : '' ">
+                        <div class="notification-item--top"
+                            @@click="openNotiContent">
+                            <div class="notification-control">
+                                <div class="notification-control-close"
+                                    @@click="removeNoti"></div>
+                                <div class="notification-control-read"
+                                    v-if="!noti_data.is_ready"></div>
+                            </div>
+                            <p class="title" v-text="noti_data.title"></p>
+                            <p class="shortdesc" v-text="noti_data.content"></p>
+                        </div>
+                        <div class="notification-item--body" v-text="noti_data.content"></div>
+                        <div class="notification-item--footer" v-text="noti_data.date"></div>
+                    </div>
+                </transition>`,
+        });
+
+        var app = new Vue({
+            el: "#app",
+            store: store,
+            mixins: [myMixin],
+            components: {
+                contactItem,
+                notificationItem
+            },
+            data: {
+                apiProfileUrl: '@Url.Action("GetUserProfile", "Home")',
+                apiUrl_GetMessage: '@Url.Action("GetMessage", "Home")',
+                apiUrl_ReplyMessage: '@Url.Action("ReplyMessage", "Home")',
+                apiUrl_Notification: '@Url.Action("Notification", "Vendor")',
+                apiUrl_ReadNotification: '@Url.Action("ReadNotification", "Vendor")',
+                apiUrl_DeleteNotification: '@Url.Action("DeleteNotification", "Vendor")',
+                apiUrl_DeleteAllNotification: '@Url.Action("DeleteAllNotification", "Vendor")',
+                apiUrl_ReadAllNotification: '@Url.Action("ReadAllNotification", "Vendor")',
+                window: {
+                    width: 0,
+                    height: 0
+                },
+                currentPage: {
+                    VendorIndex: false,
+                    FillIn: false,
+                    CaseInquiry: false,
+                    AskPayment: false,
+                    AppropriationInquiry: false,
+                    ChangePW: false,
+                    productManage: false,
+                    orderManage: false,
+                    addProduct: false,
+                    MaintainStore: false
+                },
+                inApp: @inApp, /*若為在APP開啟網頁的情況: 1為IOS，2為android，0為網頁 */
+                showBackBtn: false,
+                showBackBtn_case: false,
+                changeMobileMenu: false,
+                showMobileMenuFlag: false,
+                userProfile: {
+                    name: '',
+                    shop: '',
+                    shop2: ''
+                },
+                contactCenter_isShow: false,
+                notificationCenter_isShow: false,
+                message: [],
+                userSendMessage: '',
+                showContact_clearBtn: false,
+                contactIsNull: false, /* 切換客服中心的狀態用 */
+                notificationIsNull: false, /* 切換通知中心的狀態用 */
+                notification: [],
+                notificationIds: [],
+                notiCenterIsFirst: true,
+                deleteAllNoti_isShow: false,
+                notification_Count: 0,
+                notification_ReturnMsg: 0
+            },
+            created: function () {
+                window.addEventListener('resize', this.handleResize);
+                this.handleResize();
+                this.getUserProfile();
+            },
+            watch: {
+                showMobileMenuFlag: function (val) {
+                    if (val) {
+                        document.getElementById("main").style.display = "none"
+                    } else {
+                        document.getElementById("main").style.display = "block"
+                    }
+                },
+                userSendMessage: function (val) {
+                    if (val !== "") {
+                        this.showContact_clearBtn = true
+                    } else {
+                        this.showContact_clearBtn = false
+                    }
+                },
+
+            },
+            computed: {
+                collapse1_isVisible: {
+                    get() {
+                        return this.currentPage.AskPayment || this.currentPage.CaseInquiry
+                    },
+                    set() {
+                        return false
+                    }
+                },
+                collapse2_isVisible: {
+                    get() {
+                        return this.currentPage.productManage || this.currentPage.orderManage || this.currentPage.addProduct
+                    },
+                    set() {
+                        return false
+                    }
+                },
+                collapse3_isVisible: {
+                    get() {
+                        return this.currentPage.ChangePW
+                    },
+                    set() {
+                        return false
+                    }
+                }
+            },
+            mounted() {
+
+            },
+            // TODO UserProfile
+            methods: {
+                getUserProfile: function () {
+                    var vm = this;
+                    axios.post(vm.apiProfileUrl)
+                        .then(function (response) {
+                            console.log(response);
+                            if (response.data.Result.ReturnCode == 0) {
+                                vm.userProfile.name = response.data.Data.VEND_SALE_NME;
+                                vm.userProfile.shop = response.data.Data.VENDER_ID + response.data.Data.VENDER_NME;
+                                vm.userProfile.shop2 = response.data.Data.VENDER_NME;
+                            }
+                        })
+                        .catch(function (error) {
+                        });
+                },
+                gotoBottom: function (id) {
+                    document.getElementById(id).scrollTop = document.getElementById(id).scrollHeight
+                },
+                handleResize: function () {
+                    this.window.width = window.innerWidth;
+                    this.window.height = window.innerHeight;
+                    store.commit("updateWindowWidth", this.window.width);
+                    store.commit("updateWindowHeight", this.window.height);
+                },
+                showMobileMenu: function () {
+                    this.showMobileMenuFlag = true;
+                },
+                closeMobileMenu: function () {
+                    this.showMobileMenuFlag = false;
+                },
+                sendSendMessage: function (evt) {
+                    let vm = this
+                    evt.preventDefault()
+                    if (vm.userSendMessage == "") return
+
+                    axios.post(vm.apiUrl_ReplyMessage, {
+                        message: vm.userSendMessage
+                    })
+                        .then(function (response) {
+                            vm.getContactStaffHistroy()
+                            vm.userSendMessage = ''
+                        })
+                        .catch(function (error) {
+
+                        });
+                },
+                showContactCenter: function () {
+                    this.contactCenter_isShow = true
+                    this.getContactStaffHistroy()
+
+                },
+                getContactStaffHistroy: function () {
+                    let vm = this
+                    vm.message = [];
+
+                    axios.post(vm.apiUrl_GetMessage)
+                        .then(function (response) {
+                            if (response.data.Result.ReturnCode == 0) {
+                                if (response.data.Data.length > 0) {
+                                    var message_data = response.data.Data;
+                                    message_data = message_data.reverse();
+                                    for (let index = 0; index < message_data.length; index++) {
+                                        vm.message.push({
+                                            who: message_data[index].Who,
+                                            reply: message_data[index].Reply,
+                                            reply_date: message_data[index].ReplyDt
+                                        });
+                                    }
+
+                                    vm.contactIsNull = false
+
+                                } else {
+                                    vm.contactIsNull = true
+                                }
+                            } else {
+                                alert("抓取資料失敗")
+                            }
+                            vm.contactCenter_isShow = true
+
+                            let checkScroll = setInterval(function () {
+                                if (document.getElementById('contactMsgBox').scrollTop > 0) clearInterval(checkScroll)
+                                document.getElementById('contactMsgBox').scrollTop = document.getElementById('contactMsgBox').scrollHeight
+                            }, 150)
+
+                        })
+                        .catch(function (error) {
+
+                        });
+                    console.log('done')
+                },
+                afterEnter: function () {
+                    // console.log("afterEnter")
+                },
+                showNotificationCenter: function () {
+                    let vm = this
+                    this.notificationCenter_isShow = true
+                    if (vm.notification.length == 0) this.getNotiData()
+                },
+                onScroll: function ({ target: { scrollTop, clientHeight, scrollHeight } }) {
+                    if (scrollTop + clientHeight >= (scrollHeight - 10) && (this.notification.length !== this.notification_Count)) {
+                        this.getNotiData(this.notification.length)
+                    }
+                },
+                // 取得會員通知訊息
+                getNotiData: function (start = 0, len = 20, order = 'desc') {
+                    let vm = this
+                    if (vm.notiCenterIsFirst) {
+                        vm.notification = [];
+                        vm.notiCenterIsFirst = false;
+                    }
+                    axios.post(vm.apiUrl_Notification, {
+                        start: start,
+                        len: len,
+                        order: order
+                    })
+                        .then(function (response) {
+                            console.log(response);
+                            if (response.data.Result.ReturnCode == 0) {
+                                faker.locale = "zh_TW";
+                                vm.notification_Count = response.data.Result.Count
+                                vm.notification_ReturnMsg = parseInt(response.data.Result.ReturnMsg)
+                                for (let index = 0; index < response.data.Data.length; index++) {
+                                    if (vm.notificationIds.indexOf(response.data.Data[index].Id) == -1) {
+                                        vm.notificationIds.push(response.data.Data[index].Id);
+                                        vm.notification.push({
+                                            id: response.data.Data[index].Id,
+                                            title: response.data.Data[index].Title,
+                                            content: response.data.Data[index].Content,
+                                            date: response.data.Data[index].Date,
+                                            is_ready: response.data.Data[index].IsReady
+                                        });
+                                    }
+                                }
+
+                                console.log('notification', vm.notification);
+
+                                vm.notification.forEach(element => {
+                                    element.is_open = false
+                                });
+                            }
+                        })
+                        .catch(function (error) {
+
+                        });
+                },
+                sendNotiIsReaded: function (notiId) {
+                    let vm = this
+                    // const targetNoti = vm.notification.filter(function (value, index, array){
+                    //     return value.id == notiId
+                    // })
+
+                    for (let i = 0; i < vm.notification.length; i++) {
+                        if (vm.notification[i].id == notiId) {
+                            vm.notification[i].is_ready = true
+                        }
+                    }
+                    axios.post(vm.apiUrl_ReadNotification, {
+                        id: notiId
+                    })
+                        .then(function (response) {
+                            if (response.data.ReturnCode != 0) {
+                                alert(response.data.Alert);
+                            } else {
+                                vm.notification_ReturnMsg = vm.notification_ReturnMsg - 1
+
+                            }
+                        })
+                        .catch(function (error) {
+
+                        });
+                },
+                deleteNoti: function (notiId) {
+                    let vm = this
+                    let temp = this.notification.filter(function (val, index) {
+                        return val.id != notiId
+                    })
+
+                    this.notification = temp
+                    axios.post(vm.apiUrl_DeleteNotification, {
+                        id: notiId
+                    })
+                        .then(function (response) {
+                            if (response.data.ReturnCode != 0) {
+                                alert(response.data.Alert);
+                            }
+                        })
+                        .catch(function (error) {
+
+                        });
+                },
+                deleteAllNoti: function () {
+                    let vm = this
+                    vm.notification = []
+                    vm.deleteAllNoti_isShow = false
+
+                    axios.post(vm.apiUrl_DeleteAllNotification)
+                        .then(function (response) {
+                            if (response.data.ReturnCode == 0) {
+                                vm.notification = []
+                                vm.deleteAllNoti_isShow = false
+                            }
+                        })
+                        .catch(function (error) {
+
+                        });
+                },
+                readAllNoti: function () {
+                    let vm = this
+
+                    vm.notification.forEach(element => {
+                        element.is_ready = true
+                    });
+                    axios.post(vm.apiUrl_ReadAllNotification)
+                        .then(function (response) {
+                            if (response.data.ReturnCode == 0) {
+                                vm.notification.forEach(element => {
+                                    element.is_ready = true
+                                });
+                                vm.notification_ReturnMsg = 0
+                            }
+                        })
+                        .catch(function (error) {
+
+                        });
+                },
+            }
+        })
+
+        window.onbeforeunload = function (e) {
+            var e = window.event || e;
+            if (location.href.indexOf('addproduct') > -1) {
+                if (IsFormChanged() === true) {
+
+                    e.returnValue = ("確定離開當前頁面嗎？ 已編輯的資料不會儲存哦");
+                }
+            }
+        }
+
+        function IsFormChanged() {
+            var isChanged = false;
+            var inputElement = document.getElementsByTagName('input');
+            for (var i = 0; i < inputElement.length && inputElement[i]; i++) {
+                var element = inputElement[i];
+                if (element.type === 'text') {
+                    if (element.value != element.defaultValue) {
+                        isChanged = true;
+                        break;
+                    }
+                }
+            }
+            return isChanged;
+        }
+
+        function IsFormChanged1() {
+            var isChanged = false;
+            var form = document.forms[0];
+
+            for (var i = 0; i < form.elements.length; i++) {
+                var element = form.elements[i];
+                var type = element.type;
+                if (type == "text" || type == "hidden" || type == "textarea" || type == "button") {
+                    if (element.value != element.defaultValue) {
+                        isChanged = true;
+                        break;
+                    }
+                } else if (type == "radio" || type == "checkbox") {
+                    if (element.checked != element.defaultChecked) {
+                        isChanged = true;
+                        break;
+                    }
+                } else if (type == "select-one" || type == "select-multiple") {
+                    for (var j = 0; j < element.options.length; j++) {
+                        if (element.options[j].selected != element.options[j].defaultSelected) {
+                            isChanged = true;
+                            break;
+                        }
+                    }
+                } else {
+                    //  etc...  
+                }
+            }
+            return isChanged;
+        }  
+    </script>
+    @RenderSection("scripts", required: false)
+</body>
+
+</html>

@@ -1,0 +1,713 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D99512E8-4D3A-4ADA-9027-91C2B6C73B48}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SupplierPlatform</RootNamespace>
+    <AssemblyName>SupplierPlatform</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <Use64BitIISExpress />
+    <IISExpressSSLPort>44324</IISExpressSSLPort>
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac, Version=5.1.2.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.5.1.2\lib\net461\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Extensions.DependencyInjection, Version=6.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.Extensions.DependencyInjection.6.0.0\lib\netstandard2.0\Autofac.Extensions.DependencyInjection.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Integration.Mvc, Version=5.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.Mvc5.5.0.0\lib\net461\Autofac.Integration.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="Bogus, Version=29.0.1.0, Culture=neutral, PublicKeyToken=fa1bb3f3f218129a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Bogus.29.0.1\lib\net40\Bogus.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.10.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.2.10.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="Flurl, Version=2.8.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Flurl.2.8.2\lib\net40\Flurl.dll</HintPath>
+    </Reference>
+    <Reference Include="Flurl.Http, Version=2.4.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Flurl.Http.2.4.2\lib\net46\Flurl.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.1.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.2.1.0\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.6.8\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.Web.4.9.0\lib\net35\NLog.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp, Version=106.0.0.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.106.10.1\lib\net452\RestSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.FileSystem.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.FileSystem.Primitives.4.3.0\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.Packaging, Version=4.0.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Packaging.4.7.0\lib\net46\System.IO.Packaging.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.7\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.7\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WebGrease">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="Antlr3.Runtime">
+      <Private>True</Private>
+      <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\AutofacConfig.cs" />
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Connected Services\APP_WSServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BillingController.cs" />
+    <Compile Include="Controllers\CaseController.cs" />
+    <Compile Include="Controllers\CaptchaController.cs" />
+    <Compile Include="Controllers\Common\AuthController.cs" />
+    <Compile Include="Controllers\Common\BaseController.cs" />
+    <Compile Include="Controllers\EcommerceController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MartController.cs" />
+    <Compile Include="Controllers\ProductController.cs" />
+    <Compile Include="Controllers\StoreController.cs" />
+    <Compile Include="Controllers\VendorController.cs" />
+    <Compile Include="Entities\VendorOperator.cs" />
+    <Compile Include="Entities\Operator.cs" />
+    <Compile Include="Enums\AppLoginTypeEnum.cs" />
+    <Compile Include="Enums\CopyOrDeleteEnum.cs" />
+    <Compile Include="Enums\MobileTypeEnum.cs" />
+    <Compile Include="Enums\OnePageStatusEnum.cs" />
+    <Compile Include="Enums\ProductOptionEnum.cs" />
+    <Compile Include="Enums\ProductStatusEnum.cs" />
+    <Compile Include="Enums\RegexEnum.cs" />
+    <Compile Include="Enums\TitleTypeEnum.cs" />
+    <Compile Include="Extension\ExtensionOfCollections.cs" />
+    <Compile Include="Extension\ObjectExtension.cs" />
+    <Compile Include="Extension\StringExtension.cs" />
+    <Compile Include="Filter\AuthFilter.cs" />
+    <Compile Include="Filter\LogRequestFilter.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Helps\AES.cs" />
+    <Compile Include="Helps\EnumAttributeHelper.cs" />
+    <Compile Include="Helps\WebApiAdapter.cs" />
+    <Compile Include="Models\AppropriationDataModel.cs" />
+    <Compile Include="Models\BaseListResult.cs" />
+    <Compile Include="Models\BaseModels\BasePageResult.cs" />
+    <Compile Include="Models\BaseModels\FilebaseModel.cs" />
+    <Compile Include="Models\BaseModels\PaginationModel.cs" />
+    <Compile Include="Models\BaseResult.cs" />
+    <Compile Include="Models\CaseStatusDtoModel.cs" />
+    <Compile Include="Models\CaseTypeDtoModel.cs" />
+    <Compile Include="Models\DownloadFileRDto.cs" />
+    <Compile Include="Models\Dto\AdjustCaseBaseDtoModel.cs" />
+    <Compile Include="Models\Dto\AdjustCaseDtoModel.cs" />
+    <Compile Include="Models\Dto\AppropriationInquiryCaseDtoModel.cs" />
+    <Compile Include="Models\Dto\AppropriationInquiryDtoModel.cs" />
+    <Compile Include="Models\Dto\AskPaymentCaseDtoModel.cs" />
+    <Compile Include="Models\Dto\BillingSearchBaseDtoModel.cs" />
+    <Compile Include="Models\Dto\CaseBaseDtoModel.cs" />
+    <Compile Include="Models\Dto\CaseDtoModel.cs" />
+    <Compile Include="Models\Dto\CaseReturnViewModel.cs" />
+    <Compile Include="Models\Dto\CustomerMessageDtoModel.cs" />
+    <Compile Include="Models\Dto\OnePageToken.cs" />
+    <Compile Include="Models\Dto\OrderItemDtoModel.cs" />
+    <Compile Include="Models\Dto\PeriodNumInformationDtoModel.cs" />
+    <Compile Include="Models\Dto\ProductCustomeSpecsTypeDtoModel.cs" />
+    <Compile Include="Models\Dto\ProductDtoModel.cs" />
+    <Compile Include="Models\Dto\ProductInformationDtoModel.cs" />
+    <Compile Include="Models\Dto\ProductPeriodDtoModel.cs" />
+    <Compile Include="Models\Dto\ProductPeriodTypeDtoModel.cs" />
+    <Compile Include="Models\Dto\ProductSpecsPublishDtoModel.cs" />
+    <Compile Include="Models\Dto\ProductSpecsTypeDtoModel.cs" />
+    <Compile Include="Models\Dto\SpecDtoModel.cs" />
+    <Compile Include="Models\Dto\StoreProductImageDtoModel.cs" />
+    <Compile Include="Models\OrderInquiryParamsStatus.cs" />
+    <Compile Include="Models\Root.cs" />
+    <Compile Include="Models\UploadFile.cs" />
+    <Compile Include="Models\VenderResultViewModel.cs" />
+    <Compile Include="Models\ViewModel\CaseGetCurrentDetailViewModel.cs" />
+    <Compile Include="Models\ViewModel\CaseInquiryViewModel.cs" />
+    <Compile Include="Models\ViewModel\DownDtoModel.cs" />
+    <Compile Include="Models\ViewModel\LoginInfoViewModel.cs" />
+    <Compile Include="Models\Dto\NotificationStatusDtoModel.cs" />
+    <Compile Include="Models\ResultViewModel.cs" />
+    <Compile Include="Models\Dto\BaseListResponse.cs" />
+    <Compile Include="Models\Dto\BaseResponse.cs" />
+    <Compile Include="Models\ViewModel\AdjustPriceResultViewModel.cs" />
+    <Compile Include="Models\ViewModel\CancellationFeeCalculationViewModel.cs" />
+    <Compile Include="Models\ViewModel\CaseDetailViewModel.cs" />
+    <Compile Include="Models\ViewModel\CaseMessageViewModel.cs" />
+    <Compile Include="Models\ViewModel\CaseSendMessageViewModel.cs" />
+    <Compile Include="Models\ViewModel\LatestCaseViewModel.cs" />
+    <Compile Include="Models\PageListResult.cs" />
+    <Compile Include="Models\Dto\SendAskPaymentDtoModel.cs" />
+    <Compile Include="Models\StoreDataModel.cs" />
+    <Compile Include="Models\Result.cs" />
+    <Compile Include="Models\ResultModel.cs" />
+    <Compile Include="Models\StrongDataModel.cs" />
+    <Compile Include="Models\ViewModel\AdjustCaseInfoViewModel.cs" />
+    <Compile Include="Models\ViewModel\AgreeResultViewModel.cs" />
+    <Compile Include="Models\ViewModel\AppropriationInquiryResultViewModel.cs" />
+    <Compile Include="Models\ViewModel\AppropriationInquiryViewModel.cs" />
+    <Compile Include="Models\ViewModel\AppropriationOverviewViewModel.cs" />
+    <Compile Include="Models\ViewModel\AskPaymentListResultViewModel.cs" />
+    <Compile Include="Models\Dto\AskPaymentListDtoModel.cs" />
+    <Compile Include="Models\ViewModel\BillingAppropriationInquiryResultViewModel.cs" />
+    <Compile Include="Models\ViewModel\BillingBaseViewModel.cs" />
+    <Compile Include="Models\ViewModel\CalculatorResultViewModel.cs" />
+    <Compile Include="Models\ViewModel\CalculatorViewModel.cs" />
+    <Compile Include="Models\ViewModel\CaseDetailResultViewModel.cs" />
+    <Compile Include="Models\ViewModel\CaseFillInViewModel.cs" />
+    <Compile Include="Models\ViewModel\CaseHistoryViewModel.cs" />
+    <Compile Include="Models\ViewModel\ChangePassWordViewModel.cs" />
+    <Compile Include="Models\ViewModel\CustomerMessageViewModel.cs" />
+    <Compile Include="Models\ViewModel\LoginBaseModel.cs" />
+    <Compile Include="Models\ViewModel\LoginResultViewModel.cs" />
+    <Compile Include="Models\ViewModel\LoginViewModel.cs" />
+    <Compile Include="Models\ViewModel\MenuViewModel.cs" />
+    <Compile Include="Models\ViewModel\NotificationResultViewModel.cs" />
+    <Compile Include="Models\ViewModel\NotificationViewModel.cs" />
+    <Compile Include="Models\ViewModel\OrderInquiryParamsViewModel.cs" />
+    <Compile Include="Models\ViewModel\OrderInquiryResultViewModel.cs" />
+    <Compile Include="Models\ViewModel\OrderInquiryViewModel.cs" />
+    <Compile Include="Models\ViewModel\PeriodInfoViewModel.cs" />
+    <Compile Include="Models\ViewModel\PeriodItemViewModel.cs" />
+    <Compile Include="Models\ViewModel\PeriodNumInformationViewModel.cs" />
+    <Compile Include="Models\ViewModel\ProductInformationViewModel.cs" />
+    <Compile Include="Models\ViewModel\ProductInfoViewModel.cs" />
+    <Compile Include="Models\ViewModel\ProductPeriodViewModel.cs" />
+    <Compile Include="Models\ViewModel\ProductViewModel.cs" />
+    <Compile Include="Models\ViewModel\SearchBaseViewModel.cs" />
+    <Compile Include="Models\ViewModel\SaveUploadFilesViewModel.cs" />
+    <Compile Include="Models\ViewModel\StoreInformationViewModel.cs" />
+    <Compile Include="Models\ViewModel\StoreInfoViewModel.cs" />
+    <Compile Include="Models\ViewModel\StoreViewModel.cs" />
+    <Compile Include="Models\ViewModel\TransactionBaseViewModel.cs" />
+    <Compile Include="Models\ViewModel\UserInfoBaseModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\FileRepository.cs" />
+    <Compile Include="Services\AccountService.cs" />
+    <Compile Include="Services\ApiService.cs" />
+    <Compile Include="Services\BaseService.cs" />
+    <Compile Include="Services\BillingService.cs" />
+    <Compile Include="Services\CaseService.cs" />
+    <Compile Include="Services\CustomerService.cs" />
+    <Compile Include="Services\EcommerceService.cs" />
+    <Compile Include="Services\ExeclService.cs" />
+    <Compile Include="Services\HomeService.cs" />
+    <Compile Include="Services\Interface\IExeclService.cs" />
+    <Compile Include="Services\IOperatorContext.cs" />
+    <Compile Include="Services\OperatorSessionContext.cs" />
+    <Compile Include="Services\ProductService.cs" />
+    <Compile Include="Services\StoreService.cs" />
+    <Compile Include="Services\VendorService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\APP_WSServiceReference\APP_WS.disco" />
+    <None Include="Connected Services\APP_WSServiceReference\configuration91.svcinfo" />
+    <None Include="Connected Services\APP_WSServiceReference\configuration.svcinfo" />
+    <None Include="Connected Services\APP_WSServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <Content Include="Content\images\bg-desktop.svg" />
+    <Content Include="Content\images\bg-mobile.svg" />
+    <Content Include="Content\images\btn-add-pink.svg" />
+    <Content Include="Content\images\btn-customer-service-default.svg" />
+    <Content Include="Content\images\btn-notification-default.svg" />
+    <Content Include="Content\images\ec-image-shop-info-sample.png" />
+    <Content Include="Content\images\icon-alert-error.svg" />
+    <Content Include="Content\images\icon-alert-info.svg" />
+    <Content Include="Content\images\icon-alert-success.svg" />
+    <Content Include="Content\images\icon-alert-warning.svg" />
+    <Content Include="Content\images\icon-arrow-down-black-20-px.svg" />
+    <Content Include="Content\images\icon-arrow-down-black.svg" />
+    <Content Include="Content\images\icon-arrow-down-grey-20-px.svg" />
+    <Content Include="Content\images\icon-arrow-down-white-20-px.svg" />
+    <Content Include="Content\images\icon-arrow-foward-left-darkgrey.svg" />
+    <Content Include="Content\images\icon-arrow-foward-right-darkgrey.svg" />
+    <Content Include="Content\images\icon-arrow-left-darkgrey.svg" />
+    <Content Include="Content\images\icon-arrow-right-black-20-px.svg" />
+    <Content Include="Content\images\icon-arrow-right-black.svg" />
+    <Content Include="Content\images\icon-arrow-right-darkgrey.svg" />
+    <Content Include="Content\images\icon-arrow-right-grey.svg" />
+    <Content Include="Content\images\icon-arrow-right-lightpink-20-px.svg" />
+    <Content Include="Content\images\icon-arrow-top-black-20-px.svg" />
+    <Content Include="Content\images\icon-arrow-top-pink-20-px.svg" />
+    <Content Include="Content\images\icon-arrow-top-white-20-px.svg" />
+    <Content Include="Content\images\icon-back-arrow-white.svg" />
+    <Content Include="Content\images\icon-back-arrow.svg" />
+    <Content Include="Content\images\icon-case-amounts-pink.svg" />
+    <Content Include="Content\images\icon-case-amounts-red.svg" />
+    <Content Include="Content\images\icon-case-amounts.svg" />
+    <Content Include="Content\images\icon-confirm-none-authorize.svg" />
+    <Content Include="Content\images\icon-confirm-success-check.svg" />
+    <Content Include="Content\images\icon-confirm-success.svg" />
+    <Content Include="Content\images\icon-date-grey.svg" />
+    <Content Include="Content\images\icon-date-pink.svg" />
+    <Content Include="Content\images\icon-delete-black.svg" />
+    <Content Include="Content\images\icon-dialog-close-black.svg" />
+    <Content Include="Content\images\icon-dialog-close-grey.svg" />
+    <Content Include="Content\images\icon-dialog-default-status.svg" />
+    <Content Include="Content\images\icon-dialog-logo.svg" />
+    <Content Include="Content\images\icon-dialog-user.svg" />
+    <Content Include="Content\images\icon-error-hint-pink.svg" />
+    <Content Include="Content\images\icon-expand-grey.svg" />
+    <Content Include="Content\images\icon-expand-liner-pink.svg" />
+    <Content Include="Content\images\icon-expand-white.svg" />
+    <Content Include="Content\images\icon-fold-hardpink.svg" />
+    <Content Include="Content\images\icon-fold-pink.svg" />
+    <Content Include="Content\images\icon-fold-white.svg" />
+    <Content Include="Content\images\icon-image-upload.svg" />
+    <Content Include="Content\images\icon-img-upload-small.svg" />
+    <Content Include="Content\images\icon-input-success.svg" />
+    <Content Include="Content\images\icon-logo-vendor-dark.svg" />
+    <Content Include="Content\images\icon-logo-vendor-light.svg" />
+    <Content Include="Content\images\icon-menu-mobile.svg" />
+    <Content Include="Content\images\icon-minus-pink-plus.svg" />
+    <Content Include="Content\images\icon-minus-pink-sub.svg" />
+    <Content Include="Content\images\icon-my-account-pink-66-px.svg" />
+    <Content Include="Content\images\icon-my-account-white-66-px.svg" />
+    <Content Include="Content\images\icon-nav-more-grey.svg" />
+    <Content Include="Content\images\icon-navigation-close-black.svg" />
+    <Content Include="Content\images\icon-navigation-close-white.svg" />
+    <Content Include="Content\images\icon-notification-red.svg" />
+    <Content Include="Content\images\icon-notify-loading-ani.svg" />
+    <Content Include="Content\images\icon-order-num-pink.svg" />
+    <Content Include="Content\images\icon-product-manage-default.svg" />
+    <Content Include="Content\images\icon-question.svg" />
+    <Content Include="Content\images\icon-radio-decrease.svg" />
+    <Content Include="Content\images\icon-radio-select-style-2.svg" />
+    <Content Include="Content\images\icon-radio-select.svg" />
+    <Content Include="Content\images\icon-radio-unselect-pink.svg" />
+    <Content Include="Content\images\icon-radio-unselect.svg" />
+    <Content Include="Content\images\icon-searchlist-loading.gif" />
+    <Content Include="Content\images\icon-searchlist-loading.svg" />
+    <Content Include="Content\images\icon-searchlist-none-result.svg" />
+    <Content Include="Content\images\icon-store-pink.svg" />
+    <Content Include="Content\images\icon-user-pink.svg" />
+    <Content Include="Content\images\icon-user-white.svg" />
+    <Content Include="Content\images\icon_send_pink.svg" />
+    <Content Include="Content\images\image-motorcycle-01.png" />
+    <Content Include="Content\images\image-shop-info-sample.png" />
+    <Content Include="Content\images\img-cat-404.svg" />
+    <Content Include="Content\images\img-cat-500.svg" />
+    <Content Include="Content\images\img-cat-login.svg" />
+    <Content Include="Content\images\menu-icon-appropriation.svg" />
+    <Content Include="Content\images\menu-icon-ecommerce.svg" />
+    <Content Include="Content\images\menu-icon-home.svg" />
+    <Content Include="Content\images\menu-icon-manage-transaction.svg" />
+    <Content Include="Content\images\menu-icon-send-transaction.svg" />
+    <Content Include="Content\images\menu-icon-setting.svg" />
+    <Content Include="Content\images\storePreview\01.png" />
+    <Content Include="Content\images\storePreview\ad_store.png" />
+    <Content Include="Content\images\storePreview\bg_pink.svg" />
+    <Content Include="Content\images\storePreview\bg_pink_s.svg" />
+    <Content Include="Content\images\storePreview\icon_arrow_down_grey.svg" />
+    <Content Include="Content\images\storePreview\icon_arrow_right_gray.svg" />
+    <Content Include="Content\images\storePreview\icon_circle_blue.svg" />
+    <Content Include="Content\images\storePreview\icon_circle_blue_mobile.svg" />
+    <Content Include="Content\images\storePreview\icon_circle_yellow.svg" />
+    <Content Include="Content\images\storePreview\icon_circle_yellow02_mobile.svg" />
+    <Content Include="Content\images\storePreview\icon_logo.svg" />
+    <Content Include="Content\images\storePreview\icon_purchase_step01.svg" />
+    <Content Include="Content\images\storePreview\icon_purchase_step02.svg" />
+    <Content Include="Content\images\storePreview\icon_purchase_step03.svg" />
+    <Content Include="Content\images\storePreview\icon_purchase_step04.svg" />
+    <Content Include="Content\layout.min.css" />
+    <Content Include="Content\pages\account\changePw.min.css" />
+    <Content Include="Content\pages\billing\AppropriationInquiry.min.css" />
+    <Content Include="Content\pages\billing\AskPayment.min.css" />
+    <Content Include="Content\pages\billing\PaymentUploadList.min.css" />
+    <Content Include="Content\pages\case\caseDetail.min.css" />
+    <Content Include="Content\pages\case\caseInquiry.min.css" />
+    <Content Include="Content\pages\case\fillIn.min.css" />
+    <Content Include="Content\pages\case\notOpen.min.css" />
+    <Content Include="Content\pages\case\returns.min.css" />
+    <Content Include="Content\pages\ecommerce\addProduct.min.css" />
+    <Content Include="Content\pages\ecommerce\maintainStore.min.css" />
+    <Content Include="Content\pages\ecommerce\orderManage.min.css" />
+    <Content Include="Content\pages\ecommerce\productManage.min.css" />
+    <Content Include="Content\pages\ecommerce\storeContent.min.css" />
+    <Content Include="Content\pages\ecommerce\storePreview.min.css" />
+    <Content Include="Content\pages\ecommerce\zerocardCommon.css" />
+    <Content Include="Content\pages\home\error.min.css" />
+    <Content Include="Content\pages\home\logout.min.css" />
+    <Content Include="Content\pages\vendor\agree.min.css" />
+    <Content Include="Content\pages\home\forgetPW.min.css" />
+    <Content Include="Content\pages\vendor\index.min.css" />
+    <Content Include="Content\pages\home\login.min.css" />
+    <Content Include="Content\vendor\bootstrap-theme.css" />
+    <Content Include="Content\vendor\bootstrap-theme.min.css" />
+    <Content Include="Content\vendor\bootstrap-vue.min.css" />
+    <Content Include="Content\vendor\bootstrap.css" />
+    <Content Include="Content\vendor\bootstrap.min.css" />
+    <Content Include="favicon.ico" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\common\Site.css" />
+    <Content Include="Scripts\common\filter.js" />
+    <Content Include="Scripts\common\mixins.js" />
+    <Content Include="Scripts\common\variables.js" />
+    <Content Include="Scripts\vendor\aos.js" />
+    <Content Include="Scripts\vendor\axios.min.js" />
+    <Content Include="Scripts\vendor\babel.min.js" />
+    <Content Include="Scripts\vendor\bootstrap-vue.min.js" />
+    <Content Include="Scripts\vendor\bootstrap.bundle.js" />
+    <Content Include="Scripts\vendor\bootstrap.js" />
+    <Content Include="Scripts\vendor\bootstrap.min.js" />
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\components\_float.scss" />
+    <Content Include="Content\components\_footer.scss" />
+    <Content Include="Content\components\_form.scss" />
+    <Content Include="Content\components\_loadingCover.scss" />
+    <Content Include="Content\components\_menu.scss" />
+    <Content Include="Content\components\_modal.scss" />
+    <Content Include="Content\setting\_extend.scss" />
+    <Content Include="Content\setting\_mixins.scss" />
+    <Content Include="Content\setting\_reset.scss" />
+    <Content Include="Content\setting\_variables.scss" />
+    <Content Include="Content\layout.min.css.map" />
+    <Content Include="Content\layout.scss" />
+    <Content Include="Content\pages\home\forgetPW.scss" />
+    <Content Include="Content\pages\home\login.scss" />
+    <Content Include="Content\pages\home\login.min.css.map" />
+    <Content Include="Content\pages\vendor\agree.scss" />
+    <Content Include="Content\pages\vendor\index.scss" />
+    <Content Include="Content\pages\vendor\index.min.css.map" />
+    <Content Include="Content\pages\case\caseDetail.scss" />
+    <Content Include="Content\pages\case\caseInquiry.scss" />
+    <Content Include="Content\pages\case\caseDetail.min.css.map" />
+    <Content Include="Content\components\_searchTable.scss" />
+    <Content Include="Content\pages\vendor\agree.min.css.map" />
+    <Content Include="Content\pages\home\forgetPW.min.css.map" />
+    <Content Include="Content\pages\case\caseInquiry.min.css.map" />
+    <Content Include="Content\pages\case\fillIn.scss" />
+    <Content Include="Content\pages\case\fillIn.min.css.map" />
+    <Content Include="Content\pages\home\logout.scss" />
+    <Content Include="Content\pages\home\logout.min.css.map" />
+    <Content Include="Content\pages\case\notOpen.scss" />
+    <Content Include="Content\pages\case\notOpen.min.css.map" />
+    <Content Include="Content\components\_contact.scss" />
+    <Content Include="Content\vendor\bootstrap-theme.css.map" />
+    <Content Include="Content\vendor\bootstrap-theme.min.css.map" />
+    <Content Include="Content\vendor\bootstrap.css.map" />
+    <Content Include="Content\vendor\bootstrap.min.css.map" />
+    <Content Include="Content\pages\billing\AppropriationInquiry.scss" />
+    <Content Include="Content\pages\account\changePw.scss" />
+    <Content Include="Content\pages\account\changePw.min.css.map" />
+    <Content Include="Content\pages\billing\AppropriationInquiry.min.css.map" />
+    <Content Include="Content\pages\billing\AskPayment.scss" />
+    <Content Include="Content\pages\billing\AskPayment.min.css.map" />
+    <Content Include="Content\pages\billing\PaymentUploadList.scss" />
+    <Content Include="Content\pages\billing\PaymentUploadList.min.css.map" />
+    <Content Include="Content\pages\home\error.scss" />
+    <Content Include="Content\pages\home\error.min.css.map" />
+    <Content Include="Content\pages\case\returns.scss" />
+    <Content Include="Content\pages\case\returns.min.css.map" />
+    <Content Include="Content\pages\ecommerce\productManage.scss" />
+    <Content Include="Content\pages\ecommerce\addProduct.scss" />
+    <Content Include="Content\pages\ecommerce\orderManage.scss" />
+    <Content Include="Content\pages\ecommerce\addProduct.min.css.map" />
+    <Content Include="Content\pages\ecommerce\orderManage.min.css.map" />
+    <Content Include="Content\pages\ecommerce\productManage.min.css.map" />
+    <None Include="Connected Services\APP_WSServiceReference\APP_WS.wsdl" />
+    <Content Include="Content\pages\ecommerce\maintainStore.scss" />
+    <Content Include="Content\pages\ecommerce\storePreview.scss" />
+    <Content Include="Content\pages\ecommerce\maintainStore.min.css.map" />
+    <Content Include="Content\pages\ecommerce\storePreview.min.css.map" />
+    <Content Include="Content\pages\ecommerce\storeContent.scss" />
+    <Content Include="Content\pages\ecommerce\storeContent.min.css.map" />
+    <Content Include="Content\vendor\_slick-theme.scss" />
+    <Content Include="Content\vendor\_slick.scss" />
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <Content Include="Scripts\vendor\bootstrap.bundle.js.map" />
+    <None Include="Properties\PublishProfiles\Web Deploy_EC0Card.pubxml" />
+    <None Include="Properties\PublishProfiles\WebDeploy_EC_EZ_UAT.pubxml" />
+    <None Include="Scripts\vendor\jquery-3.3.1.intellisense.js" />
+    <Content Include="Scripts\vendor\compressor.min.js" />
+    <Content Include="Scripts\vendor\es6-promise.auto.js" />
+    <Content Include="Scripts\vendor\iframeResizer.contentWindow.min.js" />
+    <Content Include="Scripts\vendor\iframeResizer.min.js" />
+    <Content Include="Scripts\vendor\jquery-3.3.1.js" />
+    <Content Include="Scripts\vendor\jquery-3.3.1.min.js" />
+    <Content Include="Scripts\vendor\jquery-3.3.1.slim.js" />
+    <Content Include="Scripts\vendor\jquery-3.3.1.slim.min.js" />
+    <None Include="Scripts\vendor\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\vendor\jquery-3.4.1.min.js" />
+    <Content Include="Scripts\vendor\jquery.validate.js" />
+    <Content Include="Scripts\vendor\jquery.validate.min.js" />
+    <Content Include="Scripts\vendor\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\vendor\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\vendor\modernizr-2.8.3.js" />
+    <Content Include="Scripts\vendor\moment.min.js" />
+    <Content Include="Scripts\vendor\pageParallax.js" />
+    <Content Include="Scripts\vendor\polyfill.js" />
+    <Content Include="Scripts\vendor\slick.min.js" />
+    <Content Include="Scripts\vendor\vue.js" />
+    <Content Include="Scripts\vendor\vue2Dropzone.js" />
+    <Content Include="Scripts\vendor\vue2Dropzone.min.css" />
+    <Content Include="Scripts\vendor\vuex.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Home\Login.cshtml" />
+    <Content Include="Views\Home\ForgetPW.cshtml" />
+    <Content Include="Views\Vendor\Agree.cshtml" />
+    <Content Include="Views\Home\Guideline.cshtml" />
+    <Content Include="Views\Components\_Menu.cshtml" />
+    <Content Include="Views\Shared\_LayoutNotMenu.cshtml" />
+    <Content Include="Views\Case\CaseDetail.cshtml" />
+    <Content Include="Views\Case\CaseInquiry.cshtml" />
+    <Content Include="Views\Home\SystemInfo.cshtml" />
+    <Content Include="Views\Home\Error.cshtml" />
+    <Content Include="Views\Vendor\Index.cshtml" />
+    <Content Include="Views\Case\NotOpen.cshtml" />
+    <Content Include="Views\Case\FillIn.cshtml" />
+    <Content Include="Views\Billing\AskPayment.cshtml" />
+    <Content Include="Views\Billing\AppropriationInquiry.cshtml" />
+    <Content Include="Views\Billing\PaymentUploadList.cshtml" />
+    <Content Include="Views\Account\ChangePW.cshtml" />
+    <Content Include="Views\Account\Index.cshtml" />
+    <Content Include="Views\Home\Logout.cshtml" />
+    <Content Include="Views\Home\Error500.cshtml" />
+    <Content Include="Views\Case\Returns.cshtml" />
+    <Content Include="Views\Ecommerce\ProductManage.cshtml" />
+    <Content Include="Views\Ecommerce\AddProduct.cshtml" />
+    <Content Include="Views\Ecommerce\OrderManage.cshtml" />
+    <Content Include="Views\Ecommerce\ProductManageNotOpen.cshtml" />
+    <Content Include="Views\Billing\NotOpen.cshtml" />
+    <Content Include="Views\Ecommerce\StorePreview.cshtml" />
+    <Content Include="Views\Ecommerce\MaintainStore.cshtml" />
+    <Content Include="Views\Ecommerce\StoreContent.cshtml" />
+    <Content Include="Views\Billing\AskPaymentNotOpen.cshtml" />
+    <Content Include="Views\Ecommerce\NotOpen.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Mart\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Views\Product\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <None Include="packages.config" />
+    <Content Include="Scripts\vendor\jquery-3.3.1.slim.min.map" />
+    <Content Include="Scripts\vendor\jquery-3.3.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Infrastructure\LoggerService\LoggerService.csproj">
+      <Project>{05778AA7-4346-4203-9B89-3635F2E62DA4}</Project>
+      <Name>LoggerService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Infrastructure\UploadService\UploadService.csproj">
+      <Project>{28C7B02F-94C0-4437-A73E-E174A0AAB5FC}</Project>
+      <Name>UploadService</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Connected Services\APP_WSServiceReference\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>51476</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>https://localhost:44324/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>此專案參考這部電腦上所缺少的 NuGet 套件。請啟用 NuGet 套件還原，以下載該套件。如需詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的檔案是 {0}。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

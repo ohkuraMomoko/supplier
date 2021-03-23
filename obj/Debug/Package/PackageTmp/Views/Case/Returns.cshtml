@@ -1,0 +1,80 @@
+﻿
+@{
+    ViewBag.Title = "調降金額/退貨已送出";
+}
+
+@section header {
+	@Styles.Render("~/Content/pages/case/returns.min.css") 
+}
+
+<div id="page" class="page">
+    <div class="content">
+        <img class="center content-img" src="@Url.Content("~/Content/images/icon-confirm-success-check.svg")" alt="">
+        <h2 class="content-title">調降金額/退貨已送出</h2>
+        <p class="content-text" v-html="info">
+        </p>
+        <div class="bank"
+            v-if="isRemit">
+            <div class="bank-item">
+                <div class="bank-item--title">匯款銀行：</div>
+                <div class="bank-item--data">{{bankName}}</div>
+            </div>
+            <div class="bank-item">
+                <div class="bank-item--title">銀行代號：</div>
+                <div class="bank-item--data">{{bank}}</div>
+            </div>
+            <div class="bank-item">
+                <div class="bank-item--title">銀行帳號：</div>
+                <div class="bank-item--data">{{accountNo}}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+<script type="text/babel">
+    var page = new Vue({
+        el: "#page",
+        mixins: [myMixin],
+        store: store,
+        data: {
+            bankName: '',
+            bank: '',
+            accountNo: '',
+            isRemit: true,
+            info: '',
+        },
+        created: function() {
+            let vm = this;
+            app.showBackBtn_case = true;
+            let case_number = this.getUrlParameter("case_number");			
+            console.log(case_number);
+
+            if(sessionStorage.getItem("case_detail") != null && sessionStorage.getItem("case_detail") != '') {
+                let caseDetail = JSON.parse(sessionStorage.getItem("case_detail"));
+                console.log('caseDetail',caseDetail);
+
+                if(caseDetail.CaseNumber == case_number) {
+                    vm.bankName= caseDetail.BankName;
+                    vm.bank= caseDetail.BankId;
+                    vm.accountNo= caseDetail.AccountNo;
+                }
+            }
+
+            let paymentData = sessionStorage.getItem("paymentInfo")
+
+            // 退款方式：1:撥款中扣除 2:廠商自行匯款
+            if(paymentData == '1') {
+                vm.isRemit = false;
+                vm.info ="您已選擇的退款方式為撥款金額扣除，<br/>退款款項將從下次撥款金額內扣除，待扣足後才會正常撥款";
+            }else {
+                vm.isRemit = true;
+                vm.info = "您已選擇的退款方式為匯款，<br/>請於退貨申請後三日內將退款款項匯回下列帳號：";
+            }
+        },
+        methods: {
+            
+        }
+    });
+</script>
+}

@@ -1,0 +1,269 @@
+﻿@{ 
+    ViewBag.Title = "首頁"; 
+} 
+@section header {
+    @Styles.Render("~/Content/pages/home/index.min.css") 
+}
+
+<div id="page" class="page">
+	<div class="announcement" v-if="announcementShow"  v-cloak>
+		<p class="announcement--content">{{ announcementText }}</p>
+    </div>
+	<div class="table-container">
+        <p class="table-title">最新案件</p>
+
+        <!-- mobile -->
+        <div class="mobile-box"
+            v-if="this.$store.getters.getWindowWidth < this.$store.getters.getBreakpoint">
+            <case-item 
+                v-for="data in apiDatas"
+                v-bind:case_data="data"></case-item>
+        </div>
+        <!-- desktop -->
+        <div class="table-box"
+            v-else>
+            <div class="table-control">
+                <div class="table-control--item" 
+                    v-bind:style="{ width: columnWidth.update_date + '%' }">
+                    更新日期</div>
+                <div class="table-control--item" 
+                    v-bind:style="{ width: columnWidth.application_date + '%' }">
+                    申請日期</div>
+                <div class="table-control--item" 
+                    v-bind:style="{ width: columnWidth.store_name + '%' }">
+                    門市名稱</div>
+                <div class="table-control--item" 
+                    v-bind:style="{ width: columnWidth.name + '%' }">
+                    姓名</div>
+                <div class="table-control--item" 
+                    v-bind:style="{ width: columnWidth.price + '%' }">
+                    交易金額</div>
+                <div class="table-control--item" 
+                    v-bind:style="{ width: columnWidth.period + '%' }">
+                    期數</div>
+                <div class="table-control--item" 
+                    v-bind:style="{ width: columnWidth.status + '%' }">
+                    狀態</div>
+                <div class="table-control--item" 
+                    v-bind:style="{ width: columnWidth.action + '%' }">
+                    &nbsp;</div>
+            </div>
+            <div class="table-content">
+                <table-row 
+                    v-for="data in apiDatas"
+                    v-bind:case_data="data"
+                    v-bind:colume_width="columnWidth"></table-row>
+            </div>
+        </div>
+        
+        <div class="table-footer">
+            <a href="" class="table-footer--link" >
+                <span>更多訂單/案件</span>
+                <img src="@Url.Content("~/Content/images/icon-arrow-right-black-20-px.svg")" alt="">
+            </a>
+        </div>
+    </div>
+    <div class="mobile-tips"
+        v-if="this.$store.getters.getWindowWidth < this.$store.getters.getBreakpoint">
+        更全面、完整功能的供應商平台管理系統請從桌面瀏覽
+    </div>
+</div>
+
+@section scripts {
+<script type="text/babel">
+    // 區分桌手機component: tableRow (desktop) / caseItem (mobile)
+    const tableRow = Vue.component("table-row", {
+        props: [
+            "case_data",
+            "colume_width"
+        ],
+		data: function() {
+			return {
+				
+			};
+		},
+        created: function() {
+            
+        },
+		template:
+            `<transition name="fade">
+				<div class="table-row" 
+                    v-bind:id="'row'+case_data.id">
+                    <div class="table-row--item" 
+                        v-bind:style="{ width: colume_width.update_date + '%' }">
+                        {{ case_data.update_date }}
+                    </div>
+                    <div class="table-row--item" 
+                        v-bind:style="{ width: colume_width.application_date + '%' }">
+                        {{ case_data.application_date }}
+                    </div>
+                    <div class="table-row--item" 
+                        v-bind:style="{ width: colume_width.store_name + '%' }">
+                        {{ case_data.store_name }}
+                    </div>
+                    <div class="table-row--item" 
+                        v-bind:style="{ width: colume_width.name + '%' }">
+                        {{ case_data.name }}
+                    </div>
+                    <div class="table-row--item" 
+                        v-bind:style="{ width: colume_width.price + '%' }">
+                        <div class="case-money">
+                            <img src="@Url.Content("~/Content/images/icon-case-amounts.svg")" alt="">
+                            {{ $options.filters.amountAddDot(case_data.price) }}
+                        </div>
+                    </div>
+                    <div class="table-row--item" 
+                        v-bind:style="{ width: colume_width.period + '%' }">
+                        {{ case_data.period }}
+                    </div>
+                    <div class="table-row--item" 
+                        v-bind:style="{ width: colume_width.status + '%' }">
+                        <div class="case-status"
+                            v-bind:class="'case-status--' + case_data.status.type ">
+                            {{ case_data.status.description }}
+                        </div>
+                    </div>
+                    <div class="table-row--item" 
+                        v-bind:style="{ width: colume_width.action + '%' }">
+                        <div class="case-detail"
+                            v-bind:id="'caseDetail'+case_data.id"
+                            v-on:click="goCaseDetail(case_data.id)">
+                            <img src="@Url.Content("~/Content/images/icon-nav-more-grey.svg")" />
+                        </div>
+                        <b-tooltip v-bind:target="'caseDetail'+case_data.id" placement="left">檢視案件明細</b-tooltip>
+                    </div>
+                </div>
+			</transition>`
+		,
+		methods: {
+			goCaseDetail: function(id) {
+                console.log(id);
+                
+            }
+		}
+	});
+
+    const caseItem = Vue.component("case-item", {
+        props: [
+            "case_data",
+        ],
+		data: function() {
+			return {
+				
+			};
+		},
+        created: function() {
+            
+        },
+		template:
+            `<transition name="fade">
+				<div class="case-item">
+                    <div class="case-content">
+                        <div class="case-content-row">
+                            <span class="case-name">
+                                <img src="@Url.Content("~/Content/images/icon-user-pink.svg")" alt="">
+                                {{ case_data.name }}
+                            </span>
+                            <div class="case-status"
+                                v-bind:class="'case-status--' + case_data.status.type ">
+                                {{ case_data.status.description }}
+                            </div>
+                        </div>
+                        <div class="case-content-row">
+                            <span class="case-shop">
+                                <img src="@Url.Content("~/Content/images/icon-store-pink.svg")" alt="">
+                                {{ case_data.store_name }}
+                            </span>
+                            <span class="case-money">
+                                <img src="@Url.Content("~/Content/images/icon-case-amounts-pink.svg")" alt="">
+                                {{ $options.filters.amountAddDot(case_data.price) }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="case-footer">
+                        <span class="case-footer--time">申請日期：{{ case_data.application_date }}</span>
+                        <div class="case-footer--link"
+                            v-on:click="goCaseDetail(case_data.id)">
+                            <img src="@Url.Content("~/Content/images/icon-nav-more-grey.svg")" />
+                        </div>
+                    </div>
+                </div>
+			</transition>`
+		,
+		methods: {
+			goCaseDetail: function(id) {
+                console.log(id);
+                
+            }
+		}
+	});
+    
+	var page = new Vue({
+		el: "#page",
+        mixins: [ myMixin ],
+        store: store,
+		component: {
+            tableRow,
+            caseItem
+		},
+		data: {
+			announcementShow: false,
+			announcementText:
+				"提醒您：12/14 (六）適逢中租企業尾牙，調整服務時間通知。",
+            columnWidth: {
+                update_date: '12.5',
+                application_date: '12.5',
+                store_name: '12.5',
+                name: '12.5',
+                price: '12.5',
+                period: '12.5',
+                status: '12.5',
+                action: '12.5',
+            },
+			apiDatas: [],
+		},
+		created: function() {
+            var vm = this;
+            // 在這邊接API
+            // axios.post(vm.apiUrl)
+            // .then(function (response) {
+                // this.announcementText = response;
+            // })
+            // .catch(function(error){
+                
+            // });
+
+            // 案件狀態: 1:尚未操作 2:審核中 3:婉拒(未通過) 4:核准前取消 5:已核准未請款 6:請款中7:已撥款 8:核准後取消
+            // 假json資料
+            faker.locale = "zh_TW";
+            for (let index = 0; index < 20; index++) {
+                vm.apiDatas.push( { 
+                    "id": faker.random.number(), 
+                    "update_date": faker.date.recent().toISOString(), 
+                    "application_date": faker.date.past().toISOString(), 
+                    "store_name": faker.company.companyName(), 
+                    "name": faker.name.firstName() + faker.name.lastName(), 
+                    "price":  faker.random.number(), 
+                    "period": faker.random.number(), 
+                    "status": {
+                        "type": 2,
+                        "description":"審核中"
+                    }, 
+                } );   
+            }
+            // console.log(vm.apiDatas);
+            
+        },
+		computed: {
+			
+		},
+		mounted: function() {
+			console.log(this.$store.getters.getWindowWidth);
+		},
+		methods: {
+			
+		}
+	});
+
+</script>
+}

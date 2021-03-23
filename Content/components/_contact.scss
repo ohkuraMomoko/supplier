@@ -1,0 +1,397 @@
+﻿@import "../setting/_variables.scss";
+@import "../setting/_mixins.scss";
+
+
+/* block: 客服中心 ==============================*/
+.contact-container {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(#000, 0.3);
+    z-index: 4;
+    // display: none;
+}
+
+.contact {
+    width: 100%;
+    max-width: 500px;
+    height: 100%;
+    background-color: #fff;
+    box-shadow: 0 4px 12px 0 #00000019;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.contact-top {
+    padding: 30px 40px 16px;
+    border-bottom: 1px solid #ececec;
+    &--title {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 27px;
+    }
+    &--close {
+        width: 60px;
+        height: 60px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        right: 26px;
+        top: 14px;
+        >img {
+            width: 28px;
+        }
+    }
+    &--text {
+        font-size: 14px;
+        line-height: 2;
+    }
+}
+@include rwd(#{$ipad-pro - 1px}) {
+    .contact-top {
+        padding: 40px 20px 16px;
+        &--title {
+            margin-bottom: 17px;
+        }
+    }
+}
+
+.contact-body {
+    height: calc(100% - #{166px+80px});
+    &--default {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .text {
+            font-size: 14px;
+            color: #a0a0a0;
+            text-align: center;
+            margin-top: 15px;
+        }
+    }   
+}
+.contact-body--msg {
+    padding: 27px 40px;
+    height: 100%;
+    overflow-y: scroll;
+}
+.contact-body--msg::-webkit-scrollbar-track {
+	background-color: #fff;
+}
+
+.contact-body--msg::-webkit-scrollbar {
+	width: 5px;
+	background-color: #d8d8d8;
+}
+
+.contact-body--msg::-webkit-scrollbar-thumb {
+	border-radius: 5px;
+	background-color: #d8d8d8;
+}
+@include rwd(#{$ipad-pro - 1px}) {
+    .contact-body {
+        height: calc(100% - 274px);
+        &--msg {
+            padding: 20px;
+        }
+    }
+}
+
+.contact-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 19px;
+    &--icon {
+        width: 30px;
+        height: 30px;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 100%;
+        margin-right: 12px;
+    }
+    &--content {
+        .desc {
+            max-width: 380px;
+            display: block;
+            border-radius: 20px;
+            padding: 6px 18px;
+            line-height: 1.5;
+            word-break: break-all;
+        }
+        .time {
+            font-size: 14px;
+            color: #a0a0a0;
+            margin-top: 3px;
+            margin-left: 18px;
+        }
+    }
+}
+.contact-item--staff {
+    .contact-item {
+        &--icon {
+            background-image: url('images/icon-dialog-logo.svg');
+        }
+        &--content {
+            .desc{
+                background-color: #f5f5f5;
+                color: $colorText;
+            }
+        }
+    }
+}
+.contact-item--user {
+    .contact-item {
+        &--icon {
+            background-image: url('images/icon-dialog-user.svg');
+        }
+        &--content {
+            .desc{
+                background-color: $colorPrimary;
+                color: #fff;
+            }
+        }
+    }
+}
+
+
+.contact-footer {
+    width: 100%;
+    height: 80px;
+    padding: 18px 40px;
+    background-color: #f5f5f5;
+    .contact-msg {
+        width: 100%;
+        height: 44px;
+        background-color: #fff;
+        border-radius: 20px;
+        border: solid 1px #d8d8d8;
+        display: flex;
+        align-content: center;
+        justify-content: center;
+        position: relative;
+        >.clear-btn {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+        >input {
+            width: 95%;
+            background-color: transparent;
+            line-height: 1.5;
+            border: none;
+            outline: none;
+        }
+    }
+    .send-msg {
+        display: none;
+    }
+    
+}
+@include rwd(#{$ipad-pro - 1px}) {
+    .contact-footer {
+        padding: 7px 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .send-msg {
+            width: 46px;
+            display: block;
+            cursor: pointer;
+            margin-left: 14px;
+        }
+    }
+}
+/* block: 通知中心 ==============================*/
+.notification-container {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(#000, 0.3);
+    z-index: 4;
+    // display: none;
+}
+
+.notification {
+    width: 100%;
+    max-width: 500px;
+    height: 100%;
+    background-color: #fff;
+    box-shadow: 0 4px 12px 0 #00000019;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.notification-top {
+    padding: 30px 40px 16px;
+    position: relative;
+    &--title {
+        font-size: 24px;
+        font-weight: 600;
+    }
+    &--close {
+        width: 60px;
+        height: 60px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        right: 26px;
+        top: 14px;
+        >img {
+            width: 28px;
+        }
+    }
+    &--text {
+        margin-top: 56px;
+        font-size: 12px;
+        color: #7b7b7b;
+        display: flex;
+        justify-content: space-between;
+        span{
+            line-height: 2;
+            cursor: pointer;
+        }
+    }
+    
+}
+
+.notification-body {
+    height: calc(100% - #{166px+80px});
+    &--default {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .text {
+            font-size: 14px;
+            color: #a0a0a0;
+            text-align: center;
+            margin-top: 15px;
+        }
+    }   
+}
+.notification-body--msg {
+    padding: 0 40px 20px;
+    height: 100%;
+    overflow-y: scroll;
+}
+.notification-body--msg::-webkit-scrollbar-track {
+	background-color: #fff;
+}
+
+.notification-body--msg::-webkit-scrollbar {
+	width: 5px;
+	background-color: #d8d8d8;
+}
+
+.notification-body--msg::-webkit-scrollbar-thumb {
+	border-radius: 5px;
+	background-color: #d8d8d8;
+}
+
+/* element: .notification-item ----*/
+.notification-item {
+    border-radius: 10px;
+    background-color: #fff;
+    position: relative;
+    padding: 14px 16px 17px;
+    margin-bottom: 10px;
+    transition: background-color linear 0.3s;
+    &:hover {
+        background-color: #f5f5f5;
+    }
+}
+
+.notification-item--top {
+    margin-bottom: 5px;
+    cursor: pointer;
+    &:hover {
+        .notification-control-close {
+            display: block;
+        }
+    }
+    .notification-control {
+        &-close,
+        &-read {
+            width: 30px;
+            height: 40px;
+            cursor: pointer;
+            background-repeat: no-repeat;
+            background-position: 50%;
+            background-size: 14px;
+            position: absolute;
+            top: 0;
+        }
+        &-close {
+            right: 30px;
+            display: none;
+            background-image: url('images/icon-navigation-close-black.svg');
+        }
+        &-read {
+            right: 0;
+            background-image: url('images/icon-notification-red.svg');
+        }
+    }
+    .title {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 3px;
+    }
+    .shortdesc {
+        font-size: 14px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+}
+
+.notification-item--body {
+    width: 88%;
+    font-size: 14px;
+    line-height: 1.5;
+    height: 0;
+    visibility: hidden;
+    opacity: 0;
+    transition: height linear 0.3s, visibility linear 0.3s , opacity linear 0.25s;
+}
+
+.notification-item--footer {
+    font-size: 12px;
+    color: #7b7b7b;
+    padding-top: 5px;
+}
+
+/* status: .notification-item.eopn ----*/
+.notification-item.open {
+    background-color: #f5f5f5;
+    .notification-item--top {
+        .btn-close {
+            display: flex;
+        }
+        .shortdesc {
+            display: none;
+        }
+    }
+    .notification-item--body {
+        height: auto;
+        visibility: visible;
+        opacity: 1;
+    }
+    .notification-item--footer {
+        padding-top: 21px;
+    }
+}

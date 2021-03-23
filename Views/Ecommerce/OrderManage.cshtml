@@ -1,0 +1,724 @@
+﻿@{
+    ViewBag.Title = "訂單管理";
+}
+@section header {
+    @Styles.Render("~/Content/pages/ecommerce/orderManage.min.css?v=1")
+}
+
+<div id="page" class="page">
+	<div class="page-container">
+		<div class="page-top"
+			v-bind:class="changeFixed ? 'fixed' : ''">
+            <p class="page-title">@ViewBag.Title</p>
+        </div>
+        <div class="page-body">
+            <div class="order-desktop" 
+                v-if="!isMobile">
+                <div class="order-tabs">
+                    <div class="tab"
+                        v-bind:class="tabActive == 0 ? 'active' : ''"
+                            @@click="filterOrder(0)">全部狀態</div>
+                    <div class="tab"
+                        v-bind:class="tabActive == 1 ? 'active' : ''"
+                            @@click="filterOrder(1)">顧客未操作付款</div>
+                    <div class="tab"
+                        v-bind:class="tabActive == 2 ? 'active' : ''"
+                            @@click="filterOrder(2)">審核中</div>
+                    <div class="tab"
+                        v-bind:class="tabActive == 3 ? 'active' : ''"
+                            @@click="filterOrder(3)">審核中(核准/婉拒)</div>
+                    <div class="tab"
+                        v-bind:class="tabActive == 4 ? 'active' : ''"
+                            @@click="filterOrder(4)">已取消</div>
+                </div>
+                <div class="order-list">
+                    <div class="result">
+                        <div class="result--null" v-if="resultStatus === 1">
+                            <img src="@Url.Content("~/Content/images/icon-searchlist-none-result.svg")" alt="" class="center pic">
+                            <p class="title">目前尚無任何訂單</p>
+                            <p class="title-desc">請試試其他篩選方式</p>
+                        </div>
+                        <div class="result--ok" v-if="resultStatus !== 1">
+                            <div class="table-box">
+                                <div class="table-control table-control--reorder">
+                                    <div class="table-control--item"
+                                         v-bind:style="{ width: columnWidth.sn }">
+                                        
+                                    </div>
+                                    <div class="table-control--item"
+                                         v-bind:style="{ width: columnWidth.date }">
+                                        訂購時間
+                                    </div>
+                                    <div class="table-control--item"
+                                         v-bind:style="{ width: columnWidth.order_sn }">
+                                        訂單編號
+                                    </div>
+                                    <div class="table-control--item"
+                                         v-bind:style="{ width: columnWidth.product_name }">
+                                        商品名稱
+                                    </div>
+                                    @* <div class="table-control--item"
+                                         v-bind:style="{ width: columnWidth.product_specs }">
+                                        顏色規格
+                                    </div>
+                                    <div class="table-control--item"
+                                         v-bind:style="{ width: columnWidth.custome_specs }">
+                                        自訂選項
+                                    </div> *@
+                                    <div class="table-control--item"
+                                         v-bind:style="{ width: columnWidth.price }">
+                                        交易金額
+                                    </div>
+                                    <div class="table-control--item"
+                                         v-bind:style="{ width: columnWidth.review_price }">
+                                        撥款金額
+                                    </div>
+                                    <div class="table-control--item"
+                                         v-bind:style="{ width: columnWidth.review_period }">
+                                        期數
+                                    </div>
+                                    <div class="table-control--item"
+                                         v-bind:style="{ width: columnWidth.orderer }">
+                                        訂購/收件資訊
+                                    </div>
+                                    <div class="table-control--item"
+                                         v-bind:style="{ width: columnWidth.update_date }">
+                                        更新時間
+                                    </div>
+                                    <div class="table-control--item"
+                                         v-bind:style="{ width: columnWidth.status }">
+                                        訂單狀態
+                                    </div>
+                                    <div class="table-control--item"
+                                         v-bind:style="{ width: columnWidth.action }">
+                                        &nbsp;
+                                    </div>
+                                </div>
+                                <div class="table-content">
+                                    <table-row 
+                                               v-for="data in filteredData"
+                                               :key="data.order_sn"
+                                               v-bind:case_data="data"
+                                               v-bind:colume_width="columnWidth"
+                                               @@send-open="sendOpen">
+                                    </table-row>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="result--null" v-if="resultStatus === 0">
+                            <img src="@Url.Content("~/Content/images/icon-searchlist-loading.gif")" alt="" class="center pic">
+                            <p class="desc">正在為您努力載入...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div v-else class="order-mobile">
+                <!-- rwd: 查詢結果 mobile -->
+                <div class="modal-tabs"
+                    v-bind:class="isShowModalTabs ? 'display-show' : ''">
+                    <div class="modal-tabs--close"
+                        @@click="isShowModalTabs = false"></div>
+                    <p class="modal-tabs--title">訂單分類</p>
+                    <div class="tab"
+                        v-bind:class="tabActive == 0 ? 'active' : ''"
+                            @@click="filterOrder(0)">全部狀態</div>
+                    <div class="tab"
+                        v-bind:class="tabActive == 1 ? 'active' : ''"
+                            @@click="filterOrder(1)">顧客未操作付款</div>
+                    <div class="tab"
+                        v-bind:class="tabActive == 2 ? 'active' : ''"
+                            @@click="filterOrder(2)">審核中</div>
+                    <div class="tab"
+                        v-bind:class="tabActive == 3 ? 'active' : ''"
+                            @@click="filterOrder(3)">審核中(核准/婉拒)</div>
+                    <div class="tab"
+                        v-bind:class="tabActive == 4 ? 'active' : ''"
+                            @@click="filterOrder(4)">已取消</div>
+                </div>
+                <div class="mobile-box"
+                    v-if="isMobile">
+                    <div class="filter-order"
+                        @@click="isShowModalTabs = true">{{mobileTabs}}</div>
+                        <div class="result" >
+                            
+                            <div class="result--null" v-if="resultStatus === 1">
+                                <img src="@Url.Content("~/Content/images/icon-searchlist-none-result.svg")" alt="" class="center pic">
+                                <p class="title">目前尚無任何訂單</p>
+                                <p class="title-desc">請試試其他篩選方式</p>
+                            </div>
+                            <div class="result--ok" v-else-if="resultStatus !== 1">
+                                <case-item
+                                v-for="data in filteredData"
+                                :key="data.product_id"
+                                v-bind:case_data="data"
+                                @@send-open="sendOpen"></case-item>
+                            </div>
+                            <div class="result--null" v-if="resultStatus === 0">
+                                <img src="@Url.Content("~/Content/images/icon-searchlist-loading.gif")" alt="" class="center pic">
+                                <p class="desc">正在為您努力載入...</p>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- modal: 通用訊息 -->
+    <b-modal id="model_Common"
+        v-model="model_Common.isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="model_Common.title"
+        v-bind:hide-header-close="true"
+        v-bind:dialog-class="'modal-custome ' + model_Common.statusClass">
+        <div class="modal-body--content">
+            <p v-html="model_Common.content"></p>
+        </div>
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--cancel"
+                v-if="model_Common.hasCancel"
+                @@click="model_Common.isShow = false">取消</div>
+            <div class="modal-custome-btn btn--ok"
+                v-if="model_Common.hasOk"
+                @@click="model_Common.isShow = false">確定</div>
+        </div>
+    </b-modal>
+    <div class="mobile-tips"
+        v-if="isMobile">
+        更全面、完整功能的供應商平台管理系統請從桌面瀏覽
+    </div>
+</div>
+
+@section scripts {
+<script type="text/babel">
+
+    // 區分桌手機component: tableRow (desktop) / caseItem (mobile)
+    const tableRow = Vue.component("table-row", {
+        props: {
+            "case_data": {
+                type: Object
+            },
+            "colume_width": {
+                type: Object
+            },
+        },
+        data: function() {
+            return {
+                isOpen: false
+            }
+        },
+        created: function() {
+
+        },
+    template:
+    `<div v-bind:id="'row'+case_data.order_sn">
+        <div class="table-row cursor-need"
+             @@click="changeDetailShow">
+            <div class="table-row--item"
+                 v-bind:style="{ width: colume_width.sn }">
+                {{ case_data.sn }}
+            </div>
+            <div class="table-row--item"
+                 v-bind:style="{ width: colume_width.date }">
+                {{ case_data.date }}
+            </div>
+            <div class="table-row--item"
+                 v-bind:style="{ width: colume_width.order_sn }">
+                <p class="limit-6">{{ case_data.order_sn }}</p>
+            </div>
+            <div class="table-row--item"
+                 v-bind:style="{ width: colume_width.product_name }">
+                <p class="limit-6">{{ case_data.product_name }}</p>
+            </div>
+            @* <div class="table-row--item"
+                 v-bind:style="{ width: colume_width.product_specs }">
+                <p class="limit-6">{{ case_data.product_specs }}</p>
+            </div>
+            <div class="table-row--item"
+                 v-bind:style="{ width: colume_width.custome_specs }">
+                <p class="limit-6">{{ case_data.custome_specs }}</p>
+            </div> *@
+            <div class="table-row--item"
+                 v-bind:style="{ width: colume_width.price }">
+                <div class="case-money">
+                    <img src="@Url.Content("~/Content/images/icon-case-amounts.svg")" alt=""
+                         v-if="case_data.price !== ''">
+                    {{ $options.filters.amountAddDot(case_data.price) }}
+                </div>
+            </div>
+            <div class="table-row--item"
+                 v-bind:style="{ width: colume_width.review_price }">
+                <div class="case-money">
+                    <img src="@Url.Content("~/Content/images/icon-case-amounts.svg")" alt=""
+                         v-if="case_data.review_price !== ''">
+                    {{ $options.filters.amountAddDot(case_data.review_price) }}
+                </div>
+            </div>
+            <div class="table-row--item"
+                 v-bind:style="{ width: colume_width.review_period }">
+                {{ case_data.review_period }}
+            </div>
+            <div class="table-row--item item-orderer"
+                 v-bind:style="{ width: colume_width.orderer }">
+                <span class="limit-3">{{ case_data.orderer }}</span>
+                <div class="icon-arrow"
+                     v-bind:class="isOpen ? 'open' : '' "></div>
+            </div>
+            <div class="table-row--item"
+                 v-bind:style="{ width: colume_width.update_date }">
+                {{ case_data.update_date }}
+            </div>
+            <div class="table-row--item"
+                 v-bind:style="{ width: colume_width.status }">
+                <div class="case-status"
+                     v-bind:class="'case-status--' + case_data.status.type ">
+                    {{ case_data.status.description }}
+                </div>
+            </div>
+            <div class="table-row--item"
+                 v-bind:style="{ width: colume_width.action }">
+                <div class=""
+                     v-if="case_data.order_sn != null"
+                     v-bind:id="'caseDetail'+case_data.order_sn"
+                     v-on:click="goCaseDetail(case_data.case_sn, case_data.order_sn, case_data.merchant_id)">
+                    <img src="@Url.Content("~/Content/images/icon-nav-more-grey.svg")" />
+                </div>
+                <b-tooltip v-bind:target="'caseDetail'+case_data.order_sn" placement="left">檢視案件明細</b-tooltip>
+            </div>
+        </div>
+        <transition name="fade">
+            <div class="table-row--detail" v-show="isOpen">
+                <div class="detail-item">
+                    <div class="detail-item--title">
+                        <p>訂購時間</p>
+                        <p>訂單編號</p>
+                        <p>商品名稱</p>
+                        <p>顏色規格</p>
+                        <p>自訂選項</p>
+
+                    </div>
+                    <div class="detail-item--data">
+                        <p v-text="case_data.date"></p>
+                        <p v-text="case_data.order_sn"></p>
+                        <p v-text="case_data.product_name"></p>
+                        <p v-text="case_data.product_specs"></p>
+                        <p v-text="case_data.custome_specs"></p>
+
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-item--title">
+                        <p>交易金額</p>
+                        <p>訂單狀態</p>
+                        <p>撥款金額</p>
+                        <p>審核期數</p>
+                        <p>訂購人</p>
+                    </div>
+                    <div class="detail-item--data">
+                        <p>
+                            {{ $options.filters.amountAddDot(case_data.price) }}
+                        </p>
+                        <div class="case-status"
+                             v-bind:class="'case-status--' + case_data.status.type ">
+                            {{ case_data.status.description }}
+                        </div>
+                        <p>
+                            {{ $options.filters.amountAddDot(case_data.review_price) }}
+                        </p>
+                        <p v-text="case_data.review_period"></p>
+                        <p v-text="case_data.orderer"></p>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-item--title">
+
+                        <p>訂購人電話</p>
+                        <p>訂購人地址</p>
+                    </div>
+                    <div class="detail-item--data">
+                        <p v-text="case_data.orderer_phone"></p>
+                        <p v-text="case_data.orderer_address"></p>
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </div>`,
+    watch: {
+    case_data: {
+    handler(newVal, oldVal) {
+    console.log('Prop changed: ', newVal, ' | was: ', oldVal);
+    this.isOpen = newVal.open;
+    },
+    deep: true
+    }
+    },
+    methods: {
+    changeDetailShow() {
+    let vm = this
+    this.$emit("send-open", vm.case_data.order_sn);
+    vm.isOpen = !vm.isOpen
+    // vm.$forceUpdate();
+    },
+    goCaseDetail: function(case_number, order_sn, merchant_id) {
+    var _param = [];
+    if(!!case_number)
+    {
+    _param.push("case_number="+case_number)
+    }
+
+    if(!!order_sn)
+    {
+    _param.push("order_sn="+encodeURIComponent(order_sn))
+    }
+
+    if(!!merchant_id)
+    {
+    _param.push("merchant_id="+merchant_id)
+    }
+
+
+    window.location.href = '@Url.Action("CaseDetail", "Case")'+"?"+_param.join("&");
+    }
+    }
+    });
+
+    const caseItem = Vue.component("case-item", {
+    props: {
+    "case_data": {
+    type: Object
+    },
+    },
+    data: function() {
+    return {
+    isOpen: false
+    }
+    },
+    created: function() {},
+    template:
+    `<div v-bind:id="'row'+case_data.order_sn">
+        <div class="case-item appropriant"
+             v-bind:class="[case_data.isCancel ? 'cancel' : '' ,
+						isOpen ? 'open' : '']">
+            <div class="case-content"
+                 @@click="changeDetailShow">
+                <div class="row mb-2">
+                    <span class="col-4 case-name">
+                        <img src="@Url.Content("~/Content/images/icon-user-pink.svg")" alt="">
+                        {{ case_data.orderer }}
+                    </span>
+                    <span class="col-8 case-money">
+                        <img src="@Url.Content("~/Content/images/icon-case-amounts-pink.svg")" alt="">
+                        {{ $options.filters.amountAddDot(case_data.price) }}
+                    </span>
+                </div>
+                <div class="case-content-row">
+                    <div class="case-status"
+                         v-bind:class="'case-status--' + case_data.status.type ">
+                        {{ case_data.status.description }}
+                    </div>
+                </div>
+                <div class="case-date">
+                    <img src="@Url.Content("~/Content/images/icon-date-grey.svg")" />
+                    <span v-text="case_data.date"></span>
+                    <span>&nbsp;&nbsp;更新：{{ case_data.update_date }}</span>
+                </div>
+            </div>
+            <div class="case-detail" v-show="isOpen">
+                <div class="row">
+                    <div class="col-4 case-detail--title">序號</div>
+                    <div class="col-8 case-detail--data" v-text="case_data.sn"></div>
+                </div>
+                <div class="row">
+                    <div class="col-4 case-detail--title">訂購時間</div>
+                    <div class="col-8 case-detail--data" v-text="case_data.date"></div>
+                </div>
+                <div class="row">
+                    <div class="col-4 case-detail--title">訂單編號</div>
+                    <div class="col-8 case-detail--data" v-text="case_data.order_sn"></div>
+                </div>
+                <div class="row">
+                    <div class="col-4 case-detail--title">商品名稱</div>
+                    <div class="col-8 case-detail--data" v-text="case_data.product_name"></div>
+                </div>
+                <div class="row">
+                    <div class="col-4 case-detail--title">顏色規格</div>
+                    <div class="col-8 case-detail--data" v-text="case_data.product_specs"></div>
+                </div>
+                <div class="row">
+                    <div class="col-4 case-detail--title">自訂選項</div>
+                    <div class="col-8 case-detail--data" v-text="case_data.custome_specs"></div>
+                </div>
+                <div class="row">
+                    <div class="col-4 case-detail--title">審核金額</div>
+                    <div class="col-8 case-detail--data">
+                        {{ $options.filters.amountAddDot(case_data.review_price) }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4 case-detail--title">審核期數</div>
+                    <div class="col-8 case-detail--data" v-text="case_data.review_period"></div>
+                </div>
+                <div class="row">
+                    <div class="col-4 case-detail--title">訂購人</div>
+                    <div class="col-8 case-detail--data" v-text="case_data.orderer"></div>
+                </div>
+                <div class="row">
+                    <div class="col-4 case-detail--title">訂購人電話</div>
+                    <div class="col-8 case-detail--data" v-text="case_data.orderer_phone"></div>
+                </div>
+                <div class="row">
+                    <div class="col-4 case-detail--title">訂購人地址</div>
+                    <div class="col-8 case-detail--data" v-text="case_data.orderer_address"></div>
+                </div>
+                <div class="row">
+                    <div class="col-4 case-detail--title">更新時間</div>
+                    <div class="col-8 case-detail--data" v-text="case_data.update_date"></div>
+                </div>
+                <div class="detail-link"
+                     v-on:click="goCaseDetail(case_data.case_sn, case_data.order_sn, case_data.merchant_id)">查看案件明細</div>
+            </div>
+        </div>
+    </div>`,
+    watch: { 
+            case_data: {
+                handler(newVal, oldVal) {
+                    console.log('Prop changed: ', newVal, ' | was: ', oldVal);
+                    this.isOpen = newVal.open;
+                },
+                deep: true
+            }
+        },
+		methods: {
+			changeDetailShow() {
+                let vm = this
+                this.$emit("send-open", this.case_data.order_sn);
+                vm.isOpen = !vm.isOpen
+                // vm.$forceUpdate();
+			},
+            goCaseDetail: function(case_number, order_sn, merchant_id) {
+                var _param = [];
+				
+                if(!!case_number)
+                {
+                    _param.push("case_number="+case_number)
+                }
+
+                if(!!order_sn)
+                {
+                    _param.push("order_sn="+order_sn)
+                }
+
+                if(!!merchant_id)
+                {
+                    _param.push("merchant_id="+merchant_id)
+                }
+
+				window.location.href = '@Url.Action("CaseDetail", "Case")'+"?"+_param.join("&");
+            }
+		}
+	});
+    var dataSn = 1;
+    var page = new Vue({
+		el: "#page",
+		mixins: [myMixin],
+        store: store,
+        component: {
+            tableRow,
+            caseItem
+        },
+        data: {
+            apiUrl_GetOrder: '@Url.Action("Orders", "Ecommerce")',
+            changeFixed: false,
+            isMobile: false,
+            mobileTabs: '全部狀態',
+            isEdit: true,
+            changeFixed: false,
+			model_Common: {
+                title: '提示訊息',
+				content: '',
+                isShow: false,
+                btnValue: '',
+                hasCancel: false,
+                hasOk: true,
+                statusClass: 'modal-custome',
+            },
+            tabsType: [
+					    { value: 0, text: "全部狀態" },
+					    { value: 1, text: "顧客未操作付款" },
+					    { value: 2, text: "審核中" },
+					    { value: 3, text: "審核中(核准/婉拒)" },
+					    { value: 4, text: "已取消" },
+				      ],
+            resultStatus: 2,
+            columnWidth: {
+                sn: '4%',
+				date: '12%',
+				order_sn: '11%',
+				product_name: '15%',
+				product_specs: '15%',
+				custome_specs: '15%',
+				price: '15%',
+				review_price: '15%',
+				review_period: '40px',
+				orderer: '140px',
+                update_date: '10%',
+                status: '13%',
+                action: '5%'
+			},
+            apiDatas: [],
+            apiDatas_origin: [],
+            tabActive: 0,
+            isShowModalTabs: false,
+            scrolledToBottom: false,
+            pagenation: {
+                TotalPage :1,
+                PageSize : 20,
+                Page: 1,
+                Total:1
+            },
+            pageinit: true,
+        },
+        created: function() {
+			app.currentPage.orderManage = true
+			this.checkSize()
+			window.addEventListener('scroll', () => {
+                this.checkSize()
+			}, true);
+			window.addEventListener('resize', () => {
+                this.checkSize()
+			}, true);
+            if(this.pageinit) {
+                this.getTableData(this.pagenation.Page);
+                this.pageinit = false
+            }
+		},
+        computed: {
+			filteredData: function() {
+				var data = this.apiDatas;
+				return data;
+			},
+        },
+        methods: {
+            checkSize: function() {
+				let scrollTop = document.documentElement.scrollTop ||
+							document.body.scrollTop ||
+							document.querySelector('body').scrollTop;
+				if(scrollTop >= 100){
+					this.changeFixed = true;
+				}else {
+					this.changeFixed = false;
+				}
+
+				if(this.$store.getters.getWindowWidth <= this.$store.getters.getBreakpoint) {
+					this.isMobile = true;
+				}else {
+					this.isMobile = false;
+				}
+                let bottomOfWindow = Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop) + window.innerHeight + 100 >= document.documentElement.offsetHeight
+                if (bottomOfWindow && this.pageinit === false && (this.pagenation.Page !== this.pagenation.TotalPage)) {
+                    this.scrolledToBottom = true
+                    this.getTableData(this.pagenation.Page+=1);
+                }
+			},
+            getTableData: function(index) {
+				let vm = this
+                //防止多次打API的問題
+                if(vm.resultStatus === 0){
+                    return;
+                }
+				vm.resultStatus = 0;
+				// vm.apiDatas = [];
+
+                axios.post(vm.apiUrl_GetOrder, {
+					"page": index
+                    ,"pagesize" : vm.pagenation.PageSize
+                    ,"status" : vm.tabActive
+				})
+                .then(function (response) {
+                    if (response.status === 200) {
+                        vm.data = response.data.Data;
+                        console.log('ProductList', vm.data);
+                        vm.pagenation = response.data.Pagination;
+                        if(vm.data.length === 0) {
+                            if (vm.apiDatas_origin.length === 0)
+                            {
+                                vm.resultStatus = 1;
+                            }
+                            return;
+                        }
+                        for (let index = 0; index < vm.data.length; index++) {
+                            vm.apiDatas_origin.push({
+                                sn: dataSn++,
+                                date: vm.data[index].CreateDt,
+                                merchant_id : vm.data[index].MerchantId,
+                                case_sn : vm.data[index].AppNo,
+                                order_sn: vm.data[index].OrderId,
+                                product_name: vm.data[index].ProductName,
+                                product_specs: vm.data[index].ProductSpecs,
+                                custome_specs: vm.data[index].CustomeSpecs,
+                                price: vm.data[index].TransactionAmount,
+                                review_price: vm.data[index].AppropriationAmount,
+                                review_period: vm.data[index].Period,
+                                orderer: vm.data[index].CustName,
+                                orderer_phone: vm.data[index].Mobile,
+                                orderer_address: vm.data[index].Address,
+                                update_date: vm.data[index].UpdateDt,
+                                status: {
+                                    onepagetype: vm.data[index].OnePageStatusType,
+                                    type: vm.data[index].StatusType,
+                                    description: vm.data[index].StatusName
+                                },
+                                open: false
+                            });
+                        }
+                        vm.apiDatas = vm.apiDatas_origin;
+                        //vm.filterOrder(vm.tabActive);
+                        vm.resultStatus = 2
+                        vm.productManageIsDefault = false
+                    }
+                    
+                })
+            },
+            filterOrder: function(type) {
+                let vm = this;
+                //防止多次打API的問題
+                if(vm.resultStatus === 0){
+                    return;
+                }
+                dataSn = 1;
+                this.tabActive = type;
+                this.apiDatas_origin = [];
+                this.getTableData(1);
+
+                if(this.isShowModalTabs) this.isShowModalTabs = false;
+                
+                let tempTabs = vm.tabsType.filter(function(value, index, array){
+                    return value.value == type;
+                })
+                vm.mobileTabs = tempTabs[0].text;
+
+                for(let i=0; i < vm.apiDatas.length; i++){
+                    vm.apiDatas[i].open = false;
+                }
+
+                let temp = this.apiDatas_origin.filter(function(value, index, array){
+                    return value.status.onepagetype == type
+                })
+                
+                this.apiDatas = temp
+                
+            },
+            sendOpen: function(order_sn) {
+                let vm = this;
+                for(let i=0; i < vm.apiDatas.length; i++){
+                    if(vm.apiDatas[i].order_sn == order_sn){
+                        vm.apiDatas[i].open = !vm.apiDatas[i].open;
+                    }else {
+                        vm.apiDatas[i].open = false;
+                    }
+                }
+            }
+        }
+    })
+</script>
+}
+

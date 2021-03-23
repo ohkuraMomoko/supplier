@@ -1,0 +1,28 @@
+﻿/* @site: 2019消089 供應商平台改版
+ * @author: nikki
+ * @update: nikki (2020-03-12)
+ * @page: Layout
+ * @description: 依照目前需要引入樣式檔，為專案主要樣式檔案
+ * @compiler: visual code(live sass compiler)
+ */
+
+/* plugin */
+
+// // @import "plugin/_noty.scss";  
+// @import "plugin/aos/aos.scss";
+// //@import "plugin/_textoverflow.scss";
+
+/* setting */ 
+@import "setting/_variables.scss";
+@import "setting/_reset.scss"; 
+@import "setting/_mixins.scss"; 
+@import "setting/_extend.scss"; 
+
+/* components */ 
+@import "components/_menu.scss";   
+@import "components/_contact.scss";
+// @import "components/_footer.scss";      
+@import "components/_form.scss";    
+@import "components/_modal.scss";
+// @import "components/_float.scss";        
+@import "components/_searchTable.scss";    

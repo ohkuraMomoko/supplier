@@ -1,0 +1,38 @@
+﻿@import "../../setting/_variables.scss";
+@import "../../setting/_reset.scss";
+@import "../../setting/_mixins.scss";
+
+.page {
+    padding-top: 156px;
+}
+.msg {
+    &--title {
+        font-size: 30px;
+        text-align: center;
+        margin: 30px auto;
+    }
+    &--link {
+        width: 275px;
+        height: 46px;
+        border-radius: 23px;
+        border: solid 1px #ececec;
+        background-color: #ffffff;
+        text-align: center;
+        line-height: 46px;
+        color: $colorText;
+    }
+}
+@include rwd(#{$ipad-pro - 1px}) {
+    .page {
+        padding-top: 67px;
+    }
+    .msg {
+        &--pic {
+            width: 140px;
+        }
+        &--title {
+            font-size: 20px;
+            margin-bottom: 144px;
+        }
+    }
+}

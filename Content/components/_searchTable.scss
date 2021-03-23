@@ -1,0 +1,366 @@
+@import "../setting/_variables.scss";
+@import "../setting/_mixins.scss";
+
+/* block: .table-box (for desktop) -------------------------*/
+.table-control {
+    height: 40px;
+    line-height: 40px;
+    border-top: solid 1px #ececec;
+    border-bottom: solid 1px #ececec;
+    padding-left: 40px;
+    display: flex;
+    &--item {
+        font-size: 14px;
+        color: #7b7b7b;
+        cursor: pointer;
+        .arrow {
+            width: 8px;
+            height: 8px;
+            display: inline-block;
+            margin-left: 7px;
+            background-image: url('images/icon-arrow-right-lightpink-20-px.svg');
+        }
+    }
+    &--reorder {
+        background-color: #fff5f5;
+    }
+    &--arrow {
+        width: 30px;
+    }
+}
+
+.table-row {
+    padding: 30px 0;
+    display: flex;
+    border-bottom: solid 1px #ececec;
+    padding-left: 40px;
+    &--item {
+        font-size: 14px;
+        .case-money {
+            font-weight: 500;
+            >img {
+                display: inline-block;
+                margin-right: 5px;
+            }
+        }
+        .case-detail {
+            width: 30px;
+            cursor: pointer;
+        }
+    }
+    &--arrow {
+        //撥款查詢的arrow icon
+        width: 30px;
+        height: 20px;
+        position: relative;
+        &:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/icon-arrow-down-black-20-px.svg');
+            background-repeat: no-repeat;
+            background-position: 0 50%;
+            background-size: 14px;
+            transition: all linear 0.3s;
+        }
+        &.open {
+            &:after {
+                background-image: url('images/icon-arrow-top-pink-20-px.svg');
+            }
+        }
+    }
+}
+
+/*status: for 查詢撥款 的該筆案件為取消狀態 ---*/
+.table-row.cancel {
+    background-color: $colorError;
+    color: #ffffff;
+    .table-row--arrow {
+        &:after {
+            background-image: url('images/icon-arrow-down-white-20-px.svg');
+        }
+        &.open {
+            &:after {
+                background-image: url('images/icon-arrow-top-white-20-px.svg');
+            }
+        }
+    }
+}
+/*block: for 查詢撥款 該筆案件的詳細資料 ---*/
+.table-row--detail {
+    border-top: 1px solid rgba(#ffbbbb, 0.5);
+    border-bottom: 1px solid rgba(#ffbbbb, 0.5);
+    background-color: rgba(#ffbbbb, 0.1);
+    display: flex;
+    padding: 20px 40px 0;
+    .detail-item {
+        padding-right: 86px;
+        display: flex;
+        font-size: 14px;
+        line-height: 20px;
+        white-space: nowrap;
+        margin-bottom: 15px;
+        &--title {
+            margin-right: 40px;
+            color: #7b7b7b;
+        }
+        &--data {
+            color: $colorText;
+            font-weight: 600;
+            >p {
+                min-height: 20px;
+            }
+        }
+    }
+}
+/* block: .table-box (for desktop) -------------------------*/
+
+/* block: .mobile-box (for mobile) ---------------------------*/
+.case-item {
+    border-radius: 10px;
+    box-shadow: 0 4px 12px 0 #00000019;
+    background-color: #ffffff;
+    margin-bottom: 15px;
+    img {
+        display: inline-block;
+    }
+    .case-content {
+        border-bottom: solid 1px #ececec;
+        padding: 16px 16px 0;
+        &-row {
+            height: 24px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .case-name {
+
+        }
+        .case-status {
+            width: 86px;
+            height: 24px;
+            line-height: 24px;
+            font-size: 14px;
+        }
+        .case-shop {
+            font-size: 14px;
+        }
+        .case-money {
+
+        }
+    }
+    .detail-item {
+        background-color: #fff;
+        padding: 20px 16px;
+        border-radius: 0 0 10px 10px;
+        display: flex;
+        &--title {
+            padding-right: 36px;
+            p{
+                margin-bottom: 12px;
+                color: #7b7b7b;
+            }
+        }
+        &--data {
+            p{
+                margin-bottom: 12px;
+            }
+        }
+    }
+    .case-footer {
+        height: 47px;
+        font-size: 14px;
+        color: #a0a0a0;
+        padding: 0 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        &--link {
+            width: 60px;
+            height: 100%;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+    }
+}
+
+/* type: for 查詢撥款 common樣式改動 ---*/
+.case-item.appropriant {
+    position: relative;
+    z-index: 1;
+    &:after {
+        content: '';
+        position: absolute;
+        right: 16px;
+        top: 22px;
+        width: 46px;
+        height: 46px;
+        background-size: contain;
+        background-image: url("images/icon-expand-grey.svg");
+        transition: all linear 0.3s;
+        z-index: -1;
+    }
+    &.open {
+        &:after {
+            background-image: url("images/icon-fold-pink.svg");
+        }
+    }
+}
+
+/*status: for 查詢撥款 的該筆案件為取消狀態 ---*/
+.case-item.appropriant.cancel {
+    background-color: $colorError;
+    &:after {
+        background-image: url('images/icon-expand-white.svg');
+    }
+    &.open {
+        &:after {
+            background-image: url('images/icon-fold-white.svg');
+        }
+    }
+    .case-footer,
+    .case-content {
+        color: #ffffff;
+    }
+}
+/* element: .case-status ----------------*/
+// 案件狀態: 1:尚未操作 2:審核中 3:婉拒(未通過) 4:取消案件 5:已核准未請款 6:請款中 7:已撥款 8:已核准處理中 9:退貨 10:調降金額處理中
+.case-status {
+    min-width: 114px;
+    height: 24px;
+    line-height: 24px;
+    border-radius: 12px;
+    text-align: center;
+    padding: 0 7px;
+    margin-top: 3px;
+    &--1,
+    &--2,
+    &--10 {
+        background-color: #ffef97;
+        color: #32322e;
+    }
+    &--3,
+    &--4,
+    &--9 {
+        background-color: #ececec;
+        color: #7b7b7b;
+    }
+    &--5,
+    &--6,
+    &--7,
+    &--8 {
+        background-color: #56c6d0;
+        color: #ffffff;
+    }
+}
+
+/*reset: .page-link ---*/
+.page-link,
+.page-item.active .page-link,
+.page-link:hover,
+.page-item.disabled .page-link {
+    border: none;
+    background-color: transparent;
+    color: #7b7b7b;
+    box-shadow: none;
+}
+/* element: .table-pagination ----*/
+.table-pagination {
+    
+}
+
+.table-pagination--item {
+    margin: 0 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .page-link {
+        padding: 6px 25px;
+        border-radius: 23px;
+        background-color: #ececec;
+        transition: all .3s linear;
+    }
+    &.active{
+        .page-link {
+            color: #fff;
+            background-color: $colorPrimary;
+            z-index: unset;
+        }
+    }
+    &:hover {
+        .page-link {
+            color: #fff;
+            background-color: $colorSecondary;
+        }
+    }
+}
+.table-pagination {
+    &--first,
+    &--last {
+        .page-link {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            >img {
+                width: 22px;
+                height: 22px;
+            }
+        }
+    }
+}
+@include rwd(#{$ipad-pro - 1px}) {
+    .table-pagination {
+        justify-content: center;
+        .page-link {
+            padding: 9px 15px;
+        }
+    }
+}
+
+/* element: datepicker-costom ----*/
+.b-form-datepicker{
+    >button {
+        width: 0;
+        padding: 0;
+        opacity: 0;
+    }
+}
+.datapicker {
+    >.form-control {
+        width: 200px;
+        border-radius: 20px;
+        padding: 0;
+        padding-left: 20px !important;
+        line-height: 40px;
+        box-shadow: none !important;
+        outline: none !important;
+        background-image: url("images/icon-arrow-down-black.svg");
+        background-color: transparent;
+        background-repeat: no-repeat;
+        background-position: 93% 39%;
+        background-size: 15px;
+    }
+}
+.datepicker-costom {
+    [role="button"] {
+        span:hover {
+            color: $colorText;
+            background-color: #f5f5f5;
+        }
+    }
+    [aria-selected="true"] {
+        >span {
+            background-color: $colorPrimary !important;
+        }
+    }
+    &--today {
+        background-color: transparent;
+        color: $colorText;
+    }
+}

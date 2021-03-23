@@ -1,0 +1,561 @@
+﻿@import "../../setting/_variables.scss";
+@import "../../setting/_reset.scss";
+@import "../../setting/_mixins.scss";
+
+.btn-common-white {
+    background-color: #fff;
+    color: $colorText;
+}
+
+.btn-common-pink {
+    background-color: $colorPrimary;
+    color: #ffffff;
+}
+.btn-common-red {
+    background-color: $colorError;
+    color: #ffffff;
+}
+
+.page {
+    width: 90%;
+    // max-width: 1100px;
+    margin: 0 auto;
+    min-height: 110vh;
+}
+
+.page-container {
+    padding-bottom: 40px;
+    min-height: calc(100vh - 68px);
+}
+
+@include rwd(#{$ipad-pro - 1px}) {
+    .page {
+        width: 100%;
+    }
+
+    .page-container {
+        padding-bottom: 4px;
+    }
+    .fillin-input>input {
+        width: 90%;
+    }
+}
+.mobile-tips {
+    position: relative;
+}
+
+
+/* block: page-top ===================*/
+.page-top {
+    padding-top: 33px;
+    padding-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all linear 0.2s;
+
+    .page-title {
+        font-size: 30px;
+    }
+
+    &.fixed {
+        position: fixed;
+        z-index: 2;
+        width: calc(100vw - 260px);
+        background-color: rgba(#f5f5f5, 0.9);
+        right: 0;
+        padding: 0 40px;
+        height: 66px;
+
+        .page-title {
+            font-size: 14px;
+        }
+    }
+}
+
+.page-btn-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    &.bottom {
+        display: none;
+    }              
+    .btn-common {
+        display: block;
+        width: 200px;
+        margin: 0 7.5px;
+    }
+}
+
+@include rwd(#{ $ipad-pro - 1px}) {
+    .page-top {
+        width: 90%;
+        margin: 0 auto;
+        flex-direction: column;
+        align-items: flex-start;
+        &.fixed {
+            position: static;
+            padding: unset;
+            width: 90%;
+            .page-title {
+                font-size: 30px;
+            }
+        }
+    }
+    .page-btn-container  {
+        width: 100%;
+        margin-top: 16px;
+        &.fixed {
+            position: fixed;
+            bottom: 20px;
+            left: 5%;
+            z-index: 5;
+            width: 90%;
+        }
+        &.bottom {
+            display: flex;
+        }
+        .btn-common {
+            width: 50%;
+        }
+    }
+}
+
+.page-body {
+    display: flex;
+    justify-content: space-between;
+    .product-form {
+        width: 49%;
+        .block {
+            border-radius: 10px;
+            background-color: #fff;
+            margin-bottom: 20px;
+            &-title {
+                font-size: 20px;
+                line-height: 59px;
+                border-bottom: 1px solid #ececec;
+                padding-left: 40px;
+            }
+            &-content {
+                padding: 20px 40px;
+            }
+        }
+    }
+}
+
+@include rwd(#{ $ipad-pro - 1px}) {
+    .page-body {
+        flex-direction: column;
+        .product-form {
+            width: 100%;
+            padding: 24px 16px 0;
+            .block-title {
+                width: 100%;
+            }
+            .block-content {
+                padding: 20px 16px;
+            }
+        }
+    }
+}
+.input-care {
+    font-size: 14px;
+    color: #aaa;
+    margin-top: 10px;
+}
+
+/* period */
+.period-type {
+    margin-bottom: 12px;
+}
+.period-desc {
+    font-size: 14px;
+    color: #a0a0a0;
+    padding-left: 38px;
+}
+
+.period-title{
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 18px;
+    &.required::before {
+        content: '✻';
+        position: absolute;
+        left: 14px;
+        top: 3px;
+        color: $colorPrimary;
+        font-size: 12px;
+        font-weight: 600;
+    }
+}
+
+.tag-input {
+    height: 60px;
+    line-height: 60px;
+    border-radius: 20px;
+    border: solid 1px #d8d8d8;
+    background-color: #ffffff;
+    background-repeat: no-repeat;
+    background-position: 97% center;
+    background-size: 20px;
+    display: flex;
+    flex-direction: row;
+    transition: all 0.3s linear;
+    position: relative;
+    &:hover {
+        border-color: $colorPrimary;
+    }
+    >label {
+        padding-left: 30px;
+        padding-right: 20px;
+        white-space: nowrap;
+    }
+    >input {
+        width: 100%;
+        height: 100%;
+        padding: 0 30px;
+        border: none;
+        outline: none;
+        background-color: transparent !important;
+    }
+}
+@include rwd(#{ $ipad-pro - 1px}){
+    .tag-input {
+        flex-direction: column;
+        height: 40px;
+        line-height: 40px;
+        >label {
+            line-height: 22px;
+            position: absolute;
+            top: -30px;
+            left: 0;
+            height: 22px;
+            padding-left: 14px;
+        }
+        >input {
+            padding-left: 15px;
+        }
+        &.required::before {
+            left: 0;
+            top: -40px;
+        }
+    }
+}
+
+/* Element: .tag-box -----*/
+.tag-box {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    .tag {
+        border-radius: 15px;
+        background-color: #ececec;
+        color: #7b7b7b;
+        font-size: 14px;
+        padding: 5px 45px 5px 15px;
+        margin: 5px 10px;
+        position: relative;
+        transition: background-color 0.2s linear;
+        &-close {
+            background-image: url('../../images/icon-navigation-close-black.svg');
+            background-size: 8px;
+            background-position: 50%;
+            background-repeat: no-repeat;
+            height: 30px;
+            width: 30px;
+            background-repeat: no-repeat;
+            background-position: center;
+            display: inline-block;
+            cursor: pointer;
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+        &:hover {
+            background-color: rgba(#ffb84a,0.5);
+        }
+    }
+}
+.btn-add-tag {
+    width: 127px;
+    margin-top: 40px;
+}
+
+/* Element: .image-upload ----*/
+.image-upload {
+    width: 200px;
+    height: 200px;
+    border: 2px dotted #ffbbbb;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+@include rwd($ipad) {
+    .image-upload {
+        margin: 0 auto;
+    }
+    .input-care {
+        text-align: center;
+    }
+}
+.product-control {
+    display: flex;
+    justify-content: center;
+    
+    .btn-common {
+        width: 30%;
+        max-width: 136px;
+    }
+}
+
+/* Vendor: vueDropzone ------*/
+/* RESET */
+.dropzone .dz-preview {
+    margin: 0;
+}
+.dropzone .dz-preview .dz-error-message {
+    top: 0 !important;
+}
+.vue-dropzone {
+    border: none;
+    background-color: transparent;
+    height: 100%;
+    padding: 0;
+}
+.dropzone .dz-preview .dz-progress {
+    opacity: 0;
+}
+#dropzone.vue-dropzone>.dz-preview .dz-details {
+    padding: 0;
+    background-color: rgba(#32322e, 0.8);
+    &:after {
+        content: '';
+        $w: 46px;
+        width: $w;
+        height: $w;
+        background-repeat: no-repeat;
+        background-position: 50% 50%;
+        background-size: $w;
+        background-image: url('../../images/icon-img-upload-small.svg');
+        position: absolute;
+        left: calc(50% - #{$w/2});
+        top: 30%;
+    }
+    &:before {
+        content: '重新上傳';
+        position: absolute;
+        text-align: center;
+        width: 100%;
+        bottom: 30%;
+        color: #fff;
+        font-size: 14px;
+    }
+}
+.vue-dropzone>.dz-preview .dz-details .dz-filename,
+.dropzone .dz-preview .dz-details .dz-size {
+    display: none;
+}
+.image-upload {
+    .dropzone .dz-preview.dz-image-preview {
+        margin: 0;
+        width: 200px;
+        height: 200px;
+        overflow: hidden;
+    }
+    .dropzone .dz-preview .dz-image img {
+        width: 200px;
+    }
+}
+
+.image-upload2 {
+    width: 100%;
+    min-height: 233px;
+    border-radius: 20px;
+    border: solid 1px #d8d8d8;
+    .dropzone {
+        min-height: 233px;
+    }
+    .dropzone .dz-preview.dz-image-preview {
+        width: 100px;
+        height: 100px;
+        overflow: hidden;
+    }
+    .dropzone .dz-preview .dz-image img {
+        width: 100px;
+    }
+    .vue-dropzone > .dz-preview .dz-remove {
+        background-repeat: no-repeat;
+        background-position: 100% 0;
+        background-image: url('../../images/icon-dialog-close-black.svg');
+        width: 60px;
+        height: 60px;
+        top: 0;
+        right: 0;
+    }
+    .vue-dropzone>.dz-preview .dz-details {
+        background-color: transparent;
+    }
+}
+
+/* 商品介紹 ===*/
+.fillin-textarea {
+    padding-left: 30px;
+    padding-right: 30px;
+    >textarea {
+        width: 100%;
+    }
+}
+@include rwd($ipad) {
+    .fillin-textarea {
+        margin-top: 0;
+        padding: 19px 15px;
+        >textarea {
+            padding: 0;
+        }
+    }
+}
+.fillin-textarea.custome_specs{ 
+    height: 60px;
+    padding: 16px 30px;
+}
+@include rwd($ipad) {
+    .fillin-textarea.custome_specs{
+        height: 98px;
+    }
+}
+.btn-pd-info {
+    width: 127px;
+}
+.text-pd-info {
+    font-size: 14px;
+    color: #7b7b7b;
+    margin: 20px 0 10px;
+    display: block;
+}
+/* 商品庫存 ===*/
+.instock-title {
+    border-bottom: 1px solid #ececec;
+}
+.instock-btn {
+    width: 127px;
+    border-radius: 23px;
+    border: solid 1px $colorPrimary;
+    margin-right: 40px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    color: $colorPrimary;
+    cursor: pointer;
+    transition: all $cb 0.3s;
+    &:hover {
+        background-color: $colorPrimary;
+        color: #fff;
+    }
+}
+.instock-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 40px;
+    border-bottom: 1px solid #ececec;
+    &:last-child {
+        border-bottom-color: transparent;
+    }
+    &--info {
+        width: 160px;
+        font-size: 14px;
+        color: #7b7b7b;
+    }
+    &--tag {
+        border-radius: 15px;
+        background-color: #ececec;
+        color: #7b7b7b;
+        font-size: 14px;
+        padding: 5px 15px;
+        display: block;
+        @include textrow(1,30px,130px);
+    }
+}
+.modal-instock {
+    width: auto;
+    max-width: 1080px;
+    border-radius: 2px;
+    .modal-header .close {
+        background-image: url(../../images/icon-navigation-close-black.svg);
+        background-repeat: no-repeat;
+        background-size: 28px;
+        text-shadow: none;
+        color: transparent;
+        position: absolute;
+        right: 20px;
+        top: 30px;
+    }
+    .modal-title {
+        font-size: 24px;
+        font-weight: bold;
+    }
+    .modal-body {
+        padding-top: 0;
+    }
+}
+
+.instock-containter {
+    margin-bottom: 20px;
+    max-height: 380px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    &--title {
+        line-height: 80px;
+        border-bottom: 1px solid #000;
+        padding: 0 40px;
+    }
+    &--item {
+        padding: 15px 0;
+        border-bottom: 1px solid #ececec;
+        .instock-tag {
+            border-radius: 15px;
+            background-color: #ececec;
+            color: #7b7b7b;
+            font-size: 14px;
+            padding: 5px 15px;
+        }
+    }
+    .instock-control {
+        display: flex;
+        &--input {
+            width: 110px;
+            line-height: 30px;
+            border-radius: 20px;
+            border: 1px solid #d8d8d8;
+            text-align: center;
+            margin: 0 15px;
+            &:focus {
+                outline: none;
+            }
+        }
+        &--btn {
+            width: 30px;
+            height: 30px;
+            background-repeat: no-repeat;
+            background-position: 50% 50%;
+            background-size: 100%;
+            cursor: pointer;
+            &.sub {
+                background-image: url('../../images/icon-minus-pink-sub.svg');
+            }
+            &.plus {
+                background-image: url('../../images/icon-minus-pink-plus.svg');
+            }
+        }
+    }
+}
+@include rwd($ipad)  {
+    .instock-containter .instock-control--input {
+        width: 96px;
+        margin: 0 auto;
+    }
+}

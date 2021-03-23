@@ -1,0 +1,1142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="LOGIN">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strApp_ID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strVerify_Type" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strLogin_ID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strPWD" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strApp_type" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strMAC" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strPUSH_KEY" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strAPP_VERSION" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strOS_VERSION" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strMANUFACTURER" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strPHONEMODEL" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strWIDTHPIXELS" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strHEIGHTPIXELS" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="IsInhouse" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LOGINResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LOGINResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LOGIN_V1">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strApp_ID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strVerify_Type" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strLogin_ID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strPWD" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strApp_type" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strMAC" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strPUSH_KEY" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strAPP_VERSION" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strOS_VERSION" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strMANUFACTURER" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strPHONEMODEL" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strWIDTHPIXELS" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strHEIGHTPIXELS" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="IsInhouse" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LOGIN_V1Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LOGIN_V1Result" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LOGIN_V2">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strApp_ID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strVerify_Type" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strLogin_ID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strPWD" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strApp_type" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strMAC" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strPUSH_KEY" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strAPP_VERSION" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strOS_VERSION" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strMANUFACTURER" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strPHONEMODEL" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strWIDTHPIXELS" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strHEIGHTPIXELS" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="IsInhouse" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strLoginInputJson" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LOGIN_V2Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LOGIN_V2Result" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LOGOUT_INHOUSE">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="USER_ID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LOGOUT_INHOUSEResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LOGOUT_INHOUSEResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LOGOUT_V2">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strApp_ID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strLogin_ID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LOGOUT_V2Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LOGOUT_V2Result" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LOGOUT">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strApp_ID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strLogin_ID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strApp_type" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strMAC" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="IsInhouse" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LOGOUTResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LOGOUTResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CHECK_VERIFY_CODE_S">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strLogin_ID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strApp_ID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strVerify_code" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CHECK_VERIFY_CODE_SResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CHECK_VERIFY_CODE_SResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CHECK_VERIFY_CODE">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strLogin_ID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strApp_ID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strMAC" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strApp_Type" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strVerify_code" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="IsInhouse" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CHECK_VERIFY_CODEResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CHECK_VERIFY_CODEResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpdatePushKey">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strLogin_ID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strApp_ID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strApp_Type" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strVerifyCode" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strPhsuKey" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpdatePushKeyResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="UpdatePushKeyResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CHECK_APPVERSION">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strApp_ID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strApp_Type" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="IsInhouse" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CHECK_APPVERSIONResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CHECK_APPVERSIONResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GET_USR_PRFL">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="strLogin_ID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strApp_ID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strMAC" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strApp_Type" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="IsInhouse" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="strComp_ID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GET_USR_PRFLResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GET_USR_PRFLResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="string" nillable="true" type="s:string" />
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="LOGINSoapIn">
+    <wsdl:part name="parameters" element="tns:LOGIN" />
+  </wsdl:message>
+  <wsdl:message name="LOGINSoapOut">
+    <wsdl:part name="parameters" element="tns:LOGINResponse" />
+  </wsdl:message>
+  <wsdl:message name="LOGIN_V1SoapIn">
+    <wsdl:part name="parameters" element="tns:LOGIN_V1" />
+  </wsdl:message>
+  <wsdl:message name="LOGIN_V1SoapOut">
+    <wsdl:part name="parameters" element="tns:LOGIN_V1Response" />
+  </wsdl:message>
+  <wsdl:message name="LOGIN_V2SoapIn">
+    <wsdl:part name="parameters" element="tns:LOGIN_V2" />
+  </wsdl:message>
+  <wsdl:message name="LOGIN_V2SoapOut">
+    <wsdl:part name="parameters" element="tns:LOGIN_V2Response" />
+  </wsdl:message>
+  <wsdl:message name="LOGOUT_INHOUSESoapIn">
+    <wsdl:part name="parameters" element="tns:LOGOUT_INHOUSE" />
+  </wsdl:message>
+  <wsdl:message name="LOGOUT_INHOUSESoapOut">
+    <wsdl:part name="parameters" element="tns:LOGOUT_INHOUSEResponse" />
+  </wsdl:message>
+  <wsdl:message name="LOGOUT_V2SoapIn">
+    <wsdl:part name="parameters" element="tns:LOGOUT_V2" />
+  </wsdl:message>
+  <wsdl:message name="LOGOUT_V2SoapOut">
+    <wsdl:part name="parameters" element="tns:LOGOUT_V2Response" />
+  </wsdl:message>
+  <wsdl:message name="LOGOUTSoapIn">
+    <wsdl:part name="parameters" element="tns:LOGOUT" />
+  </wsdl:message>
+  <wsdl:message name="LOGOUTSoapOut">
+    <wsdl:part name="parameters" element="tns:LOGOUTResponse" />
+  </wsdl:message>
+  <wsdl:message name="CHECK_VERIFY_CODE_SSoapIn">
+    <wsdl:part name="parameters" element="tns:CHECK_VERIFY_CODE_S" />
+  </wsdl:message>
+  <wsdl:message name="CHECK_VERIFY_CODE_SSoapOut">
+    <wsdl:part name="parameters" element="tns:CHECK_VERIFY_CODE_SResponse" />
+  </wsdl:message>
+  <wsdl:message name="CHECK_VERIFY_CODESoapIn">
+    <wsdl:part name="parameters" element="tns:CHECK_VERIFY_CODE" />
+  </wsdl:message>
+  <wsdl:message name="CHECK_VERIFY_CODESoapOut">
+    <wsdl:part name="parameters" element="tns:CHECK_VERIFY_CODEResponse" />
+  </wsdl:message>
+  <wsdl:message name="UpdatePushKeySoapIn">
+    <wsdl:part name="parameters" element="tns:UpdatePushKey" />
+  </wsdl:message>
+  <wsdl:message name="UpdatePushKeySoapOut">
+    <wsdl:part name="parameters" element="tns:UpdatePushKeyResponse" />
+  </wsdl:message>
+  <wsdl:message name="CHECK_APPVERSIONSoapIn">
+    <wsdl:part name="parameters" element="tns:CHECK_APPVERSION" />
+  </wsdl:message>
+  <wsdl:message name="CHECK_APPVERSIONSoapOut">
+    <wsdl:part name="parameters" element="tns:CHECK_APPVERSIONResponse" />
+  </wsdl:message>
+  <wsdl:message name="GET_USR_PRFLSoapIn">
+    <wsdl:part name="parameters" element="tns:GET_USR_PRFL" />
+  </wsdl:message>
+  <wsdl:message name="GET_USR_PRFLSoapOut">
+    <wsdl:part name="parameters" element="tns:GET_USR_PRFLResponse" />
+  </wsdl:message>
+  <wsdl:message name="LOGINHttpGetIn">
+    <wsdl:part name="strApp_ID" type="s:string" />
+    <wsdl:part name="strVerify_Type" type="s:string" />
+    <wsdl:part name="strLogin_ID" type="s:string" />
+    <wsdl:part name="strPWD" type="s:string" />
+    <wsdl:part name="strApp_type" type="s:string" />
+    <wsdl:part name="strMAC" type="s:string" />
+    <wsdl:part name="strPUSH_KEY" type="s:string" />
+    <wsdl:part name="strAPP_VERSION" type="s:string" />
+    <wsdl:part name="strOS_VERSION" type="s:string" />
+    <wsdl:part name="strMANUFACTURER" type="s:string" />
+    <wsdl:part name="strPHONEMODEL" type="s:string" />
+    <wsdl:part name="strWIDTHPIXELS" type="s:string" />
+    <wsdl:part name="strHEIGHTPIXELS" type="s:string" />
+    <wsdl:part name="IsInhouse" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="LOGINHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="LOGIN_V1HttpGetIn">
+    <wsdl:part name="strApp_ID" type="s:string" />
+    <wsdl:part name="strVerify_Type" type="s:string" />
+    <wsdl:part name="strLogin_ID" type="s:string" />
+    <wsdl:part name="strPWD" type="s:string" />
+    <wsdl:part name="strApp_type" type="s:string" />
+    <wsdl:part name="strMAC" type="s:string" />
+    <wsdl:part name="strPUSH_KEY" type="s:string" />
+    <wsdl:part name="strAPP_VERSION" type="s:string" />
+    <wsdl:part name="strOS_VERSION" type="s:string" />
+    <wsdl:part name="strMANUFACTURER" type="s:string" />
+    <wsdl:part name="strPHONEMODEL" type="s:string" />
+    <wsdl:part name="strWIDTHPIXELS" type="s:string" />
+    <wsdl:part name="strHEIGHTPIXELS" type="s:string" />
+    <wsdl:part name="IsInhouse" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="LOGIN_V1HttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="LOGIN_V2HttpGetIn">
+    <wsdl:part name="strApp_ID" type="s:string" />
+    <wsdl:part name="strVerify_Type" type="s:string" />
+    <wsdl:part name="strLogin_ID" type="s:string" />
+    <wsdl:part name="strPWD" type="s:string" />
+    <wsdl:part name="strApp_type" type="s:string" />
+    <wsdl:part name="strMAC" type="s:string" />
+    <wsdl:part name="strPUSH_KEY" type="s:string" />
+    <wsdl:part name="strAPP_VERSION" type="s:string" />
+    <wsdl:part name="strOS_VERSION" type="s:string" />
+    <wsdl:part name="strMANUFACTURER" type="s:string" />
+    <wsdl:part name="strPHONEMODEL" type="s:string" />
+    <wsdl:part name="strWIDTHPIXELS" type="s:string" />
+    <wsdl:part name="strHEIGHTPIXELS" type="s:string" />
+    <wsdl:part name="IsInhouse" type="s:string" />
+    <wsdl:part name="strLoginInputJson" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="LOGIN_V2HttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="LOGOUT_INHOUSEHttpGetIn">
+    <wsdl:part name="USER_ID" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="LOGOUT_INHOUSEHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="LOGOUT_V2HttpGetIn">
+    <wsdl:part name="strApp_ID" type="s:string" />
+    <wsdl:part name="strLogin_ID" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="LOGOUT_V2HttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="LOGOUTHttpGetIn">
+    <wsdl:part name="strApp_ID" type="s:string" />
+    <wsdl:part name="strLogin_ID" type="s:string" />
+    <wsdl:part name="strApp_type" type="s:string" />
+    <wsdl:part name="strMAC" type="s:string" />
+    <wsdl:part name="IsInhouse" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="LOGOUTHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="CHECK_VERIFY_CODE_SHttpGetIn">
+    <wsdl:part name="strLogin_ID" type="s:string" />
+    <wsdl:part name="strApp_ID" type="s:string" />
+    <wsdl:part name="strVerify_code" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CHECK_VERIFY_CODE_SHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="CHECK_VERIFY_CODEHttpGetIn">
+    <wsdl:part name="strLogin_ID" type="s:string" />
+    <wsdl:part name="strApp_ID" type="s:string" />
+    <wsdl:part name="strMAC" type="s:string" />
+    <wsdl:part name="strApp_Type" type="s:string" />
+    <wsdl:part name="strVerify_code" type="s:string" />
+    <wsdl:part name="IsInhouse" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CHECK_VERIFY_CODEHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="UpdatePushKeyHttpGetIn">
+    <wsdl:part name="strLogin_ID" type="s:string" />
+    <wsdl:part name="strApp_ID" type="s:string" />
+    <wsdl:part name="strApp_Type" type="s:string" />
+    <wsdl:part name="strVerifyCode" type="s:string" />
+    <wsdl:part name="strPhsuKey" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="UpdatePushKeyHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="CHECK_APPVERSIONHttpGetIn">
+    <wsdl:part name="strApp_ID" type="s:string" />
+    <wsdl:part name="strApp_Type" type="s:string" />
+    <wsdl:part name="IsInhouse" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CHECK_APPVERSIONHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GET_USR_PRFLHttpGetIn">
+    <wsdl:part name="strLogin_ID" type="s:string" />
+    <wsdl:part name="strApp_ID" type="s:string" />
+    <wsdl:part name="strMAC" type="s:string" />
+    <wsdl:part name="strApp_Type" type="s:string" />
+    <wsdl:part name="IsInhouse" type="s:string" />
+    <wsdl:part name="strComp_ID" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GET_USR_PRFLHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="LOGINHttpPostIn">
+    <wsdl:part name="strApp_ID" type="s:string" />
+    <wsdl:part name="strVerify_Type" type="s:string" />
+    <wsdl:part name="strLogin_ID" type="s:string" />
+    <wsdl:part name="strPWD" type="s:string" />
+    <wsdl:part name="strApp_type" type="s:string" />
+    <wsdl:part name="strMAC" type="s:string" />
+    <wsdl:part name="strPUSH_KEY" type="s:string" />
+    <wsdl:part name="strAPP_VERSION" type="s:string" />
+    <wsdl:part name="strOS_VERSION" type="s:string" />
+    <wsdl:part name="strMANUFACTURER" type="s:string" />
+    <wsdl:part name="strPHONEMODEL" type="s:string" />
+    <wsdl:part name="strWIDTHPIXELS" type="s:string" />
+    <wsdl:part name="strHEIGHTPIXELS" type="s:string" />
+    <wsdl:part name="IsInhouse" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="LOGINHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="LOGIN_V1HttpPostIn">
+    <wsdl:part name="strApp_ID" type="s:string" />
+    <wsdl:part name="strVerify_Type" type="s:string" />
+    <wsdl:part name="strLogin_ID" type="s:string" />
+    <wsdl:part name="strPWD" type="s:string" />
+    <wsdl:part name="strApp_type" type="s:string" />
+    <wsdl:part name="strMAC" type="s:string" />
+    <wsdl:part name="strPUSH_KEY" type="s:string" />
+    <wsdl:part name="strAPP_VERSION" type="s:string" />
+    <wsdl:part name="strOS_VERSION" type="s:string" />
+    <wsdl:part name="strMANUFACTURER" type="s:string" />
+    <wsdl:part name="strPHONEMODEL" type="s:string" />
+    <wsdl:part name="strWIDTHPIXELS" type="s:string" />
+    <wsdl:part name="strHEIGHTPIXELS" type="s:string" />
+    <wsdl:part name="IsInhouse" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="LOGIN_V1HttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="LOGIN_V2HttpPostIn">
+    <wsdl:part name="strApp_ID" type="s:string" />
+    <wsdl:part name="strVerify_Type" type="s:string" />
+    <wsdl:part name="strLogin_ID" type="s:string" />
+    <wsdl:part name="strPWD" type="s:string" />
+    <wsdl:part name="strApp_type" type="s:string" />
+    <wsdl:part name="strMAC" type="s:string" />
+    <wsdl:part name="strPUSH_KEY" type="s:string" />
+    <wsdl:part name="strAPP_VERSION" type="s:string" />
+    <wsdl:part name="strOS_VERSION" type="s:string" />
+    <wsdl:part name="strMANUFACTURER" type="s:string" />
+    <wsdl:part name="strPHONEMODEL" type="s:string" />
+    <wsdl:part name="strWIDTHPIXELS" type="s:string" />
+    <wsdl:part name="strHEIGHTPIXELS" type="s:string" />
+    <wsdl:part name="IsInhouse" type="s:string" />
+    <wsdl:part name="strLoginInputJson" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="LOGIN_V2HttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="LOGOUT_INHOUSEHttpPostIn">
+    <wsdl:part name="USER_ID" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="LOGOUT_INHOUSEHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="LOGOUT_V2HttpPostIn">
+    <wsdl:part name="strApp_ID" type="s:string" />
+    <wsdl:part name="strLogin_ID" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="LOGOUT_V2HttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="LOGOUTHttpPostIn">
+    <wsdl:part name="strApp_ID" type="s:string" />
+    <wsdl:part name="strLogin_ID" type="s:string" />
+    <wsdl:part name="strApp_type" type="s:string" />
+    <wsdl:part name="strMAC" type="s:string" />
+    <wsdl:part name="IsInhouse" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="LOGOUTHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="CHECK_VERIFY_CODE_SHttpPostIn">
+    <wsdl:part name="strLogin_ID" type="s:string" />
+    <wsdl:part name="strApp_ID" type="s:string" />
+    <wsdl:part name="strVerify_code" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CHECK_VERIFY_CODE_SHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="CHECK_VERIFY_CODEHttpPostIn">
+    <wsdl:part name="strLogin_ID" type="s:string" />
+    <wsdl:part name="strApp_ID" type="s:string" />
+    <wsdl:part name="strMAC" type="s:string" />
+    <wsdl:part name="strApp_Type" type="s:string" />
+    <wsdl:part name="strVerify_code" type="s:string" />
+    <wsdl:part name="IsInhouse" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CHECK_VERIFY_CODEHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="UpdatePushKeyHttpPostIn">
+    <wsdl:part name="strLogin_ID" type="s:string" />
+    <wsdl:part name="strApp_ID" type="s:string" />
+    <wsdl:part name="strApp_Type" type="s:string" />
+    <wsdl:part name="strVerifyCode" type="s:string" />
+    <wsdl:part name="strPhsuKey" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="UpdatePushKeyHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="CHECK_APPVERSIONHttpPostIn">
+    <wsdl:part name="strApp_ID" type="s:string" />
+    <wsdl:part name="strApp_Type" type="s:string" />
+    <wsdl:part name="IsInhouse" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="CHECK_APPVERSIONHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="GET_USR_PRFLHttpPostIn">
+    <wsdl:part name="strLogin_ID" type="s:string" />
+    <wsdl:part name="strApp_ID" type="s:string" />
+    <wsdl:part name="strMAC" type="s:string" />
+    <wsdl:part name="strApp_Type" type="s:string" />
+    <wsdl:part name="IsInhouse" type="s:string" />
+    <wsdl:part name="strComp_ID" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GET_USR_PRFLHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:portType name="APP_WSSoap">
+    <wsdl:operation name="LOGIN">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">登入 LOGIN</wsdl:documentation>
+      <wsdl:input message="tns:LOGINSoapIn" />
+      <wsdl:output message="tns:LOGINSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LOGIN_V1">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">登入 LOGIN 回覆公司別與部門資訊</wsdl:documentation>
+      <wsdl:input message="tns:LOGIN_V1SoapIn" />
+      <wsdl:output message="tns:LOGIN_V1SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LOGIN_V2">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">登入 LOGIN 第三方認證</wsdl:documentation>
+      <wsdl:input message="tns:LOGIN_V2SoapIn" />
+      <wsdl:output message="tns:LOGIN_V2SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LOGOUT_INHOUSE">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">清除指定人員TOKEN API</wsdl:documentation>
+      <wsdl:input message="tns:LOGOUT_INHOUSESoapIn" />
+      <wsdl:output message="tns:LOGOUT_INHOUSESoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LOGOUT_V2">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">登出 LOGOUT V2</wsdl:documentation>
+      <wsdl:input message="tns:LOGOUT_V2SoapIn" />
+      <wsdl:output message="tns:LOGOUT_V2SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LOGOUT">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">登出 LOGOUT</wsdl:documentation>
+      <wsdl:input message="tns:LOGOUTSoapIn" />
+      <wsdl:output message="tns:LOGOUTSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CHECK_VERIFY_CODE_S">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">檢查驗證碼是否有效 CHECK_VERIFY_CODE_S</wsdl:documentation>
+      <wsdl:input message="tns:CHECK_VERIFY_CODE_SSoapIn" />
+      <wsdl:output message="tns:CHECK_VERIFY_CODE_SSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CHECK_VERIFY_CODE">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">檢查驗證碼是否有效 CHECK_VERIFY_CODE</wsdl:documentation>
+      <wsdl:input message="tns:CHECK_VERIFY_CODESoapIn" />
+      <wsdl:output message="tns:CHECK_VERIFY_CODESoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdatePushKey">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">更新推播Tokn</wsdl:documentation>
+      <wsdl:input message="tns:UpdatePushKeySoapIn" />
+      <wsdl:output message="tns:UpdatePushKeySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CHECK_APPVERSION">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">APP版本檢查 CHECK_APPVERSION</wsdl:documentation>
+      <wsdl:input message="tns:CHECK_APPVERSIONSoapIn" />
+      <wsdl:output message="tns:CHECK_APPVERSIONSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GET_USR_PRFL">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">取得內部使用者資訊</wsdl:documentation>
+      <wsdl:input message="tns:GET_USR_PRFLSoapIn" />
+      <wsdl:output message="tns:GET_USR_PRFLSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="APP_WSHttpGet">
+    <wsdl:operation name="LOGIN">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">登入 LOGIN</wsdl:documentation>
+      <wsdl:input message="tns:LOGINHttpGetIn" />
+      <wsdl:output message="tns:LOGINHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LOGIN_V1">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">登入 LOGIN 回覆公司別與部門資訊</wsdl:documentation>
+      <wsdl:input message="tns:LOGIN_V1HttpGetIn" />
+      <wsdl:output message="tns:LOGIN_V1HttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LOGIN_V2">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">登入 LOGIN 第三方認證</wsdl:documentation>
+      <wsdl:input message="tns:LOGIN_V2HttpGetIn" />
+      <wsdl:output message="tns:LOGIN_V2HttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LOGOUT_INHOUSE">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">清除指定人員TOKEN API</wsdl:documentation>
+      <wsdl:input message="tns:LOGOUT_INHOUSEHttpGetIn" />
+      <wsdl:output message="tns:LOGOUT_INHOUSEHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LOGOUT_V2">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">登出 LOGOUT V2</wsdl:documentation>
+      <wsdl:input message="tns:LOGOUT_V2HttpGetIn" />
+      <wsdl:output message="tns:LOGOUT_V2HttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LOGOUT">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">登出 LOGOUT</wsdl:documentation>
+      <wsdl:input message="tns:LOGOUTHttpGetIn" />
+      <wsdl:output message="tns:LOGOUTHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CHECK_VERIFY_CODE_S">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">檢查驗證碼是否有效 CHECK_VERIFY_CODE_S</wsdl:documentation>
+      <wsdl:input message="tns:CHECK_VERIFY_CODE_SHttpGetIn" />
+      <wsdl:output message="tns:CHECK_VERIFY_CODE_SHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CHECK_VERIFY_CODE">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">檢查驗證碼是否有效 CHECK_VERIFY_CODE</wsdl:documentation>
+      <wsdl:input message="tns:CHECK_VERIFY_CODEHttpGetIn" />
+      <wsdl:output message="tns:CHECK_VERIFY_CODEHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdatePushKey">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">更新推播Tokn</wsdl:documentation>
+      <wsdl:input message="tns:UpdatePushKeyHttpGetIn" />
+      <wsdl:output message="tns:UpdatePushKeyHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CHECK_APPVERSION">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">APP版本檢查 CHECK_APPVERSION</wsdl:documentation>
+      <wsdl:input message="tns:CHECK_APPVERSIONHttpGetIn" />
+      <wsdl:output message="tns:CHECK_APPVERSIONHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GET_USR_PRFL">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">取得內部使用者資訊</wsdl:documentation>
+      <wsdl:input message="tns:GET_USR_PRFLHttpGetIn" />
+      <wsdl:output message="tns:GET_USR_PRFLHttpGetOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="APP_WSHttpPost">
+    <wsdl:operation name="LOGIN">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">登入 LOGIN</wsdl:documentation>
+      <wsdl:input message="tns:LOGINHttpPostIn" />
+      <wsdl:output message="tns:LOGINHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LOGIN_V1">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">登入 LOGIN 回覆公司別與部門資訊</wsdl:documentation>
+      <wsdl:input message="tns:LOGIN_V1HttpPostIn" />
+      <wsdl:output message="tns:LOGIN_V1HttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LOGIN_V2">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">登入 LOGIN 第三方認證</wsdl:documentation>
+      <wsdl:input message="tns:LOGIN_V2HttpPostIn" />
+      <wsdl:output message="tns:LOGIN_V2HttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LOGOUT_INHOUSE">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">清除指定人員TOKEN API</wsdl:documentation>
+      <wsdl:input message="tns:LOGOUT_INHOUSEHttpPostIn" />
+      <wsdl:output message="tns:LOGOUT_INHOUSEHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LOGOUT_V2">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">登出 LOGOUT V2</wsdl:documentation>
+      <wsdl:input message="tns:LOGOUT_V2HttpPostIn" />
+      <wsdl:output message="tns:LOGOUT_V2HttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LOGOUT">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">登出 LOGOUT</wsdl:documentation>
+      <wsdl:input message="tns:LOGOUTHttpPostIn" />
+      <wsdl:output message="tns:LOGOUTHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CHECK_VERIFY_CODE_S">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">檢查驗證碼是否有效 CHECK_VERIFY_CODE_S</wsdl:documentation>
+      <wsdl:input message="tns:CHECK_VERIFY_CODE_SHttpPostIn" />
+      <wsdl:output message="tns:CHECK_VERIFY_CODE_SHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CHECK_VERIFY_CODE">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">檢查驗證碼是否有效 CHECK_VERIFY_CODE</wsdl:documentation>
+      <wsdl:input message="tns:CHECK_VERIFY_CODEHttpPostIn" />
+      <wsdl:output message="tns:CHECK_VERIFY_CODEHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdatePushKey">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">更新推播Tokn</wsdl:documentation>
+      <wsdl:input message="tns:UpdatePushKeyHttpPostIn" />
+      <wsdl:output message="tns:UpdatePushKeyHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CHECK_APPVERSION">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">APP版本檢查 CHECK_APPVERSION</wsdl:documentation>
+      <wsdl:input message="tns:CHECK_APPVERSIONHttpPostIn" />
+      <wsdl:output message="tns:CHECK_APPVERSIONHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GET_USR_PRFL">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">取得內部使用者資訊</wsdl:documentation>
+      <wsdl:input message="tns:GET_USR_PRFLHttpPostIn" />
+      <wsdl:output message="tns:GET_USR_PRFLHttpPostOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="APP_WSSoap" type="tns:APP_WSSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="LOGIN">
+      <soap:operation soapAction="http://tempuri.org/LOGIN" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LOGIN_V1">
+      <soap:operation soapAction="http://tempuri.org/LOGIN_V1" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LOGIN_V2">
+      <soap:operation soapAction="http://tempuri.org/LOGIN_V2" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LOGOUT_INHOUSE">
+      <soap:operation soapAction="http://tempuri.org/LOGOUT_INHOUSE" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LOGOUT_V2">
+      <soap:operation soapAction="http://tempuri.org/LOGOUT_V2" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LOGOUT">
+      <soap:operation soapAction="http://tempuri.org/LOGOUT" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CHECK_VERIFY_CODE_S">
+      <soap:operation soapAction="http://tempuri.org/CHECK_VERIFY_CODE_S" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CHECK_VERIFY_CODE">
+      <soap:operation soapAction="http://tempuri.org/CHECK_VERIFY_CODE" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdatePushKey">
+      <soap:operation soapAction="http://tempuri.org/UpdatePushKey" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CHECK_APPVERSION">
+      <soap:operation soapAction="http://tempuri.org/CHECK_APPVERSION" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GET_USR_PRFL">
+      <soap:operation soapAction="http://tempuri.org/GET_USR_PRFL" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="APP_WSSoap12" type="tns:APP_WSSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="LOGIN">
+      <soap12:operation soapAction="http://tempuri.org/LOGIN" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LOGIN_V1">
+      <soap12:operation soapAction="http://tempuri.org/LOGIN_V1" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LOGIN_V2">
+      <soap12:operation soapAction="http://tempuri.org/LOGIN_V2" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LOGOUT_INHOUSE">
+      <soap12:operation soapAction="http://tempuri.org/LOGOUT_INHOUSE" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LOGOUT_V2">
+      <soap12:operation soapAction="http://tempuri.org/LOGOUT_V2" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LOGOUT">
+      <soap12:operation soapAction="http://tempuri.org/LOGOUT" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CHECK_VERIFY_CODE_S">
+      <soap12:operation soapAction="http://tempuri.org/CHECK_VERIFY_CODE_S" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CHECK_VERIFY_CODE">
+      <soap12:operation soapAction="http://tempuri.org/CHECK_VERIFY_CODE" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdatePushKey">
+      <soap12:operation soapAction="http://tempuri.org/UpdatePushKey" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CHECK_APPVERSION">
+      <soap12:operation soapAction="http://tempuri.org/CHECK_APPVERSION" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GET_USR_PRFL">
+      <soap12:operation soapAction="http://tempuri.org/GET_USR_PRFL" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="APP_WSHttpGet" type="tns:APP_WSHttpGet">
+    <http:binding verb="GET" />
+    <wsdl:operation name="LOGIN">
+      <http:operation location="/LOGIN" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LOGIN_V1">
+      <http:operation location="/LOGIN_V1" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LOGIN_V2">
+      <http:operation location="/LOGIN_V2" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LOGOUT_INHOUSE">
+      <http:operation location="/LOGOUT_INHOUSE" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LOGOUT_V2">
+      <http:operation location="/LOGOUT_V2" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LOGOUT">
+      <http:operation location="/LOGOUT" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CHECK_VERIFY_CODE_S">
+      <http:operation location="/CHECK_VERIFY_CODE_S" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CHECK_VERIFY_CODE">
+      <http:operation location="/CHECK_VERIFY_CODE" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdatePushKey">
+      <http:operation location="/UpdatePushKey" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CHECK_APPVERSION">
+      <http:operation location="/CHECK_APPVERSION" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GET_USR_PRFL">
+      <http:operation location="/GET_USR_PRFL" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="APP_WSHttpPost" type="tns:APP_WSHttpPost">
+    <http:binding verb="POST" />
+    <wsdl:operation name="LOGIN">
+      <http:operation location="/LOGIN" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LOGIN_V1">
+      <http:operation location="/LOGIN_V1" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LOGIN_V2">
+      <http:operation location="/LOGIN_V2" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LOGOUT_INHOUSE">
+      <http:operation location="/LOGOUT_INHOUSE" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LOGOUT_V2">
+      <http:operation location="/LOGOUT_V2" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LOGOUT">
+      <http:operation location="/LOGOUT" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CHECK_VERIFY_CODE_S">
+      <http:operation location="/CHECK_VERIFY_CODE_S" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CHECK_VERIFY_CODE">
+      <http:operation location="/CHECK_VERIFY_CODE" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdatePushKey">
+      <http:operation location="/UpdatePushKey" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CHECK_APPVERSION">
+      <http:operation location="/CHECK_APPVERSION" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GET_USR_PRFL">
+      <http:operation location="/GET_USR_PRFL" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="APP_WS">
+    <wsdl:port name="APP_WSSoap" binding="tns:APP_WSSoap">
+      <soap:address location="http://cfcmiduat01/APPCFCMO_WS/APP_WS.asmx" />
+    </wsdl:port>
+    <wsdl:port name="APP_WSSoap12" binding="tns:APP_WSSoap12">
+      <soap12:address location="http://cfcmiduat01/APPCFCMO_WS/APP_WS.asmx" />
+    </wsdl:port>
+    <wsdl:port name="APP_WSHttpGet" binding="tns:APP_WSHttpGet">
+      <http:address location="http://cfcmiduat01/APPCFCMO_WS/APP_WS.asmx" />
+    </wsdl:port>
+    <wsdl:port name="APP_WSHttpPost" binding="tns:APP_WSHttpPost">
+      <http:address location="http://cfcmiduat01/APPCFCMO_WS/APP_WS.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

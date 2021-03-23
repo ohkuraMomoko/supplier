@@ -1,0 +1,1276 @@
+﻿@{
+    ViewBag.Title = "案件明細";
+}
+@section header {
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue2-dropzone@3.6.0/dist/vue2Dropzone.min.js"></script> -->
+<!-- 把vue2Dropzone.min.js轉成es5在minify -->
+    <script src="~/Scripts/vendor/vue2Dropzone.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/compressorjs@1.0.6/dist/compressor.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/vue2-dropzone@3.6.0/dist/vue2Dropzone.min.css" />
+    @Styles.Render("~/Content/pages/case/caseDetail.min.css")
+}
+
+
+<div id="page" class="page">
+	<div class="page-container">
+        <div class="page-top"
+            v-bind:class="changeFixed ? 'fixed' : ''">
+			<p class="page-title">案件明細</p>
+			<div class="page-btn-container">
+                <div class="btn-common btn-common-white"
+                    v-if="case_detail.has_remittance_account"
+                    @@click="model_bank_isShow = true">匯款帳號</div>
+                <div class="btn-common btn-common-warring"
+                    v-if="case_detail.button_type == 1"
+                    @@click="model_CancleCase_isShow = true"
+                    >取消案件</div>
+                <div class="btn-common btn-common-warring"
+                    v-else-if="case_detail.button_type == 2"
+                    @@click="modal_AdjustPrice.isShow = true"
+                    >調降金額/退貨</div>
+                <div class="btn-common btn-common-white"
+                    v-if="case_detail.can_calculator && case_detail.button_type == 0 && !case_detail.has_remittance_account"
+                    @@click="modal_calculator.isShow = true"
+                    >退貨試算</div>
+				<div class="btn-common btn-common-white"
+					@@click="scrollToTop()">回到頂端</div>
+                <div class="btn-common btn-common-white"
+                    v-if="case_detail.can_supplement"
+                    @@click="model_upload_isShow = true"
+					>補件上傳</div>
+                <div class="btn-common btn-common-pink"
+                    v-if="case_detail.can_download"
+                    @@click="getFile"
+					>下載通知函</div>
+			</div>
+        </div>
+        <div class="detail">
+            <div class="detail-top">
+                <div class="detail-item">
+                    <div class="data">
+                        <p class="data--title">訂單編號</p>
+                        <p class="data--text" v-text="case_detail.order_id"></p>
+                    </div>
+                    <div class="data">
+                        <p class="data--title">案件編號</p>
+                        <p class="data--text" v-text="case_detail.case_number"></p>
+                    </div>
+                    <div class="data">
+                        <p class="data--title">身分證字號</p>
+                        <p class="data--text" v-text="case_detail.identity"></p>
+                    </div>
+                    <div class="data">
+                        <p class="data--title">案件狀態</p>
+                        <p class="data--text">
+                            <span class="case-status"
+                                v-bind:class="'case-status--' + case_detail.status.type"
+                                v-text="case_detail.status.description"></span>
+                        </p>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="data">
+                        <p class="data--title">申請日</p>
+                        <p class="data--text" v-text="case_detail.application_date"></p>
+                    </div>
+                    <div class="data">
+                        <p class="data--title">申請金額</p>
+                        <p class="data--text" v-text="$options.filters.amountAddDot(case_detail.application_amount)"></p>
+                    </div>
+                    <div class="data">
+                        <p class="data--title">申請人姓名</p>
+                        <p class="data--text" v-text="case_detail.application_name"></p>
+                    </div>
+                    <div class="data">
+                        <p class="data--title">申請人手機</p>
+                        <p class="data--text" v-text="case_detail.application_phone"></p>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="data">
+                        <p class="data--title">期數</p>
+                        <p class="data--text" v-text="case_detail.period"></p>
+                    </div>
+                    <div class="data">
+                        <p class="data--title">期付款</p>
+                        <p class="data--text" v-text="$options.filters.amountAddDot(case_detail.payment)"></p>
+                    </div>
+                    <div class="data">
+                        <p class="data--title">撥款金額</p>
+                        <p class="data--text" v-text="$options.filters.amountAddDot(case_detail.estimate)"></p>
+                    </div>
+                    <div class="data">
+                        <p class="data--title">繳款方式</p>
+                        <p class="data--text" v-text="case_detail.payment_method"></p>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="data">
+                        <p class="data--title">案件類型</p>
+                        <p class="data--text" v-text="case_detail.case_type.description"></p>
+                    </div>
+                    <div class="data">
+                        <p class="data--title">經辦人員</p>
+                        <p class="data--text" v-text="case_detail.person_in_charge"></p>
+                    </div>
+                    <div class="data">
+                        <p class="data--title">門市</p>
+                        <p class="data--text"v-text="case_detail.store"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="timeline">
+                <div class="timeline--title">案件歷程</div>
+                <div id="messageBox" class="timeline--body">
+                    <div class="timeline--body-content">
+                        <message-item v-for="(data, index) in case_detail.message"
+                            :key="'timeline'+index"
+                            v-bind:message="data"></message-item>
+                    </div>
+                </div>
+                <div class="timeline--footer" v-show="!!case_detail.case_number">
+                    <div class="timeline-msg">
+                        <input type="text" name="message" id="message" placeholder="留言給客服你的問題 ( 50字內 )"
+                               :maxlength="50"
+                               v-model.trim="userSendMessage"
+                               v-on:keyup.enter="sendSendMessage">
+                    </div>
+                    <p class="timeline-text">按 Enter 鍵 送出訊息</p>
+                    <div style="height: 40px;"></div>
+                </div>
+                <div class="timeline--footer" v-show="!case_detail.case_number">
+                      <div style="height: 40px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="mobile-control"
+            v-if="isMobile">
+            <div class="mobile-control--item"
+                @@click="pageBack">返回上一頁</div>
+            <div class="mobile-control--item"
+                @@click="scrollToTop()">回到頂端</div>
+        </div>
+    </div>
+
+    <b-modal id="msgModal"
+        v-model="modal.isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="modal.title"
+        v-bind:hide-header-close="true"
+        v-bind:dialog-class="modal.statusClass">
+        <div class="modal-body--content">
+            <p v-html="modal.content"></p>
+        </div>
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--cancel"
+                v-if="modal.hasCancel"
+                @@click="hideModal">取消</div>
+            <div class="modal-custome-btn btn--ok"
+                v-if="modal.hasOk"
+                @@click="okModal">確定</div>
+        </div>
+    </b-modal>
+
+    <b-modal id="uploadModal"
+        v-model="uploadModal.isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="uploadModal.title"
+        v-bind:hide-header-close="true"
+        v-bind:dialog-class="uploadModal.statusClass">
+        <div class="modal-body--content">
+            <p v-html="uploadModal.content"></p>
+        </div>
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--cancel"
+                v-if="uploadModal.hasCancel"
+                @@click="hideModal">取消</div>
+            <div class="modal-custome-btn btn--ok"
+                v-if="uploadModal.hasOk"
+                @@click="okUploadModal">確定</div>
+        </div>
+    </b-modal>
+
+    <!-- modal: 調降金額/退貨操作說明 -->
+    <b-modal id="model_Step"
+        v-model="model_Step_isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="'調降金額/退貨操作說明'"
+        v-bind:dialog-class="'modal-custome'">
+        <div class="modal-body--content">
+            <p class="text-bold">調降金額(退款)</p>
+            <ul class="cancle-list">
+                <li>調降金額又稱為退款，可將案件金額部份降低或全數取消(退貨)，請您依照畫面進行操作即可。</li>
+                <li>因應調降金額而有多撥的款項及相關作業費用，預設從往後交易的撥款中扣除。</li>
+                <li>調降作業完成後，客戶於「零卡分期」APP上的帳款金額亦會隨著變動，相關繳款操作可參考後方網址</li>
+                <a target="_blank" class="text-link" href="https://www.chailease.com.tw/0Card/zerocard/ebill">（https://www.chailease.com.tw/0Card/zerocard/ebill）</a></li>
+            </ul>
+            <p class="text-bold">調降金額(退款)</p>
+            <ul class="cancle-list">
+                <li>金額與期數為審核評估的重要項目，故案件成立便後無法調整；但您可嘗試再建立一筆分期訂單讓申請人填寫、送件進行審核。</li>
+            </ul>
+        </div>
+    </b-modal>
+    <!-- modal: 取消案件 -->
+    <b-modal id="model_CancleCase"
+        v-if="case_detail.button_type == 1"
+        v-model="model_CancleCase_isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="'取消案件'"
+        v-bind:hide-header-close="true"
+        v-bind:dialog-class="'modal-custome'">
+        <div class="modal-body--content">
+            <p>狀態：{{ case_detail.status.description }}</p>
+            <ul class="cancle-list">
+                <li>請留意一旦送出取消便無法復原</li>
+                <li>若為零卡額度交易，則額度將最慢於下個工作日返還</li>
+            </ul>
+        </div>
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--cancel"
+                @@click="model_CancleCase_isShow = false;clearAdjustFrom()">還是算了</div>
+            <div class="modal-custome-btn btn--ok"
+                @@click="goCancleCase">確定取消</div>
+            
+        </div>
+    </b-modal>
+
+    <!-- modal: 退貨試算 -->
+    <b-modal id="modal_calculator"
+        v-if="case_detail.can_calculator"
+        v-model="modal_calculator.isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="'退貨試算'"
+        v-bind:hide-header-close="true"
+        v-bind:dialog-class="'modal-custome'">
+        <div class="modal-body--content">
+            <div class="adjust-item" >
+                案件金額：{{ $options.filters.amountAddDot(adjustData.price) }}
+            </div>
+            <div class="adjust-item">
+                <div class="d-flex">
+                    <span style="word-break: keep-all;">調降金額：</span>
+                    <div>
+                        <div class="d-flex" style="margin-top: 7px;">
+                            <div class="fillin-input" 
+                                v-bind:class="modalErrorClass ? 'input-error' : '' ">
+                                <input type="number" id="price" name="price" 
+                                    placeholder="請輸入金額"
+                                    v-on:blur="getAdjustPrice()"
+                                    onkeydown="javascript: return event.keyCode == 69 ? false : true"
+                                    v-model.number.trim="modalPriceInput" />
+                            </div>
+                            <div class="set-btn"
+                                v-on:click="modalPriceInput = adjustData.price; getAdjustPrice()">全額</div>
+                        </div>
+                        <p class="error-desc" v-text="modal_AdjustPrice.price.showMsg"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="adjust-item">
+                最終金額：{{ $options.filters.amountAddDot(adjustData.final_amount) }}
+            </div>
+            <div class="adjust-item">
+                撥款日期：{{ adjustData.grant_date }}
+            </div>
+            <div class="adjust-item">
+                返還金額：{{ $options.filters.amountAddDot(adjustData.deduction_price) }}元
+            </div>
+            <p class="price-desc" v-html="price_desc"></p>
+        </div>
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--cancel"
+                @@click="modal_calculator.isShow = false">取消</div>
+            <div class="modal-custome-btn btn--ok"
+                @@click="goContactStaff">聯繫客服</div>
+        </div>
+    </b-modal>
+
+    <!-- modal: 調降金額 -->
+    <b-modal id="modal_AdjustPrice"
+        v-if="case_detail.button_type == 2"
+        v-model="modal_AdjustPrice.isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        @@hide="closeModel"
+        v-bind:title="'調降金額/退貨'"
+        v-bind:hide-header-close="true"
+        v-bind:dialog-class="'modal-custome'">
+        <div class="adjust-step" 
+            @@click="model_Step_isShow = true">
+            <img src="@Url.Content("~/Content/images/icon-question.svg")" alt="">
+        </div>
+        <div class="modal-body--content">
+            <div class="adjust-item">
+                狀態：{{ adjustData.status_msg }}
+            </div>
+            <div class="adjust-item">
+                案件金額：{{ $options.filters.amountAddDot(adjustData.price) }}
+            </div>
+            <div class="adjust-item require">
+                <div class="d-flex">
+                    <span style="word-break: keep-all;">調降金額：</span>
+                    <div>
+                        <div class="d-flex" style="margin-top: 7px;"
+                             v-if="!adjustData.status && adjustData.status_msg == '已進入法律程序,請聯繫客服'">
+                            <div class="fillin-input"
+                                 v-bind:class="modalErrorClass ? 'input-error' : '' ">
+                                <input type="number" id="price" name="price"
+                                       :disabled="disabled"
+                                       placeholder="請輸入金額"
+                                       v-model.number.trim="modalPriceInput" />
+                            </div>
+                            <div class="set-btn btn-common-warring">全額</div>
+                        </div>
+                        <div class="d-flex" style="margin-top: 7px;" v-else>
+                            <div class="fillin-input"
+                                 v-bind:class="modalErrorClass ? 'input-error' : '' ">
+                                <input type="number" id="price" name="price"
+                                       placeholder="請輸入金額"
+                                       v-on:blur="getAdjustPrice()"
+                                       onkeydown="javascript: return event.keyCode == 69 ? false : true"
+                                       v-model.number.trim="modalPriceInput" />
+                            </div>
+                            <div class="set-btn"
+                                 v-on:click="modalPriceInput = adjustData.price; getAdjustPrice()">全額</div>
+                        </div>
+                        <p class="error-desc" v-text="modal_AdjustPrice.price.showMsg"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="adjust-item">
+                最終金額：{{ $options.filters.amountAddDot(adjustData.final_amount) }}
+            </div>
+            <div class="adjust-item">
+                撥款日期：{{ adjustData.grant_date }}
+            </div>
+            <div class="adjust-item">
+                返還金額：{{ $options.filters.amountAddDot(adjustData.deduction_price) }}元
+            </div>
+            <p class="price-desc" v-html="price_desc"></p>
+            <div class="adjust-item require">
+                如何退款：
+            </div>
+            <div class="d-flex adjust-item" style="height: 35px;">
+                <div class="radioer">
+                    <input type="radio" name="send_method" id="send_method_1"
+                           v-model="modalPriceRefund"
+                           v-bind:value="2" 
+                           :disabled="!adjustData.status && adjustData.status_msg == '已進入法律程序,請聯繫客服'"/>
+                    <label for="send_method_1">匯款</label>
+                </div>
+                <div class="radioer ml-5">
+                    <input type="radio" name="send_method" id="send_method_2"
+                           v-model="modalPriceRefund"
+                           v-bind:value="1" 
+                           :disabled="!adjustData.status && adjustData.status_msg == '已進入法律程序,請聯繫客服'"/>
+                    <label for="send_method_2">撥款金額扣除</label>
+                </div>
+            </div>
+            <p class="price-desc" v-if="adjustData.status">{{this.checkPaymentInfo()}}</p>
+            <p class="error-desc" v-else>{{this.returnText.errortype1}}</p>
+        </div>
+        <div class="modal-custome--footer"
+            v-if="adjustData.status">
+            <div class="modal-custome-btn btn--cancel-pink"
+                @@click="modal_AdjustPrice.isShow = false;clearAdjustFrom();">還是算了</div>
+            <div class="modal-custome-btn btn--ok"
+                @@click="checkReturnPrice">確定退款</div>
+        </div>
+        <div class="modal-custome--footer"
+            v-else>
+            <div class="modal-custome-btn btn--cancel"
+                @@click="modal_AdjustPrice.isShow = false">取消</div>
+            <div class="modal-custome-btn btn--ok"
+                @@click="goContactStaff">聯繫客服</div>
+        </div>
+        <p class="footer-text"
+            v-if="adjustData.status">請留意一旦送出退款便無法復原</p>
+    </b-modal>
+
+    <!-- modal: 退款 -->
+    <b-modal id="model_return_price"
+        v-model="model_return_price.isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="'確定要進行退款？'"
+        v-bind:hide-header-close="true"
+        v-bind:dialog-class="'modal-custome'">
+        <!-- <div class="modal-body--content">
+            <p v-html="model_return_price.content"></p>
+        </div> -->
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--cancel"
+                @@click="model_return_price.isShow = false">取消</div>
+            <div class="modal-custome-btn btn--ok"
+                @@click="goReturnPrice">確定</div>
+        </div>
+    </b-modal>
+
+    <!-- modal: 匯款帳號 -->
+    <b-modal id="model_bank"
+        v-model="model_bank_isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="'匯款帳號'"
+        v-bind:dialog-class="'modal-custome'">
+        <div class="modal-body--content">
+            <p class="bank-text">若您選擇的退款方式為匯款，請於退貨申請後三日內將退款款項匯回下列帳號：</p>
+            <div class="bank">
+                <div class="bank-item">
+                    <div class="bank-item--title">匯款銀行：</div>
+                    <div class="bank-item--data">{{ case_detail.remittance_account.bank }} </div>
+                </div>
+                <div class="bank-item">
+                    <div class="bank-item--title">銀行代號：</div>
+                    <div class="bank-item--data">{{ case_detail.remittance_account.bank_no }}</div>
+                </div>
+                <div class="bank-item">
+                    <div class="bank-item--title">銀行帳號：</div>
+                    <div class="bank-item--data">{{ case_detail.remittance_account.bank_account }}</div>
+                </div>
+            </div>
+        </div>
+    </b-modal>
+
+    <!-- modal: 補件 -->
+    <b-modal id="model_upload"
+        v-model="model_upload_isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="'補件上傳'"
+        v-bind:dialog-class="'modal-upload'">
+        <div class="modal-body--content">
+            <div class="upload-box">
+                <div class="upload-left">
+                    <!-- <img src="@Url.Content("~/Content/images/icon-image-upload.svg")" alt="">
+                    <p class="drop-text">此處拖放照片<br>或</p>
+                    <div class="center btn-common btn-common-pink upload-btn">上傳照片</div> -->
+                    <p class="care-text">想知道支援檔案類型及上傳限制嗎？</p>
+                    <p class="care-text-btn" 
+                        @@click="model_file_isShow = true">進一步了解</p>
+                </div>
+                <div class="upload-right">
+                    <vue-dropzone ref="uploadfile" id="dropzone" :options="dropzoneOptions"></vue-dropzone>
+                </div>
+            </div>
+            <div class="upload-footer">
+                <div class="comment-box">
+                    <label for="uploadComment">備註事項</label>
+                    <input 
+                           id="uploadComment" 
+                           type="text" 
+                           v-model="remark" 
+                           v-on:keyup="uploadCommentkeyup"
+                           maxlength="50" 
+                           style="line-height: 15px;"
+                           placeholder="請輸入你的留言 ( 50字內 ）">
+                    <label id="uploadCommentLength">{{uploadCommentLengths}}</label>
+                </div>
+                <div class="btn-common btn-common-pink send-btn"
+                    @@click="uploadAddition">送出</div>
+            </div>
+        </div>
+    </b-modal>
+
+    <!-- modal: 上傳檔案支援規格類型說明 -->
+    <b-modal id="model_file"
+        v-model="model_file_isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="'上傳檔案支援規格類型說明'"
+        v-bind:hide-header-close="true"
+        v-bind:dialog-class="'modal-custome'">
+        <div class="modal-body--content">
+            圖片格式支援jpg、jpeg、png檔案格式類型。一次上傳圖檔張數不可超過30張，單次上傳不可超過20MB。
+        </div>
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--ok"
+                @@click="model_file_isShow = false">確定</div>
+        </div>
+    </b-modal>
+</div>
+
+@section scripts {
+<script type="text/babel">
+    const caseItem = Vue.component("message-item", {
+        props: ["message"],
+        data: function() {
+            return {};
+        },
+        created: function() {},
+        template: `<transition name="fade">
+            <div class="timeline-item"
+                v-bind:class="[message.who == '零卡' ? 'timeline-item--staff' : 'timeline-item--user']">
+                <div class="timeline-item--icon"></div>
+                <div class="timeline-item--content">
+                    <span class="desc" v-text="message.reply"></span>
+                    <p class="time" v-text="message.reply_date"></p>
+                </div>
+            </div>
+        </transition>`,
+    });
+
+    var page = new Vue({
+        el: "#page",
+        mixins: [myMixin],
+        store: store,
+        components: {
+            caseItem,
+            vueDropzone: vue2Dropzone,
+        },
+        data: {
+            changeFixed: false,
+            isMobile: false,
+            apiUrl_Detail: '@Url.Action("GetCaseDetail", "Case")', /* 訂單明細 */
+            apiUrl_GetHistory: '@Url.Action("GetHistory", "Case")', /* 案件歷程 */
+            apiUrl_SendMessage: '@Url.Action("SendMessage", "Case")', /* 案件留言 */
+            apiUrl_AdjustCaseInfo: '@Url.Action("AdjustCaseInfo", "Case")', /* 取得調降金額案件資訊 */
+            apiUrl_AdjustPrice: '@Url.Action("AdjustPrice", "Case")', /* 調降金額確認 */
+            apiUrl_Returns: '@Url.Action("Returns", "Case")', /* 案件退款 */
+            apiUrl_CancleCase: '@Url.Action("CancelCase", "Case")', /* 取消案件 */
+            apiUrl_DownloadDocument: '@Url.Action("DownloadDocument", "Case")',
+            modalPriceInput: '',
+            uploadCommentLengths: '(0/50)',
+            modalPriceRefund: 1,
+            modalErrorClass: false,
+            caseStatusIsError: false, /* 若案件異常則無法進行調降操作*/
+            returnText: {
+                type1: '請於退貨申請後三日內將退款款項匯回指定帳號',
+                type2: '退款款項將從下次撥款金額內扣除，待扣足後才會正常撥款',
+             errortype1:''   
+            },
+            remark:"",
+            price_desc: '',
+            can_sendadjuest_case: false,
+            modal: {
+                title: '',
+                content: '',
+                isShow: false,
+                btnValue: '',
+                hasCancel: true,
+                hasOk: true,
+                statusClass: 'modal-custome',
+            },
+            uploadModal: {
+                title: '',
+                content: '',
+                isShow: false,
+                btnValue: '',
+                hasCancel: true,
+                hasOk: true,
+                statusClass: 'modal-custome',
+            },
+            model_return_price: {
+                isShow: false,
+                btnValue: '',
+            },
+            model_Step_isShow: false,
+            model_CancleCase_isShow: false,
+            model_bank_isShow: false,
+            model_upload_isShow: false,
+            model_file_isShow: false,
+            modal_AdjustPrice: {
+                isShow: false,
+                btnValue: '',
+                price: {
+                    errorMsg1: '',
+                    errorMsg2: '輸入金額大於案件金額，請重新輸入。',
+                    errorMsg3: '調降金額不得為0。',
+                    showMsg: ''
+                },
+            },
+            modal_calculator: {
+                isShow: false,
+            },
+            case_detail: {
+                "order_id": "",
+                "case_number": "",
+                "identity": "",
+                "application_date": "",
+                "application_amount": 0,
+                "application_name": "",
+                "application_phone": "",
+                "period":"0",
+                "person_in_charge": "",
+                "store": "",
+                "payment_method": "",
+                "payment": 0,
+                "estimate": 0,
+                status: {
+                    type: 0,
+                    description: ""
+                },
+                "case_type" : {
+                        "type": 1,
+                        "description" : "紙本"
+                },
+                "button_type": 0, /* 切換顯示 1: 取消案件 2: 調降金額/退貨 */
+                "message": [
+                ],
+                "can_download": true,
+                "can_send_msg": true,
+                "can_supplement": true,
+                "can_calculator": true,
+                "has_remittance_account": true,
+                "remittance_account":  {
+                    "bank" : "",
+                    "bank_no": "",
+                    "bank_account" : "",
+                },
+                "uploadComment": "",
+            },
+            
+            userSendMessage: '',
+            adjustData: {
+                status: false,
+                status_msg: "",
+                price: 0,
+                final_amount: 0,
+                grant_date: "",
+                deduction_price: 0,
+                formula: '(退款金額10,000-分期手續費1,000+作業處理費30-客戶已繳2,500)'
+            },
+            dropzoneOptions: {
+                url: '@Url.Action("UploadAdditional", "Case")',
+                thumbnailWidth: 150,
+                addRemoveLinks: true,
+                method: "post",
+                maxFiles: 30,
+                maxFilesize: 20, // MB,
+                uploadMultiple: true,
+                parallelUploads: 100,
+                acceptedFiles: ".jpeg,.jpg,.png,.gif,.JPEG,.JPG,.PNG,.GIF",
+                fallback: "瀏覽器不支援，請更新",
+                dictDefaultMessage: "請將圖片拖拉到此或是點擊選擇檔案",
+                dictFileTooBig: "檔案不能超過{{maxFilesize}}MB",
+                dictInvalidFileType: "檔案格式不符合",
+                dictRemoveFile: "刪除",
+                autoProcessQueue: false, // 關閉自動處理
+                headers: { "Case-Header": "xxxxxxxx" }, // 案件編號
+                init: function () {
+                    let vm = this
+                    this.on("processing", function (file) {
+                        console.log("processing");
+                    });
+
+                    this.on("uploadprogress", function (file) {
+                        console.log("uploadprogress");
+                    });
+
+                    this.on("sending", function (file, xhr, formData) {
+                        console.log("sending");
+                        formData.append('remark', page.remark);
+                        formData.append('case_id', page.case_detail.case_id);
+                        formData.append('todo_type', page.case_detail.checkSupplement);
+                    });
+
+                    this.on("success", function (file, response) {
+                        console.log(response);
+                        page.uploadModal.title = "補件上傳成功";
+                        page.uploadModal.statusClass = 'modal-custome modal-custome--success'
+                        page.uploadModal.content = response.Alert;
+                        page.uploadModal.hasCancel = false;
+                        page.uploadModal.isShow = true;
+                    
+                    })
+
+                    this.on("maxfilesexceeded", function (file) {
+                        console.log("maxfilesexceeded");
+                        page.modal.title = "錯誤"
+                        page.modal.statusClass = 'modal-custome modal-custome--error'
+                        page.modal.content = "檔案數量不可超過30筆"
+                        page.modal.hasCancel = false
+                        page.modal.isShow = true
+                    });
+
+                    this.on("maxfilesreached", function (file) {
+                        console.log("maxfilesreached");
+                        // console.log(file);
+                    });
+
+                    this.on("error", function (file, errorMessage, xhr) {
+                        console.log("error");
+                        console.log(errorMessage);
+                        console.log(xhr);
+                        if(!!errorMessage.Alert) {
+                            page.modal.title = "錯誤"
+                            page.modal.statusClass = 'modal-custome modal-custome--error'
+                            page.modal.content = errorMessage.Alert
+                            page.modal.hasCancel = false
+                            page.modal.isShow = true
+                        }
+                    });
+
+                    this.on("complete", function () {
+                        
+                    });
+
+                    this.on("successmultiple", function() {
+                        page.model_upload_isShow = false;
+                        //page.toast('上傳成功')
+                    })
+                },
+                accept: function (file, done) {
+                    var self = this;
+
+                    // check all file size 
+                    var total_size = 0;
+                    self.files.forEach(function(f) {total_size = total_size + f.size});
+                    console.log( total_size / 1048576);
+                    if((total_size / 1048576) > 20)
+                    {
+                        page.modal.title = "錯誤";
+                        page.modal.statusClass = 'modal-custome modal-custome--error';
+                        page.modal.content = "上傳檔案超過20M";
+                        page.modal.hasCancel = false;
+                        page.modal.isShow = true;
+                        this.removeFile(file);
+                        done();
+                    }
+                    else 
+                    {
+                        new Compressor(file, {
+                            quality: 0.6,
+                            success(result) {
+                                file = result;
+                                 done();
+                            },
+                            error(err) {
+                                console.log(err.message);
+                            },
+                        });
+                    }
+                }
+            },
+        },
+        created: function() {
+            let vm = this;
+            app.showBackBtn = true;
+            let case_number = this.getUrlParameter("case_number");
+            let order_sn = this.getUrlParameter("order_sn");
+            let merchant_id = this.getUrlParameter("merchant_id");
+
+            console.log('vm',vm);
+            console.log('case_detail',vm.case_detail);
+            console.log(case_number);
+
+            this.checkSize()
+            window.addEventListener('scroll', () => {
+                this.checkSize()
+			}, true);
+			window.addEventListener('resize', () => {
+                this.checkSize()
+            }, true);
+            
+            @*axios.post(vm.apiUrl_Detail,{
+                OrderId: order_sn,
+                CaseNumber: case_number,
+                MerchantId: merchant_id
+            })
+            .then(function (response) {
+                console.log(response);*@
+               
+                var $CaseDetail = @Html.Raw(Json.Encode(ViewBag.CaseDetail));
+                console.log('$CaseDetail',$CaseDetail);
+
+                var response = {
+                    data : $CaseDetail
+                };
+
+                if (response.data.Result.ReturnCode == 0) {
+            
+                    // 把詳細資料塞到session
+                    sessionStorage.setItem('case_detail',JSON.stringify($CaseDetail.Data));
+
+                    var bType = 0; // 表示取消案件跟調降金額都不能使用
+					if(response.data.Data.IsAdjustPriceOrReturn == 'Y')
+					{
+						bType = 2;
+					}
+    
+					var isDownload = false;
+					if(response.data.Data.IsDownload == 'Y')
+					{
+						isDownload = true;
+					}
+
+					var isSendMessage = false;
+					if(response.data.Data.IsSendMessage == 'Y')
+					{
+						isSendMessage = true;
+					}
+					
+					var isSupplement = false;
+					if(response.data.Data.IsSupplement == 'Y')
+					{
+						isSupplement = true;
+					}
+					
+					var isCancel = false;
+					if(response.data.Data.IsCancel == 'Y')
+					{
+						bType = 1;
+					}
+
+                    var isCalculator = false;
+                    if(response.data.Data.IsCalculateCancellationFees == 'Y')
+                    {
+                        isCalculator  = true;
+                    }
+
+    				var isBank = false;
+					if(response.data.Data.IsShowAccountNo == 'Y')
+					{
+						isBank = true;
+					}
+
+                    var newMessage = [];
+                    for (let index = 0; index < response.data.Data.CaseMessage.length; index++) {
+					    newMessage.push({
+                            who: response.data.Data.CaseMessage[index].Role,
+                            reply: response.data.Data.CaseMessage[index].RecodeContent,
+                            reply_date: response.data.Data.CaseMessage[index].UpdateDt
+					    });
+				    }
+                    console.log(newMessage);
+                    console.log('button_type',bType);
+                    console.log('case_detail-before');
+
+                    try
+                    {
+
+                        vm.case_detail = {
+                            case_id: response.data.Data.CaseId,
+					        order_id: response.data.Data.OrderId,
+					        case_number: response.data.Data.CaseNumber,
+                            identity: response.data.Data.CustId,
+					        application_date: response.data.Data.ApplicationDate,
+					        application_amount: response.data.Data.TransactionAmount,
+					        application_name: response.data.Data.ApplicationName,
+					        application_phone: response.data.Data.ApplicationPhone,
+					        period: response.data.Data.Period,
+					        person_in_charge: response.data.Data.PersonInCharge,
+					        store: response.data.Data.Store,
+					        payment_method: response.data.Data.PaymentTypeName,
+                            checkSupplement: response.data.Data.CheckSupplement,
+                            payment: response.data.Data.OtherPaymentAmount,
+                            estimate: response.data.Data.AppropriationAmount ,
+						    status: {
+							    type: response.data.Data.StatusType,
+							    description: response.data.Data.StatusName
+						    },
+						    case_type: {
+							    type: (response.data.Data.CaseType === "電子")? 2 : 1,
+							    description : response.data.Data.CaseType
+						    },
+						    button_type: bType, 
+                            message: newMessage,
+                            can_download: isDownload,
+                            can_send_msg: isSendMessage,
+                            can_supplement: isSupplement,
+                            can_calculator: isCalculator,
+                            has_remittance_account: isBank,
+                            remittance_account:  {
+                                bank: response.data.Data.BankName,
+                                bank_no: response.data.Data.BankId,
+                                bank_account: response.data.Data.AccountNo,
+                            }
+				        }; 
+                    } catch(e)
+                    {
+                        console.log(e);
+                    }
+                        
+                    console.log('case_detail');
+
+                    console.log('case_detail',vm.case_detail);
+
+                }
+                else
+                {
+                    alert(response.data.Result.Alert);
+
+                    history.back()
+                }
+            @*})
+            .catch(function(error){
+
+            });*@
+
+            /* TODO: 把資料放到case_detail */
+
+            /* TODO: 若case_detail.button_type ==2 ，呼叫AdjustCaseInfo取得調降案件資訊 */
+            if(vm.case_detail.button_type == 2 || vm.case_detail.can_calculator) {
+                vm.getAdjustCaseInfo(case_number);
+            }
+
+        },
+        mounted: function() {
+            console.log(this.$store.getters.getWindowWidth);
+        },
+        watch: {
+            modalPriceInput: function(val, oldVal) {
+                @*if(this.modalPriceInput < 10000) {
+                    this.modal_AdjustPrice.price.showMsg = this.modal_AdjustPrice.price.errorMsg1
+                    this.modalErrorClass = true*@
+                this.modal_AdjustPrice.price.showMsg = '';
+                if(this.modalPriceInput !== '' && this.modalPriceInput == 0) {
+                    this.modal_AdjustPrice.price.showMsg = this.modal_AdjustPrice.price.errorMsg3;
+                    this.modalErrorClass = true
+                }else if(this.modalPriceInput > this.adjustData.price) {
+                    this.modal_AdjustPrice.price.showMsg = this.modal_AdjustPrice.price.errorMsg2;
+                    this.modalErrorClass = true
+                }else {
+                    this.modalErrorClass = false;
+                    this.modal_AdjustPrice.price.showMsg = '';
+                    this.adjustData.final_amount = this.adjustData.price - this.modalPriceInput;
+                }
+                // this.modalPriceInput = this.amountAddDot(this.modalPriceInput)
+            },
+        },
+        methods: {
+            checkPaymentInfo: function(){
+                var vm = this;                
+                var returnText = vm.returnText.type2
+
+                // 退款方式：1:撥款中扣除 2:廠商自行匯款
+                sessionStorage.setItem('paymentInfo','1');
+
+                if(vm.modalPriceRefund == 2) {
+                    returnText = vm.returnText.type1
+                    sessionStorage.setItem('paymentInfo','2');
+                }
+
+                return returnText;
+            },
+            closeModel: function(){
+                this.modalPriceInput = '';
+                this.price_desc = "";
+            },
+            checkSize: function() {
+				let scrollTop = document.documentElement.scrollTop ||
+							document.body.scrollTop ||
+							document.querySelector('body').scrollTop;
+				if(scrollTop >= 100){
+					this.changeFixed = true;
+				}else {
+					this.changeFixed = false;
+				}
+
+				if(this.$store.getters.getWindowWidth <= this.$store.getters.getBreakpoint) {
+					this.isMobile = true;
+				}else {
+					this.isMobile = false;
+				}
+			},
+            clearAdjustFrom: function() {
+                this.modalPriceInput = "";
+                this.price_desc = "";
+            },
+            getAdjustPrice: function() {
+                var self = this;
+                self.modal_AdjustPrice.price.showMsg = "";
+                self.price_desc = "";
+
+                if(this.modalErrorClass || this.modalPriceInput === '') {
+                    return false;
+                }
+
+                // var sendprice =  ((+page.adjustData.price - +page.modalPriceInput) > 0)? +page.modalPriceInput: +page.adjustData.price - +page.modalPriceInput;
+                var sendprice =  ((+page.adjustData.price - +page.modalPriceInput) > 0)? +page.adjustData.price - +page.modalPriceInput: +page.adjustData.price - +page.modalPriceInput;
+                var model = {
+                    newTransactionAmount: sendprice,
+                    caseNumber:  page.case_detail.case_number,
+                    isChange: ((+page.adjustData.price - +page.modalPriceInput) > 0) ? 1  : 0,
+                };
+
+                self.price_desc = "";
+                self.modal_AdjustPrice.price.showMsg = "";
+       
+                axios.post(page.apiUrl_AdjustPrice, model)
+                .then(function (response) {
+                    console.log(response);
+
+                    if (response.data.Result.ReturnCode == 0) {
+                        self.price_desc = response.data.Data.ABT_AMT_CAL_FORMULA +  response.data.Data.HNDL_FEE_CAL_FORMULA;
+                        self.adjustData.deduction_price = response.data.Data.ABT_AMT;
+                        self.can_sendadjuest_case = true;
+                        self.adjustData.status = true;
+                    } 
+                    else 
+                    {
+                        self.modal_AdjustPrice.price.showMsg = response.data.Result.Alert;
+                        self.can_sendadjuest_case = false;
+                        self.adjustData.status = false;
+                    }
+                })
+                .catch(function(error){
+                    console.log(error);
+                    self.modal_AdjustPrice.price.showMsg = response.data.Result.Alert;
+                    self.can_sendadjuest_case = false;
+                });
+            },
+            showModal: function() {
+                this.modal.isShow = true
+            },
+            hideModal: function() {
+                this.modal.isShow = false
+                this.modal.btnValue = 'cancel'
+            },
+            okModal: function() {
+                this.modal.isShow = false
+                this.modal.btnValue = 'ok'
+            },
+            okUploadModal: function() {
+                location.reload();
+            },
+            gotoBottom: function(id){
+                var element = document.getElementById(id);
+                element.scrollTop = element.scrollHeight - element.clientHeight;
+            },
+            getAdjustCaseInfo(case_number) {
+                let vm = this;
+                vm.adjustData = [];
+                @*axios.post(vm.apiUrl_AdjustCaseInfo,{
+                    caseNumber: case_number
+                })
+                .then(function (response) {*@
+                     var response = {
+                        data : @Html.Raw(Json.Encode(ViewBag.AdjustInfo))
+                    };
+
+                    console.log('apiUrl_AdjustCaseInfo',response);
+                    if(response.data.Result.ReturnCode == 0) {
+                    
+                    vm.adjustData = {
+						    status: true,
+						    status_msg: response.data.Data.Status,
+						    price: response.data.Data.TransactionAmount,
+						    final_amount: response.data.Data.TransactionAmount,
+						    grant_date: response.data.Data.AppropriationDate,
+						    deduction_price: response.data.Data.EarnestMoney,
+						    formula: ''
+					    };
+                    }
+                    else if(response.data.Result.Alert != '')
+                    {
+                        console.log('errorMsg',response.data.Result.ReturnMsg);
+                        vm.adjustData = {
+						        status: false,
+						        status_msg: response.data.Data.Status,
+						        price: response.data.Data.TransactionAmount,
+						        final_amount: response.data.Data.TransactionAmount,
+						        grant_date: response.data.Data.AppropriationDate,
+						        deduction_price: response.data.Data.EarnestMoney,
+						        formula: ''
+					        };
+                    }
+                        
+                    console.log('adjustData', vm.adjustData);
+
+                    //if(response.status && response.error_code == 200) vm.adjustData = response.data
+                @*})
+                .catch(function(error){
+
+                });*@
+            },
+            amountAddDot: function (num) {
+                var source = String(num).split(".");
+                source[0] = source[0].replace(
+                    new RegExp("(\\d)(?=(\\d{3})+$)", "ig"),
+                    "$1,"
+                );
+                return source.join(".");
+            },
+            // 取得案件歷程
+            getHistoryMessage: function() {
+    
+            },
+            // 送出訊息
+            sendSendMessage: function(evt) {
+                let vm = this
+                evt.preventDefault()
+                console.log("send:" + vm.userSendMessage)
+
+                axios.post(vm.apiUrl_SendMessage, {
+                    message: vm.userSendMessage,
+                    caseNumber: vm.case_detail.case_number
+                })
+                .then(function (response) {
+                    // 呼叫成功後，再呼叫一次API:apiUrl_GetHistory，將message內容取代掉 
+                    if (response.data.Result.ReturnCode == 0) {
+                        location.reload()
+                    } else {
+                        alert(response.data.Result.Alert);
+                    }
+
+                    /* 滾輪保持在最下 */
+                    vm.gotoBottom('messageBox')
+                })
+                .catch(function(error){
+
+                });
+            },
+            uploadAddition: function() {
+                let vm = this
+                this.dropzoneOptions.headers = {"Case-Header" : vm.case_detail.case_number}
+                let myDropzone = this.$refs.uploadfile
+
+                if (myDropzone.getAcceptedFiles().length == 0 && myDropzone.getRejectedFiles().length == 0){
+                    vm.modal.title = "錯誤"
+                    vm.modal.content = "請上傳檔案"
+                    vm.modal.hasCancel = false
+                    vm.modal.isShow = true
+                    return
+                } else if(myDropzone.getRejectedFiles().length > 0) {
+                    vm.modal.title = "錯誤"
+                    vm.modal.content = "請確認檔案尺寸、數量及檔案類型是否正確"
+                    vm.modal.hasCancel = false
+                    vm.modal.isShow = true
+                    return
+                } else {
+                    myDropzone.processQueue();
+                }
+                
+            },
+            getFile: function() {
+                let vm = this
+                 axios({
+                  url: vm.apiUrl_DownloadDocument, //your url
+                  method: 'Post',
+                  responseType: 'blob', // important
+                  data: {
+                       case_number: vm.case_detail.case_number
+                  }
+                })
+                .then(function (response) {
+                    if(response.status == 200) {
+                        var filename = response.headers.filename;
+                        if (navigator.msSaveBlob) {
+                            // for ie
+                            return navigator.msSaveBlob(response.data, filename);
+                        } else {
+                            // for other
+                            const url = window.URL.createObjectURL(new Blob([response.data]));
+                            const link = document.createElement('a');
+                            link.href = url;
+                            link.setAttribute('download', filename); //or any other extension
+                            document.body.appendChild(link);
+                            link.click();
+                        }
+
+                        vm.toast('下載通知函')
+                    }   
+                })
+                .catch(function(error){
+                    console.log(error);
+                    vm.toast('下載通知函失敗')
+                });
+                
+            },
+            checkReturnPrice: function(){
+                let vm = this
+                if(vm.modalErrorClass || vm.modalPriceInput == "") {
+                    this.modal.title = '請確認必填欄位'
+                    this.modal.content = '請將必填欄位填寫完成'
+                    this.modal.statusClass = 'modal-custome modal-custome--error'
+                    this.modal.hasCancel = false
+                    this.modal.isShow = true
+                    return
+                }else {
+                    if(vm.can_sendadjuest_case) {
+                        vm.model_return_price.isShow = true
+                    } else  {
+                        this.modal.title = '請確認調降金額'
+                        this.modal.content = '請確認調降金額'
+                        this.modal.statusClass = 'modal-custome modal-custome--error'
+                        this.modal.hasCancel = false
+                        this.modal.isShow = true
+                        return
+                    }
+                }
+            },
+            goReturnPrice: function() {
+                let vm = this
+                console.log("ok: "+ vm.modalPriceInput)
+                var sendprice =  ((+page.adjustData.price - +page.modalPriceInput) > 0)? +page.adjustData.price - +page.modalPriceInput: +page.adjustData.price - +page.modalPriceInput;
+                axios.post(vm.apiUrl_Returns,{
+                    case_number: vm.case_detail.case_number,
+                    price: sendprice,
+                    refund: +vm.modalPriceRefund,
+                    isChange: ((+page.adjustData.price - +page.modalPriceInput) > 0) ? 1  : 0 
+                })
+                .then(function (response) {
+                    page.model_return_price.isShow = false;
+                    if (response.data.ReturnCode == 0) {
+                        vm.model_CancleCase_isShow = false;
+                        vm.modal_AdjustPrice.isShow = false;
+                        page.modal.title = '調降金額/退貨成功';
+                        page.modal.content = '調降金額/退貨成功';
+                        page.modal.statusClass = 'modal-custome modal-custome--success';
+                        page.modal.hasCancel = false;
+                        page.modal.isShow = true;
+
+                        var _param = [];
+
+                        if(!!vm.case_detail.case_number)
+                        {
+                            _param.push("case_number=" + vm.case_detail.case_number)
+                        }
+
+				        window.location.href = vm.apiUrl_Returns + "?" + _param.join("&");
+                    } else {
+                        page.modal.title = '調降金額/退貨錯誤'
+                        page.modal.content = response.data.Alert
+                        page.modal.statusClass = 'modal-custome modal-custome--error'
+                        page.modal.hasCancel = false
+                        page.modal.isShow = true
+                        return
+                    }
+                })
+                .catch(function(error){
+
+                });
+            },
+            goContactStaff: function() {
+                // TODO: 案件異常無法進行調降金額操作，若按下聯繫客服按鈕，須將右側客服框打開
+                this.modal_AdjustPrice.isShow = false;
+                this.modal_calculator.isShow = false;
+                app.showContactCenter();
+            },
+            uploadCommentkeyup: function() {
+                let vm = this
+                var length = vm.remark.length;
+                vm.uploadCommentLengths = '(' + length + '/50)';
+            },
+            goCancleCase: function() {
+                let vm = this
+                vm.model_CancleCase_isShow = false
+                // TODO:
+                axios.post(vm.apiUrl_CancleCase,{
+                    caseNumber: vm.case_detail.case_number
+                })
+                .then(function (response) {
+                    vm.toast(response.data.Alert)
+                    if (response.data.ReturnCode == 0) {
+                        location.reload();
+				        @*let temp = vm.apiDatas.filter(function (value, index, array){
+					        return value.case_sn !== vm.cancelItem;
+				        })
+				        vm.apiDatas = temp;*@
+                    }
+                })
+                .catch(function(error){
+
+                });
+                vm.modal_CancleCase_isShow = false;
+            }
+        }
+    });
+</script>
+}

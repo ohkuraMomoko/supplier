@@ -1,0 +1,271 @@
+﻿@{ 
+	ViewBag.Title = "修改密碼"; 
+} 
+@section header {
+	@Styles.Render("~/Content/pages/account/changePw.min.css") 
+}
+
+<div id="page" class="page">
+	<div class="page-container">
+		<p class="page-title">修改密碼</p>
+		<div class="content">
+			<p class="content-title">更新您的密碼</p>
+			<b-form class="control-form"
+                :novalidate="true" :validated="true">
+				<div class="row mb-4">
+					<div class="col-12 col-lg-6">
+						<div class="fillin-input"
+							v-bind:class="changeClassStatus(formElementControl.old_pwd, validation_old_pwd)">
+							<label for="order_id">原密碼</label>
+							<input type="password" id="old_pwd" name="old_pwd"  placeholder="請輸入原密碼"
+								v-bind:required="formElementControl.old_pwd.required"
+								v-model.trim="form.old_pwd" />
+						</div>
+						<b-form-invalid-feedback :state="validation_old_pwd" 
+							v-if="!formElementControl.old_pwd.isDefault" v-text="formElementControl.old_pwd.invalidFeedback">
+						</b-form-invalid-feedback>
+					</div>
+				</div>
+				<div class="row ">
+					<div class="col-12 col-lg-6 mb-4">
+						<div class="fillin-input"
+							v-bind:class="changeClassStatus(formElementControl.new_pwd1, validation_new_pwd1)">
+							<label for="new_pwd1">新密碼</label>
+							<input type="password" id="new_pwd1" name="new_pwd1" placeholder="請設定6位以上英數字元"
+								v-bind:required="formElementControl.new_pwd1.required"
+								v-model.trim="form.new_pwd1" />
+						</div>
+						<b-form-invalid-feedback :state="validation_new_pwd1" 
+							v-if="!formElementControl.new_pwd1.isDefault" v-text="formElementControl.new_pwd1.invalidFeedback">
+						</b-form-invalid-feedback>
+					</div>
+					<div class="col-12 col-lg-6 mb-4">
+						<div class="fillin-input"
+							v-bind:class="changeClassStatus(formElementControl.new_pwd2, validation_new_pwd2)">
+							<label for="new_pwd2">確認新密碼</label>
+							<input type="password" id="new_pwd2" name="new_pwd2" placeholder="請再次輸入新密碼"
+								v-bind:required="formElementControl.new_pwd2.required"
+								v-model.trim="form.new_pwd2" />
+						</div>
+						<b-form-invalid-feedback :state="validation_new_pwd2" 
+							v-if="!formElementControl.new_pwd2.isDefault" v-text="formElementControl.new_pwd2.invalidFeedback">
+						</b-form-invalid-feedback>
+					</div>
+				</div>
+				<div class="form-bottom">
+                    <button type="button" class="btn-common btn-common-pink form-bottom--btn"
+                        @@click="onSubmit">儲存變更</button>
+                </div>
+			</b-form>
+		</div>
+	</div>
+	<b-modal id="msgModal"
+        v-model="modal.isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="modal.title"
+        v-bind:hide-header-close="true"
+        v-bind:dialog-class="modal.statusClass">
+        <div class="modal-body--content">
+            <p v-html="modal.content"></p>
+        </div>
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--cancel"
+                v-if="modal.hasCancel"
+                @@click="hideModal">取消</div>
+            <div class="modal-custome-btn btn--ok"
+                v-if="modal.hasOk"
+                @@click="okModal">確定</div>
+            <div class="modal-custome-btn btn--ok"
+                v-if="modal.hasOk_reload"
+                @@click="refresh()">確定</div>
+        </div>
+    </b-modal>
+</div>
+@section scripts {
+<script type="text/babel">
+    var page = new Vue({
+        el: "#page",
+        mixins: [myMixin],
+        store: store,
+        data: {
+			apiUrl: '@Url.Action("ChangePW", "Account")',
+            formElementControl: {
+                old_pwd: {
+                    isDefault: true,
+                    required: true,
+                    invalidFeedback: '請輸入原密碼',
+                    validFeedback: '請輸入原密碼',
+                    isValidOk: false
+                },
+				new_pwd1: {
+                    isDefault: true,
+                    required: true,
+                    invalidFeedback: '請設定6位以上英數字元',
+                    validFeedback: '請輸入新密碼',
+                    isValidOk: false
+                },
+				new_pwd2: {
+                    isDefault: true,
+                    required: true,
+                    invalidFeedback: '兩次密碼不一致',
+                    validFeedback: '請輸入新密碼',
+                    isValidOk: false
+                },
+            },
+            form: {
+                old_pwd: '',
+				new_pwd1: '',
+				new_pwd2: ''
+            },
+            modal: {
+                title: '',
+                content: '',
+                isShow: false,
+                btnValue: '',
+                hasCancel: true,
+                hasOk: true,
+                hasOk_reload: false,
+                statusClass: 'modal-custome',
+            },
+        },
+        created: function() {
+            app.currentPage.ChangePW = true
+        },
+        mounted: function() {
+        },
+        computed: {
+            validation_old_pwd: function() {
+                if(this.formElementControl.old_pwd.isDefault && this.form.old_pwd.length !== 0) {
+                    this.formElementControl.old_pwd.isDefault = false
+                }
+                var temp;
+                if(this.form.old_pwd.length > 1) {
+                    temp = true
+                }else {
+                    temp = false
+                }
+                this.formElementControl.old_pwd.isValidOk = temp
+                return temp
+            },
+            validation_new_pwd1: function() {
+                if(this.formElementControl.new_pwd1.isDefault && this.form.new_pwd1.length !== 0) {
+                    this.formElementControl.new_pwd1.isDefault = false
+                }
+				
+				// /^(?=.*\d)(?=.*[a-zA-Z]).{6,30}$/ 可符號
+                var req = new RegExp(/^[a-zA-Z0-9]{6,30}$/);
+                var temp;
+                if(req.test(this.form.new_pwd1)) {
+                    temp = true
+                }else {
+                    temp = false
+                }
+                this.formElementControl.new_pwd1.isValidOk = temp
+                return temp
+            },
+            validation_new_pwd2: function() {
+                if(this.formElementControl.new_pwd2.isDefault && this.form.new_pwd2.length !== 0) {
+                    this.formElementControl.new_pwd2.isDefault = false
+                }
+            
+                var temp;
+                if(this.form.new_pwd2 === this.form.new_pwd1 && this.form.new_pwd1 !== "") {
+                    temp = true
+                }else {
+                    temp = false
+                }
+                this.formElementControl.new_pwd2.isValidOk = temp
+                return temp
+            },
+
+        },
+        methods: {
+            refresh: function() {
+                location.reload()
+            },
+            changeClassStatus: function(targetRequired, targetValid) {
+                var requiredClass = targetRequired.required ? 'required' : ''
+                var validClass = targetValid ? 'success' : 'error'
+                var defaultClass = targetRequired.isDefault ? 'default' : ''
+                return [requiredClass, validClass, defaultClass]
+            },
+            onSubmit: function(evt) {
+                evt.preventDefault();
+                var vm = this;
+
+                var keyValue = Object.keys(this.formElementControl);
+                var notValid= [];
+                this.content = '';
+
+                for(var i =0 ; i< keyValue.length; i++){
+                    var temp = this.formElementControl[keyValue[i]]
+                    if(temp.required == true && temp.isValidOk == false) {
+                        notValid.push(temp)
+                    }
+                }
+
+                if(notValid.length == 0) {
+                    // alert(JSON.stringify(this.form));
+                    // 在這邊接API
+                    axios.post(vm.apiUrl, {
+                        MemberId: 0,
+                        OldPwd: this.form.old_pwd,
+                        NewPwd: this.form.new_pwd1
+                    })
+                    .then(function (response) {
+                        console.log(response);
+                        if (response.data.ReturnCode == 0) {
+                            vm.iscreated = true;
+                            vm.modal.title = '訊息提醒';
+                            vm.modal.content = '密碼變更成功。';
+                            vm.modal.statusClass = 'modal-custome modal-custome--success';
+                            vm.modal.hasCancel = false;
+                            vm.modal.isShow = true;
+                            vm.modal.hasOk = false;
+                            vm.modal.hasOk_reload = true;
+                        }
+                        else 
+                        {
+                            vm.modal.title = "錯誤";
+                            vm.modal.content = response.data.Alert;
+                            vm.modal.statusClass = 'modal-custome modal-custome--error';
+                            vm.modal.hasCancel = false;
+                            vm.modal.isShow = true;
+                        }
+                    })
+                    .catch(function(error){
+                        vm.modal.title = "錯誤";
+                        vm.modal.content = error;
+                        vm.modal.statusClass = 'modal-custome modal-custome--error';
+                        vm.modal.hasCancel = false;
+                        vm.modal.isShow = true;
+                    });
+                }else {
+                    this.modal.content = ''
+                    for(var i=0; i< notValid.length; i++) {
+                        this.modal.content += notValid[i].invalidFeedback + '<br>'
+                    }
+                    this.modal.title = '請將必填欄位填寫完成'
+                    this.modal.statusClass = 'modal-custome modal-custome--warning'
+                    this.modal.isShow = true
+                }
+
+            },
+            showModal: function() {
+                this.modal.isShow = true
+            },
+            hideModal: function() {
+                this.modal.isShow = false
+                this.modal.btnValue = 'cancel'
+            },
+            okModal: function() {
+                this.modal.isShow = false
+                this.modal.btnValue = 'ok'
+            },
+        }
+    });
+</script>
+}
+
+

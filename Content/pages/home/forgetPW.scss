@@ -1,0 +1,126 @@
+﻿@import "../../setting/_variables.scss";
+@import "../../setting/_reset.scss"; 
+@import "../../setting/_mixins.scss"; 
+
+$loginWidth: 460px;
+
+body {
+    background-color: #f5f5f5;
+}
+
+.forget-container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.forget-content {
+    width: 100%;
+    max-width: 440px;
+    height: 570px;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px 0 #00000019;
+    background-color: #ffffff;
+    padding: 30px 40px 52px;
+    &--title {
+        margin-bottom: 60px;
+    }
+}
+@include rwd($min-w){
+    .forget-content {
+        height: 100%;
+        border-radius: 0;
+        padding-top: 40px;
+    }
+}
+
+.form-item {
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.form-item--input {
+    width: 100%;
+    line-height: 32px;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid #000019;
+    position: relative;
+    top: 0;
+    left: 0;
+    outline: 0;
+    &:valid {
+        background: white; 
+    }
+    &:focus {
+        border-bottom-color: $colorPrimary;
+    }
+    &:focus + label {
+        transform: translateY(-21px);
+        font-size: 12px;
+    }
+
+}
+.form-item--label {
+    width: 100%;
+    font-size: 1rem;
+    color: $colorText;
+    transition: all linear 0.25s;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    &.active {
+        transform: translateY(-21px);
+        font-size: 12px;
+    }
+}
+
+.btn-login {
+    width: 360px;
+    background-color: $colorPrimary;
+    margin-bottom: 15px;
+}
+.link-back {
+    width: 360px;
+    background-color: #ececec;
+    color: #7b7b7b;
+}
+.link-back-white {
+    width: 360px;
+    background-color: #fff;
+    color: #7b7b7b;
+}
+
+/* block: .result =====*/
+.result {
+    max-width: 100%;
+    padding: 0 8%;
+    &--title {
+        font-size: 30px;
+        text-align: center;
+        margin-top: 30px;
+    }
+    &--desc{
+        font-size: 18px;
+        line-height: 1.5;
+        text-align: center;
+        margin: 30px auto;
+    }
+}
+@include rwd(#{$ipad - 1px}) {
+    .result {
+        &--pic {
+            width: 140px;
+        }
+        &--title {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+        &--desc {
+            font-size: 16px;
+            margin: 20px auto 75px;
+        }
+    }
+}

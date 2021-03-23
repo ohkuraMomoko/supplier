@@ -1,0 +1,266 @@
+﻿@import "../../setting/_variables.scss";
+@import "../../setting/_reset.scss"; 
+@import "../../setting/_mixins.scss"; 
+
+$loginWidth: 460px;
+
+
+body {
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url("../../images/bg-desktop.svg");
+}
+@include rwd($min-w) {
+    body {
+        background-image: url("../../images/bg-mobile.svg");
+    }
+}
+
+.cat {
+    position: fixed;
+    right: 300px;
+    bottom: calc(20% - 232px);
+}
+@include rwd($min-w) {
+    .cat {
+        display: none;
+    }
+}
+/* Element: .modal ----------------*/
+
+.btn-modal {
+    width: 150px;
+    background-color: $colorPrimary !important;
+    float: right;
+    text-align: center;
+}
+.model-body {
+    padding: 1rem 40px 30px;
+}
+.modal-content {
+    border-radius: 20px;
+    box-shadow: 0 4px 12px 0 #00000019;   
+}
+.modal-header {
+    border: none;
+    padding-bottom: 0;
+}
+.modal-title {
+    font-size: 20px;
+    font-weight: 600;
+}
+.noti-content {
+    line-height: 1.75;
+    margin-bottom: 25px;
+}
+@include rwd(#{$ipad - 1px}) {
+    .modal-dialog {
+        margin: 1rem;
+    }
+    .modal-header {
+        padding: 30px 20px 0;
+    }
+    .btn-modal {
+        width: 100%;
+    }
+    .modal-body {
+        padding: 0 20px 30px;
+    }
+}
+/* Element: .top-bar --------------*/
+.top-bar {
+    width: 100%;
+    padding-top: 20px;
+    padding-left: 60px;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+@include rwd($min-w) {
+    .top-bar {
+        padding: 9px 0 0 16px;
+        >img {
+            height: 32px;
+        }
+    }
+}
+/* Block:  .page-container ----------*/
+.page-container {
+    width: calc(100% - #{$loginWidth});
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+@include rwd($min-w){
+    .page-container {
+        width: 100%;
+    }
+}
+
+
+/* Block:  .announcement ----------*/
+.announcement {
+    $w: 760px;
+    width: $w;
+    min-height: 186px;
+    padding: 25px 5%;
+    border-radius: 20px;
+    background-color: rgba(#e45c6c, 0.5);
+    color: #fff;
+    position: absolute;
+    left: calc(50% - #{$w/2});
+    top: 20%;
+    z-index: 5;
+    &--title {
+        font-size: +rem(20px);
+        margin-bottom: 20px;
+    }
+    &--content {
+        font-size: +rem(16px);
+        line-height: 1.75;
+    }
+}
+@include rwd($min-w){
+    .announcement {
+        width: 90%;
+        left: 5%;
+        top: 84px;
+        max-height: 275px;
+        overflow-x: scroll;
+    }
+}
+
+/* Block:  .login-container ----------*/
+.login-container {
+    width: $loginWidth;
+    height: 100vh;
+    background-color: #fff;
+    box-shadow: -7px 4px 12px 0 #00000019;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 5;
+}
+
+.login-container.active {
+    transform: translateX(0);
+}
+@include rwd($min-w){
+    .login-container {
+        width: 100%;
+        transition: all linear .3s;
+        transform: translateX(-100%);
+    }
+}
+.login-content {
+    width: 80%;
+    max-width: 360px;
+    &--title {
+        font-size: +rem(30px);
+        margin-bottom: 40px;
+    }
+}
+
+
+.form-item {
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.form-item--input {
+    width: 100%;
+    line-height: 32px;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid #000019;
+    position: relative;
+    top: 0;
+    left: 0;
+    outline: 0;
+    &:valid {
+        background: white; 
+    }
+    &:focus {
+        border-bottom-color: $colorPrimary;
+    }
+    &:focus + label {
+        transform: translateY(-21px);
+        font-size: 12px;
+    }
+
+}
+.form-item--label {
+    width: 100%;
+    font-size: 1rem;
+    color: $colorText;
+    transition: all linear 0.25s;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    &.active {
+        transform: translateY(-21px);
+        font-size: 12px;
+    }
+}
+
+
+.forget-link {
+    display: block;
+    width: 100%;
+    color: $colorText;
+    text-align: center;
+    margin-top: 28px;
+    &:hover {
+        color: initial;
+    }
+}
+
+.btn-login {
+    width: 360px;
+    background-color: $colorPrimary;
+}
+
+.btn-mobileopen {
+    width: 80%;
+    margin: 0 auto;
+    background-color: #fff;
+    color: $colorText;
+    position: fixed;
+    left: 10%;
+    top: 400px;
+    display: none;
+}
+.btn-mobileclose {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    display: none;
+}
+
+@include rwd(#{$ipad-pro}) {
+    .btn-mobileopen {
+        display: block;
+    }
+    .btn-mobileclose {
+        display: flex;
+    }
+}
+
+.verification-img {
+    width: 101px;
+    height: 34px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+}

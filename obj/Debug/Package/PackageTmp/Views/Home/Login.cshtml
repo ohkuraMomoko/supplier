@@ -1,0 +1,261 @@
+﻿@{
+    ViewBag.Title = "登入";
+    Layout = "~/Views/Shared/_LayoutNotMenu.cshtml";
+}
+@section header {
+    @Styles.Render("~/Content/pages/home/login.min.css")
+}
+
+<div id="app">
+    <div class="top-bar">
+        <img src="@Url.Content("~/Content/images/icon-logo-vendor-dark.svg")"
+             alt="零卡分期商家">
+    </div>
+
+    <!-- model: 停機公告 -->
+    <b-modal id="modalSysNoti" centered hide-footer hide-header-close
+             title="停機公告"
+             v-model="modalShowSysNoti">
+        <p class="noti-content" v-text="sysNoti">
+        </p>
+        <b-button class="btn-common btn-modal" block
+                  v-on:click="$bvModal.hide('modalSysNoti')">好，我知道了</b-button>
+    </b-modal>
+
+    <!-- block: page -->
+    <div class="page-container">
+        <div class="announcement">
+            <h3 class="announcement--title">系統公告</h3>
+            <div class="announcement--content" v-text="systemNotification">
+            </div>
+        </div>
+        <img src="@Url.Content("~/Content/images/img-cat-login.svg")" alt=""
+             class="cat">
+    </div>
+    <div class="btn-common btn-mobileopen"
+         v-on:click="showLogin">登入</div>
+
+    <div class="login-container"
+         v-bind:class="{ active: showLoginFlag }"
+         v-cloak>
+        <div class="btn-mobileclose"
+             v-on:click="closeLogin">
+            <img src="@Url.Content("~/Content/images/icon-navigation-close-black.svg")" alt="">
+        </div>
+        <b-form @@submit="onSubmit" class="login-content">
+            <h2 class="login-content--title">登入</h2>
+            <div class="form-item">
+                <b-form-input id="unifiedBusinessNo"
+                              class="form-item--input"
+                              v-model="form.unifiedBusinessNo"
+                              type="text"
+                              pattern="\d{8}"
+                              title="請輸入正確的統編"
+                              required></b-form-input>
+                <label class="form-item--label" for="unifiedBusinessNo"
+                       v-bind:class="{ active: form.unifiedBusinessNo!=='' }">登入統編</label>
+            </div>
+            <div class="form-item">
+                <b-form-input id="account"
+                              class="form-item--input"
+                              v-model="form.account"
+                              type="tel"
+                              pattern="^\d{8,10}$"
+                              title="請輸入正確的手機或市話號碼"
+                              required></b-form-input>
+                <label class="form-item--label" for="account"
+                       v-bind:class="{ active: form.account!=='' }">帳號(手機或市話號碼）</label>
+            </div>
+            <div class="form-item">
+                <b-form-input id="password"
+                              class="form-item--input"
+                              v-model="form.password"
+                              type="password"
+                              required></b-form-input>
+                <label class="form-item--label" for="password"
+                       v-bind:class="{ active: form.password!=='' }">密碼</label>
+            </div>
+            <div class="form-item">
+                <b-form-input id="verificationCode"
+                              class="form-item--input"
+                              v-model="form.verificationCode"
+                              type="text"
+                              required></b-form-input>
+                <label class="form-item--label" for="verificationCode"
+                       v-bind:class="{ active: form.verificationCode!=='' }">驗證碼</label>
+                <img id="verificationimg" src="@Url.Content("~/Captcha/GetCaptcha")" class="verification-img" />
+            </div>
+
+            <div class="login-content--footer">
+                <b-button 
+                          :disabled="this.isDown"
+                          type="submit" 
+                          variant="primary" 
+                          class="btn-common btn-login">登入</b-button>
+                <a href="@Url.Content("~/home/ForgetPW")" class="forget-link">忘記密碼?</a>
+            </div>
+        </b-form>
+    </div>
+    <b-modal id="msgModal"
+             v-model="modal.isShow"
+             v-bind:centered="true"
+             v-bind:hide-footer="true"
+             v-bind:title="modal.title"
+             v-bind:hide-header-close="true"
+             v-bind:dialog-class="modal.statusClass">
+        <div class="modal-body--content">
+            <p v-html="modal.content"></p>
+        </div>
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--cancel"
+                 v-if="modal.hasCancel"
+                 @@click="hideModal">取消</div>
+            <div class="modal-custome-btn btn--ok"
+                 v-if="modal.hasOk"
+                 @@click="okModal">確定</div>
+        </div>
+    </b-modal>
+</div>
+
+@section scripts {
+    <script>
+	var app = new Vue({
+		el: "#app",
+		data: {
+            breakPoint: 1140,
+            apiUrl: '@Url.Action("CheckLogin", "Home")',
+            apiDowntimeUrl: '@Url.Action("DowntimeCheck", "Home")',
+            apiSystemNotificationUrl: '@Url.Action("SystemNotification", "Home")',
+            showLoginFlag: false,
+            modalShowSysNoti: false,
+            isDown: false,
+			window: {
+                width: 0,
+                height: 0
+            },
+            form: {
+                unifiedBusinessNo: '',
+                account: '',
+                password: '',
+                verificationCode: ''
+            },
+            sysNoti: '',
+            systemNotification:'',
+            modal: {
+                title: '',
+                content: '',
+                isShow: false,
+                btnValue: '',
+                hasCancel: false,
+                hasOk: true,
+                statusClass: 'modal-custome',
+            },
+        },
+		created: function() {
+			window.addEventListener('resize', this.handleResize);
+            this.handleResize();
+            this.getDowntimeCheck();
+            this.getSystemNotification();
+        },
+        mounted: function() {
+            // this.$bvModal.show('modal-center');
+        },
+		methods: {
+            handleResize: function () {
+                this.window.width = window.innerWidth;
+                this.window.height = window.innerHeight;
+            },
+            showLogin: function(){
+                this.showLoginFlag = true;
+            },
+            closeLogin: function(){
+                this.showLoginFlag = false;
+            },
+            onSubmit: function(evt) {
+                evt.preventDefault();
+                var vm = this;
+                //alert(JSON.stringify(this.form));
+
+                if (vm.isDown == true) {
+                    vm.sysNoti = '很抱歉，目前系統停機中，請稍後在試';;
+                    vm.modalShowSysNoti = true;
+                    return false;
+                }
+
+                // 登入驗證API
+                axios.post(vm.apiUrl, {
+                    uniformnumbers: vm.form.unifiedBusinessNo,
+                    phone: vm.form.account,
+                    secret: vm.form.password,
+                    code: vm.form.verificationCode
+                })
+                    .then(function (response) {
+                        console.log(response);
+                        if (response.data.Result.ReturnCode == -1) {
+                            if (response.data.Result.Alert == '驗證碼錯誤' || response.data.Result.Alert == '驗證碼逾時') {
+                                document.getElementById("verificationimg").src = "@Url.Action("GetCaptcha", "Captcha")" +"?time=" + Date.now();
+                            }
+
+                            //vm.modal.content = '請輸入正確統編/帳號/手機或市話號碼'
+                            vm.modal.content = response.data.Result.Alert
+                            vm.modal.title = '登入錯誤'
+                            vm.modal.statusClass = 'modal-custome modal-custome--error'
+                            vm.modal.isShow = true
+                            return;
+                        }
+
+                        console.log(response.data)
+                        var url = '../vendor/index';
+
+                        if (response.data.Data == '2') {
+                            url = '../vendor/agree';
+                        }
+
+                        window.location.href = url;
+
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                    });
+            },
+            hideModal: function (){
+                this.modal.isShow = false
+                this.modal.btnValue = 'cancel'
+            },
+            okModal: function (){
+                this.modal.isShow = false
+                this.modal.btnValue = 'ok'
+            },
+            // 停機資訊
+            getDowntimeCheck: function () {
+                var vm = this;
+                axios.post(vm.apiDowntimeUrl)
+                    .then(function (response) {
+                        if (response.data.ReturnCode == 0) {
+
+                            if (response.data.ReturnMsg !== '') {
+                                vm.isDown = true;
+                                vm.sysNoti = response.data.ReturnMsg;
+                                vm.modalShowSysNoti = true;
+                            }
+                        }
+                    })
+                    .catch(function (error) {
+                });
+            },
+            // 系統公告
+            getSystemNotification: function () {
+                var vm = this;
+                axios.post(vm.apiSystemNotificationUrl)
+                    .then(function (response) {
+                        if (response.data.ReturnCode == 0) {
+                            vm.systemNotification = response.data.Alert;
+                        }
+                    })
+                    .catch(function (error) {
+                });
+            }
+        }
+	});
+    </script>
+}

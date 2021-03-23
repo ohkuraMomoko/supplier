@@ -1,0 +1,190 @@
+﻿
+@{
+    ViewBag.Title = "預覽模式";
+    Layout = null;
+}
+
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <meta http-equiv="Content-Language" content="zh-TW" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no" />
+    <meta name="author" content="chailease" />
+    <meta name="copyright" content="仲信資融股份有限公司" />
+    <link href="//fonts.googleapis.com/css?family=Noto+Sans+TC" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="~/Content/vendor/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="~/Content/vendor/bootstrap-vue.min.css" />
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/pages/ecommerce/storePreview.min.css")
+</head>
+<body>
+    <div class="control-bar" id="app">
+        <b-modal id="model_Publish"
+                 v-model="model_Publish.isShow"
+                 v-bind:no-close-on-backdrop="true"
+                 v-bind:centered="true"
+                 v-bind:hide-footer="true"
+                 v-bind:hide-header-close="true"
+                 v-bind:dialog-class="'modal-custome modal-publish'">
+            <div class="modal-body--content">
+                <div class="publish-top">
+                    <p class="publish-top--title">恭喜</p>
+                    <p class="publish-top--desc">您的商店已經發佈並上線<br/>佈版需系統作業時間，發布後請靜待數分鐘生效</p>
+                </div>
+                <div class="publish-body">
+                    <input type="text" name="store_url" id="store_url" class="publish-body--href" readonly
+                           :value="model_Publish.href">
+                    <a target="_blank" class="btn-common btn-common-white publish-body--link"
+                       :href="model_Publish.href">查看商店</a>
+                </div>
+            </div>
+            <div class="modal-custome--footer">
+                <div class="btn-common btn-common-pink modal-btn-ok"
+                     @@click="back()">已完成</div>
+            </div>
+        </b-modal>
+        <b-modal id="model_Common"
+                 v-model="model_Common.isShow"
+                 v-bind:centered="true"
+                 v-bind:hide-footer="true"
+                 v-bind:title="model_Common.title"
+                 v-bind:hide-header-close="true"
+                 v-bind:dialog-class="'modal-custome ' + model_Common.statusClass">
+            <div class="modal-body--content">
+                <p v-html="model_Common.content"></p>
+            </div>
+            <div class="modal-custome--footer">
+                <div class="modal-custome-btn btn--cancel"
+                     v-if="model_Common.hasCancel"
+                     @@click="model_Common.isShow = false">取消</div>
+                <div class="modal-custome-btn btn--ok"
+                     v-if="model_Common.hasOk"
+                     @@click="model_Common.isShow = false">確定</div>
+            </div>
+        </b-modal>
+        <a href="@Url.Action("ProductManage","Ecommerce")" class="control-bar--logo">
+            <img src="@Url.Content("~/Content/images/icon-logo-vendor-light.svg")" alt="">
+        </a>
+        <span class="control-bar--text">您目前在預覽模式中</span>
+        <div class="control-bar--btn">
+            <div class="btn-back" v-on:click="back()">離開預覽模式</div>
+            <div class="btn-publish" v-on:click="publish()">確認發佈</div>
+        </div>
+    </div>
+    <div id="nbsModal">
+        <iframe id="autopieceIframe" src="@Url.Content("~/ecommerce/storecontent")" width="100%" scrolling="no" frameborder="0"></iframe>
+    </div>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/locales/zh_TW/faker.zh_TW.min.js"></script>
+    <script src="~/Scripts/vendor/polyfill.js"></script>
+    <script src="~/Scripts/vendor/babel.min.js"></script>
+    <script src="~/Scripts/vendor/es6-promise.auto.js"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/vendor/jquery-3.3.1.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/vendor/iframeResizer.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/vendor/vue.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/vendor/axios.min.js")"></script>
+    <script src="~/Scripts/vendor/bootstrap-vue.min.js"></script>
+
+    <script type="text/javascript">
+            var page = new Vue({
+                el: '#app',
+                data: {
+                    model_Common: {
+                        title: '提示訊息',
+                        content: '',
+                        isShow: false,
+                        btnValue: '',
+                        hasCancel: false,
+                        hasOk: true,
+                        statusClass: 'modal-custome',
+                    },
+                    model_Publish: {
+                        isShow: false,
+                        href: '',
+                    },
+                    urlPublish: '',
+                },
+                methods: {
+                    back: function () {
+                        history.back();
+                    },
+                    publish: function () {
+                        axios.post(
+					        '@Url.Action("Publish", "Store")'
+				        )
+				        .then(function (response) {
+                            if (response.data.Result.ReturnCode == 0) {
+                                page.model_Publish.href = response.data.Data;
+                                page.model_Publish.isShow = true;
+                            } else {
+                                page.model_Common.title = "發佈失敗"
+                                page.model_Common.statusClass = "modal-custome--error"
+                                page.model_Common.isShow = true
+					        }
+				        })
+                        .catch(function (error) {
+                            page.model_Common.title = "發生錯誤"
+                            page.model_Common.statusClass = "modal-custome--error"
+                            page.model_Common.content = error.Alert
+                            page.model_Common.isShow = true
+				        });
+                    },
+                    callbmodal: function (message, type) {
+                        if (type == 'success') {
+                            page.model_Common.title = "成功";
+                            page.model_Common.statusClass = "modal-custome--success";
+                            page.model_Common.content = message;
+                            page.model_Common.isShow = true;
+                        }
+
+                        if (type == 'warning') {
+                            page.model_Common.title = "提醒您";
+                            page.model_Common.statusClass = "modal-custome--warning";
+                            page.model_Common.content = message;
+                            page.model_Common.isShow = true;
+                        }
+
+                        if (type == 'error') {
+                            page.model_Common.title = "錯誤";
+                            page.model_Common.statusClass = "modal-custome--error";
+                            page.model_Common.content = message;
+                            page.model_Common.isShow = true;
+                        }
+                    }
+                }
+            });
+            iFrameResize({
+                log: false, // Enable console logging
+                inPageLinks: true,
+                autoResize: true,
+                onInit: function () {
+                },
+                onResized: function (messageData) {
+                },
+                onMessage: function (messageData) {
+                    // Callback fn when message is received
+                    console.log(
+                        'Frame ID:' +
+                        messageData.iframe.id +
+                        ',Message:' +
+                        messageData.message
+                    )
+                    console.log(messageData.message);
+                    document
+                        .getElementsByTagName('iframe')[0]
+                        .iFrameResizer.sendMessage('parent!test')
+
+                    $('#nbsModal').scrollTop(minHeight);
+                },
+                onClosed: function (id) {
+                }
+            })
+    </script>
+</body>
+</html>
+
+

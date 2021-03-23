@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<sitemanifest>
+  <IisApp path="D:\tfs\Outsourcing\專2020消010\Web\EC0card\SourceCode\SupplierPlatform\obj\Debug\Package\PackageTmp" />
+  <setAcl path="D:\tfs\Outsourcing\專2020消010\Web\EC0card\SourceCode\SupplierPlatform\obj\Debug\Package\PackageTmp" setAclResourceType="Directory" />
+  <setAcl path="D:\tfs\Outsourcing\專2020消010\Web\EC0card\SourceCode\SupplierPlatform\obj\Debug\Package\PackageTmp" setAclUser="anonymousAuthenticationUser" setAclResourceType="Directory" />
+</sitemanifest>

@@ -1,0 +1,34 @@
+﻿@{
+    ViewBag .Title = "登出";
+    Layout = "~/Views/Shared/_LayoutNotMenu.cshtml";
+}
+
+@section header {
+    @Styles.Render("~/Content/pages/home/logout.min.css")
+}
+
+<div class="page">
+    <div class="msg">
+        <img src="@Url.Content("~/Content/images/icon-confirm-success.svg")" alt="" class="center msg--pic">
+        <h3 class="msg--title">你已成功登出</h3>
+        @if (ViewBag.Login_Mobile_Type != null)
+        {
+            if(ViewBag.Login_Mobile_Type == "ios")
+            {
+                 <a href="CCFAPPVENDER://" class="center msg--link">返回登入</a>
+            }
+            else if (ViewBag.Login_Mobile_Type == "android")
+            {
+                 <a href="#" onclick="window.close" class="center msg--link">返回登入</a>
+            }
+            else
+            {
+                 <a href="@Url.Content("~/home/login")" class="center msg--link">返回登入</a>
+            }
+        }
+        else
+        {
+        <a href="@Url.Content("~/home/login")" class="center msg--link">返回登入</a>
+        }
+    </div>
+</div>

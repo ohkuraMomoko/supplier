@@ -1,0 +1,28 @@
+﻿@{
+    ViewBag.Title = "尚未開通";
+}
+
+@section header {
+    @Styles.Render("~/Content/pages/case/notOpen.min.css")
+}
+
+<div class="page">
+    <div class="msg">
+        <img src="@Url.Content("~/Content/images/icon-confirm-none-authorize.svg")" alt="" class="center msg--pic">
+        <h3 class="msg--title">你尚未開通此功能</h3>
+        <p class="msg--desc">
+            1.	若您具有主管及請款權限，則可查詢轄下的撥款核銷明細。
+            <br>2.	如果想瞭解更多，請洽詢仲信業務經辦。
+        </p>
+    </div>
+</div>
+@section scripts {
+<script type="text/babel">
+    var page = new Vue({
+        el: "#page",
+        created: function() {
+			app.currentPage.AppropriationInquiry = true;
+		},
+    })
+</script>
+}

@@ -1,0 +1,478 @@
+﻿@import "../setting/_variables.scss";
+@import "../setting/_mixins.scss";
+
+/* form reset =====================*/
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.form-control{
+    border-radius: 0;
+}
+.form-control:focus {
+    border-color: transparent;
+    box-shadow: none;
+}
+
+/* input */
+.form-input {
+    input {
+        width: 100%;
+        height: 40px;
+        border-radius: 20px;
+        background-color: #ffffff;
+        border: solid 1px #d8d8d8;
+        padding: 0 20px;
+        outline: none;
+    }
+}
+.fillin-input {
+    height: 60px;
+    line-height: 60px;
+    border-radius: 20px;
+    border: solid 1px #d8d8d8;
+    background-color: #ffffff;
+    background-repeat: no-repeat;
+    background-position: 97% center;
+    background-size: 20px;
+    display: flex;
+    flex-direction: row;
+    transition: all 0.3s linear;
+    position: relative;
+    &:hover {
+        border-color: $colorPrimary;
+        .del-btn {
+            display: block;
+        }
+    }
+    >label {
+        padding-left: 30px;
+        padding-right: 20px;
+        white-space: nowrap;
+    }
+    >input {
+        width: 60%;
+        height: 100%;
+        border: none;
+        outline: none;
+        background-color: transparent !important;
+    }
+    .del-btn {
+        position: absolute;
+        top: calc(50% - 10px);
+        right: 18px;
+        cursor: pointer;
+        display: none;
+    }
+    &.required::before {
+        content: '✻';
+        position: absolute;
+        left: 14px;
+        top: 0;
+        color: $colorPrimary;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    &.default {
+        border: solid 1px #d8d8d8 !important;
+        background-image: none !important;
+    }
+    &.disable,
+    &.readyonly {
+        border: solid 1px #d8d8d8;
+        background-color: #ececec;
+    }
+    &.success {
+        background-image: url('images/icon-input-success.svg');
+    }
+    &.error {
+        background-image: url('images/icon-error-hint-pink.svg');
+        border-color: $colorError;
+    }
+}
+.form-element-invalid {
+    color: $colorError;
+    margin-top: 10px;
+}
+.form-element-valid {
+    color: $colorSecondary5;
+    margin-top: 10px;
+}
+/*webkit瀏覽器專用*/
+.form-input input::-webkit-input-placeholder { color: $colorText4; }
+/*Firefox 4-18瀏覽器專用*/
+.form-input input::-moz-placeholder { color: $colorText4; }
+/*Firefox 19+瀏覽器專用*/
+.form-input input::-moz-placeholder{color:$colorText4;}
+/*IE10瀏覽器專用*/
+.form-input input:-ms-input-placeholder{color: $colorText4;}
+
+@include rwd(#{ $ipad-pro - 1px}){
+    .fillin-input {
+        flex-direction: column;
+        height: 40px;
+        line-height: 40px;
+        margin-top: 30px;
+        >label {
+            line-height: 22px;
+            position: absolute;
+            top: -30px;
+            left: 0;
+            height: 22px;
+            padding-left: 14px;
+        }
+        >input {
+            padding-left: 15px;
+            width: calc(100% - 30px);
+        }
+        &.required::before {
+            left: 0;
+            top: -40px;
+        }
+    }
+}
+
+/*select*/
+.inline-select {
+    position: relative;
+    label {
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        line-height: 60px;
+        padding-left: 48px;
+    }
+    .select-fillin {
+        height: 60px;
+        line-height: 60px;
+        padding-left: 114px;
+        transition: all 0.3s linear;
+    }
+    &:hover {
+        .select-fillin {
+            border-color: $colorPrimary;
+        }
+    }
+    &.required::before {
+        content: '✻';
+        position: absolute;
+        left: 32px;
+        top: 0;
+        color: $colorPrimary;
+        font-size: 12px;
+        line-height: 60px;
+        font-weight: 600;
+    }
+}
+@include rwd(#{$ipad-pro - 1px}) {
+    .inline-select {
+        margin-top: 30px;
+        label {
+            padding-left: 14px;
+            line-height: 22px;
+            height: 22px;
+            top: -30px;
+            left: 15px;
+        }
+        .select-fillin {
+            height: 40px;
+            line-height: 40px;
+            padding-left: 15px;
+        }
+        &.required::before {
+            left: 15px;
+            top: -32px;
+            line-height: 22px;
+        }
+    }
+}
+.radio-label {
+    position: relative;
+    padding-left: 46px;
+    >label {
+        &.required::before {
+            content: '✻';
+            position: absolute;
+            left: 31px;
+            top: 0;
+            color: $colorPrimary;
+            font-size: 12px;
+            font-weight: 600;
+        }
+    }
+    
+}
+@include rwd(#{$ipad-pro - 1px}) {
+    .radio-label {
+        padding-left: 30px;
+        >label {
+            &.required::before {
+                left: 15px;
+            }
+        }
+    }
+}
+
+/* select */
+// 隱藏ie select的箭頭樣式
+select::-ms-expand {
+    display: none;
+}
+.search-select {
+    width: 100%;
+    height: 40px;
+    border-radius: 20px;
+    background-color: #ffffff;
+    border: solid 1px #d8d8d8;
+    padding: 0 20px;
+}
+.search-select select{
+    width: 100%;
+    border: 0;
+    height: 40px;
+    border-radius: 0;
+    -webkit-appearance: none;
+    background-image: url("images/icon-arrow-down-black.svg");
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: 99% 39%;
+    background-size: 15px;
+    line-height: 1.5;
+    letter-spacing: 1.2px;
+    color: #32322E;
+    margin: 0;
+    outline: none;
+    cursor: pointer;
+    option {
+        font-size: 1.13rem;
+        line-height: 2rem;
+        @include change(box-shadow, ease-in-out);
+        &:hover,
+        &:focus,
+        &:checked {
+            box-shadow: 0 0 10px 100px $colorPrimary inset;
+        }
+    }
+}
+
+
+/* radio =================*/
+.radioer {
+    position: relative;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.radioer input[type="radio"] {
+    display: none;
+}
+
+.radioer input[type="radio"] + label {
+    position: relative;
+    display: inline-block;
+    padding-left: 2.5rem;
+    color: $colorText;
+    cursor: pointer;
+    user-select: none;
+    transition: color 280ms cubic-bezier(0.82,0.14,0.44,0.41);
+    &:before {
+        position: absolute;
+        top: calc(50% - 12px);
+        left: 0;
+        content: " ";
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 1px solid #d8d8d8;
+        transition: all 280ms cubic-bezier(0.82,0.14,0.44,0.41);
+        background-position: center;
+    }
+}
+
+.radioer input[type="radio"] + label{
+    &:hover{
+        &:before {
+            border-color: $colorPrimary;
+        }
+    }
+    &:active{
+        &:before {
+            // box-shadow: 0 0 0 0 transparent inset,0 0 0 0 transparent inset,0 0 0 2px $colorPrimary inset,0 0 0 24px $colorText2;
+        }
+    }
+}
+
+
+.radioer input[type="radio"]:checked + label:before {
+    background-image: url('images/icon-radio-select.svg');
+    border-color: $colorPrimary;
+}
+
+.radioer input[type="radio"]:disabled ~ label {
+    cursor: not-allowed;
+    color: $colorText2;
+    &:before {
+        box-shadow: 0 0 0 0 transparent inset, 0 0 0 0 transparent inset, 0 0 0 15px #d8d8d8 inset, 0 0 0 0 transparent;
+    }
+}
+
+@include rwd(#{$ipad - 1px}) {
+    .radioer input[type="radio"] + label {
+        font-size: 0.88rem;
+        line-height: 1.25rem;
+    }
+}
+
+/* checkbox =============*/
+.checkboxitem {
+    position: relative;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.checkboxitem input[type="checkbox"] {
+    display: none;
+}
+
+.checkboxitem input[type="checkbox"] + label {
+    position: relative;
+    display: inline-block;
+    padding-left: 2.5rem;
+    color:$colorText2;
+    cursor: pointer;
+    user-select: none;
+    transition: color 280ms cubic-bezier(0.82,0.14,0.44,0.41);
+    &:before {
+        position: absolute;
+        top: calc(50% - 12px);
+        left: 0;
+        content: " ";
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 1px solid #d8d8d8;
+        transition: all 280ms cubic-bezier(0.82,0.14,0.44,0.41);
+        background-position: center;
+    }
+}
+
+.checkboxitem input[type="checkbox"] + label {
+    &:hover{
+        &:before {
+            border-color: $colorPrimary;
+        }
+    }
+    &:active{
+        &:before {
+            // box-shadow: 0 0 0 0 transparent inset,0 0 0 0 transparent inset,0 0 0 2px $colorPrimary inset,0 0 0 24px $colorText2;
+        }
+    }
+}
+
+.checkboxitem input[type="checkbox"]:checked + label:before {
+    background-image: url('images/icon-radio-select-style-2.svg');
+    border-color: $colorPrimary;
+}
+
+.checkboxitem input[type="checkbox"]:disabled ~ label {
+    cursor: not-allowed;
+    color: $colorText2;
+    &:before {
+        box-shadow: 0 0 0 0 transparent inset, 0 0 0 0 transparent inset, 0 0 0 15px #d8d8d8 inset, 0 0 0 0 transparent;
+    }
+}
+
+@include rwd(#{$ipad - 1px}) {
+    .checkboxitem input[type="checkbox"] + label {
+        font-size: 0.88rem;
+        line-height: 1.25rem;
+    }
+}
+
+
+/*textarea */
+.fillin-textarea {
+    padding: 20px 0;
+    height: 150px;
+    line-height: 1.5;
+    border-radius: 20px;
+    border: solid 1px #d8d8d8;
+    background-color: #ffffff;
+    background-repeat: no-repeat;
+    background-position: 97% calc(100% - 20px);
+    background-size: 20px;
+    display: flex;
+    flex-direction: row;
+    transition: all 0.3s linear;
+    position: relative;
+    &:hover {
+        border-color: $colorPrimary;
+    }
+    >label {
+        padding-left: 30px;
+        padding-right: 20px;
+        white-space: nowrap;
+    }
+    >textarea {
+        width: 70%;
+        height: 100%;
+        border: none;
+        outline: none;
+        background-color: transparent !important;
+        resize: none;
+    }
+    &.required::before {
+        content: '✻';
+        position: absolute;
+        left: 14px;
+        top: 20px;
+        color: $colorPrimary;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    &.default {
+        border: solid 1px #d8d8d8 !important;
+        background-image: none !important;
+    }
+    &.disable,
+    &.readyonly {
+        border: solid 1px #d8d8d8;
+        background-color: #ececec;
+    }
+    &.success {
+        background-image: url('../../images/icon-input-success.svg');
+    }
+    &.error {
+        background-image: url('../../images/icon-error-hint-pink.svg');
+        border-color: $colorError;
+    }
+}
+@include rwd(#{ $ipad-pro - 1px}){
+    .fillin-textarea {
+        flex-direction: column;
+        line-height: 1.5;
+        margin-top: 30px;
+        >label {
+            line-height: 22px;
+            position: absolute;
+            top: -30px;
+            left: 0;
+            height: 22px;
+            padding-left: 14px;
+        }
+        >textarea {
+            padding: 0 15px;
+            width: 100%;
+        }
+        &.required::before {
+            left: 0;
+            top: -40px;
+        }
+    }
+}
+.text-muted {
+    color: $colorText !important;
+}

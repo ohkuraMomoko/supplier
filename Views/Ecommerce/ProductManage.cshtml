@@ -1,0 +1,802 @@
+﻿@{
+    ViewBag.Title = "商品管理";
+}
+@section header {
+    @Styles.Render("~/Content/pages/ecommerce/productManage.min.css")
+}
+
+
+<div id="page" class="page">
+    <div class="page-loading" v-if="loadingStatus === 1">
+        <img src="@Url.Content("~/Content/images/icon-searchlist-loading.gif")" alt="" class="center pic">
+        <p class="desc">正在為您處理...</p>
+    </div>
+	<div class="page-container">
+		<div class="page-top"
+			v-if="!isMobile"
+			v-bind:class="changeFixed ? 'fixed' : ''">
+            <p class="page-title">@ViewBag.Title</p>
+            <div class="page-btn-container">
+				<a class="btn-common btn-common-white" href="@Url.Content("~/ecommerce/maintainstore")"
+					>編輯商店資訊</a>
+				<div class="btn-common btn-common-white"
+					v-bind:disable="productManageIsDefault"
+					v-bind:class="productManageIsDefault ? 'disable' : '' "
+					@@click="storePreview"
+					>預覽</div>
+				<div id="BtnStorePublish" class="btn-common btn-common-pink"
+					v-bind:disable="productManageIsDefault"
+					v-bind:class="productManageIsDefault ? 'disable' : '' "
+					@@click="storePublish"
+					>確認發佈</div>
+                <div v-if="!productManageIsDefault">
+                    <b-tooltip target="BtnStorePublish" triggers="hover" placement="bottom" custom-class="tooltip-publish">
+                        <p class="tooltip-publish--title">確認發佈</p>
+                        <p class="tooltip-publish--desc">點擊發佈讓大家都可以看到您的商店</p>
+                        <a :href="model_Publish.href" v-if="model_Publish.href != ''" class="tooltip-publish--link">查看商店</a>
+                    </b-tooltip>
+                </div>
+			</div>
+		</div>
+		<div class="pd-manage"
+			v-bind:class="[isMobile && showPdManage ? 'display-show' : '']">
+			<p class="pd-manage-title">商品管理功能</p>
+			<div class="pd-manage-close"
+				@@click="showPdManage = false"></div>
+			<div class="pd-manage-content">
+				<a class="center center btn-common btn-common-white" href="@Url.Content("~/ecommerce/maintainstore")"
+					>編輯商店資訊</a>
+				<div class="center btn-common btn-common-white"
+					@@click="storePreview"
+					>預覽</div>
+				<a class="center btn-common btn-common-white" href="_blank"
+					:href="model_Publish.href"
+					>查看商店</a>
+				<div class="center btn-common btn-common-pink"
+					@@click="storePublish"
+					>確認發佈</div>
+			</div>
+		</div>
+		<div class="product-list-default" style="display: none"
+			v-show="productManageIsDefault">
+			<div class="center default-box">
+				<img src="@Url.Content("~/Content/images/icon-product-manage-default.svg")" alt="" class="center">
+				<p class="default-box-title">新增您的第一個產品</p>
+				<p class="default-box-desc">您只要開始新增產品，就可以在這裡看得到。</p>
+				<a class="center btn-common btn-common-pink" href="@Url.Content("~/ecommerce/addproduct")">+ 新增商品</a>
+			</div>
+		</div>
+        <div v-show ="!productManageIsDefault" style="display: none">
+            <div class="row-add"
+                 v-bind:class="changeFixed ? 'fixed-table' : ''"
+                 v-if="selected.length !== 0 && !isMobile">
+                <p class="select-text"
+                   v-text="'已選擇'+selected.length+'筆'"></p>
+                <div class="btn-common btn-common-white product-add"
+                     @@click="copyProduct">複製</div>
+                <div class="btn-common btn-common-red product-add"
+                     @@click="model_pdDelete.isShow = true">刪除</div>
+            </div>
+            <div class="row-add"
+                 v-bind:class="changeFixed ? 'fixed-table' : ''"
+                 v-else>
+                <div class="product-add--mobile"
+                     v-if="isMobile">
+                    <a href="@Url.Content("~/ecommerce/addproduct")">
+                        <img src="@Url.Content("~/Content/images/btn-add-pink.svg")" alt="">
+                    </a>
+                </div>
+                <div class="btn-common btn-common-pink product-add"
+                     v-else><a class="center btn-common btn-common-pink" href="@Url.Content("~/ecommerce/addproduct")">+ 新增商品</a></div>
+            </div>
+            <div v-if="isMobile">
+                <p class="page-title-mobile">@ViewBag.Title</p>
+                <div class="control-bar"
+                     v-bind:class="[changeFixed ? 'fixed' : '' ]">
+                    <div class="d-flex"
+                         style="width: 100px;"
+                         v-if="selected.length !== 0"
+                         @@click="selected = []">
+                        <img v-if="filteredData.length == selected.length" src="@Url.Content("~/Content/images/icon-radio-select-style-2.svg")" alt="">
+                        <img v-else src="@Url.Content("~/Content/images/icon-radio-decrease.svg")" alt="">
+                        <span style="padding-left: 22px;">全選</span>
+                    </div>
+                    <div class="checkboxitem"
+                         v-else>
+                        <input type="checkbox"
+                               v-bind:name="'selectall_checkbox'"
+                               v-bind:id="'selectall_checkbox'"
+                               v-model="selectAll"
+                               autocomplete="off"/>
+                        <label v-bind:for="'selectall_checkbox'" class="selectall_checkbox_label">&nbsp;全選</label>
+                    </div>
+                    <div v-if="selected.length !== 0"
+                         class="control-box">
+                        <div class="control-box-btn control-box-btn--edit"
+                             @@click="copyProduct">複製</div>
+                        <div class="control-box-btn control-box-btn--del"
+                             @@click="model_pdDelete.isShow = true">刪除</div>
+                    </div>
+                    <div class="control-bar--btn"
+                         v-else
+                         @@click="showPdManage = true">商品管理功能</div>
+                </div>
+            </div>
+            <!-- block: result -->
+            <!-- resultStatus: 0(loading) / 1(查詢無資料/尚未查詢) / 2(正常返回結果) -->
+            <div>
+                <div class="result" >
+                    <div class="result--null" v-if="resultStatus === 1">
+                        <img src="@Url.Content("~/Content/images/icon-searchlist-none-result.svg")" alt="" class="center pic">
+                        <p class="title">尚未有符合的搜尋結果</p>
+                        <p class="desc">請試試其他搜尋條件或篩選方式</p>
+                    </div>
+                    <div class="result--null" v-else-if="resultStatus === 0">
+                        <img src="@Url.Content("~/Content/images/icon-searchlist-loading.gif")" alt="" class="center pic">
+                        <p class="desc">正在為您努力載入...</p>
+                    </div>
+                    <div class="result--ok" style="margin-bottom: 150px" v-else-if="resultStatus === 2">
+                        <!-- rwd: 查詢結果 mobile -->
+                        <div class="mobile-box"
+                             v-if="isMobile">
+                            <case-item 
+                                       v-for="data in filteredData"
+                                       :key="data.product_id"
+                                       v-bind:case_data="data"
+                                       v-bind:item_selected="selected"
+                                       v-on:input="changeSelect"
+                                       v-on:setpd="checkSetPd"></case-item>
+                        </div>
+                        <!-- rwd: 查詢結果 desktop -->
+                        <div class="table-box" v-else>
+                            <div class="table-control table-control--reorder"
+                                 v-bind:class="changeFixed ? 'fixed-table2' : ''">
+                                <div class="d-flex"
+                                     style="width: 84px;"
+                                     v-if="selected.length !== 0"
+                                     @@click="selected = []">
+                                    <img v-if="filteredData.length == selected.length" src="@Url.Content("~/Content/images/icon-radio-select-style-2.svg")" alt="">
+                                    <img v-else src="@Url.Content("~/Content/images/icon-radio-decrease.svg")" alt="">
+                                    <span style="padding-left: 11px;">全選</span>
+                                </div>
+                                <div class="checkboxitem"
+                                     style="width: 84px;"
+                                     v-else>
+                                    <input type="checkbox"
+                                           v-bind:name="'selectall_checkbox'"
+                                           v-bind:id="'selectall_checkbox'"
+                                           v-model="selectAll"
+                                           autocomplete="off"/>
+                                    <label v-bind:for="'selectall_checkbox'" class="selectall_checkbox_label" style="padding-left: 30px;">&nbsp;全選</label>
+                                </div>
+                                <div class="table-control--item cursor-none"
+                                     style="width: 87px;">
+                                    &nbsp;
+                                </div>
+                                <div class="table-control--item"
+                                     v-bind:style="{ width: columnWidth.product_name }">
+                                    商品名稱
+                                </div>
+                                <div class="table-control--item"
+                                     v-bind:style="{ width: columnWidth.product_period }">
+                                    開放期數
+                                </div>
+                                <div class="table-control--item"
+                                     v-bind:style="{ width: columnWidth.product_price }">
+                                    商品價格
+                                </div>
+                                <div class="table-control--item"
+                                     v-bind:style="{ width: columnWidth.inventory }">
+                                    產品庫存
+                                </div>
+                                <div class="table-control--item cursor-none"
+                                     v-bind:style="{ width: columnWidth.product_status }">
+                                </div>
+                            </div>
+                            <div class="table-content">
+                                <table-row 
+                                           v-for="data in filteredData"
+                                           :key="data.case_sn"
+                                           v-bind:case_data="data"
+                                           v-bind:colume_width="columnWidth"
+                                           v-bind:item_selected="selected"
+                                           v-on:input="changeSelect"
+                                           v-on:setpd="checkSetPd"
+                                           ></table-row>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+	</div>
+	
+	<!-- modal: 通用訊息 -->
+    <b-modal id="model_Common"
+        v-model="model_Common.isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="model_Common.title"
+        v-bind:hide-header-close="true"
+        v-bind:dialog-class="'modal-custome ' + model_Common.statusClass">
+        <div class="modal-body--content">
+            <p v-html="model_Common.content"></p>
+        </div>
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--cancel"
+                v-if="model_Common.hasCancel"
+                @@click="model_Common.isShow = false">取消</div>
+            <div class="modal-custome-btn btn--ok"
+                v-if="model_Common.hasOk"
+                @@click="reloadPage()">確定</div>
+        </div>
+	</b-modal>
+
+	<!-- modal: 上下架 -->
+	<b-modal id="model_pdStatus"
+        v-model="model_pdStatus.isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="model_pdStatus.title"
+        v-bind:hide-header-close="true"
+        v-bind:dialog-class="'modal-custome'">
+        <div class="modal-body--content">
+            <p v-html="model_pdStatus.content"></p>
+        </div>
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--cancel"
+                @@click="model_pdStatus.isShow = false">取消</div>
+            <div class="modal-custome-btn btn--ok"
+                @@click="setProduct">確定</div>
+        </div>
+	</b-modal>
+
+	<!-- modal: 刪除商品 -->
+	<b-modal id="model_pdDelete"
+        v-model="model_pdDelete.isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="'確定要刪除選擇的產品？'"
+        v-bind:hide-header-close="true"
+        v-bind:dialog-class="'modal-custome'">
+        <div class="modal-body--content">
+            <p>已刪除的產品將從商店中刪除，且無法恢復。</p>
+        </div>
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--cancel"
+                @@click="model_pdDelete.isShow = false">取消</div>
+            <div class="modal-custome-btn btn--ok"
+                @@click="deleteProduct">刪除</div>
+        </div>
+	</b-modal>
+	
+	<!-- modal: 發布成功 -->
+	<b-modal id="model_Publish"
+        v-model="model_Publish.isShow"
+        v-bind:no-close-on-backdrop="true"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:hide-header-close="true"
+        v-bind:dialog-class="'modal-custome modal-publish'">
+        <div class="modal-body--content">
+            <div class="publish-top">
+				<p class="publish-top--title">恭喜</p>
+				<p class="publish-top--desc">您的商店已經發佈並上線</p>
+			</div>
+			<div class="publish-body">
+				<input type="text" name="store_url" id="store_url" class="publish-body--href" readonly
+					:value="model_Publish.href">
+				<a target="_blank" class="btn-common btn-common-white publish-body--link"
+					:href="model_Publish.href" >查看商店</a>
+			</div>
+        </div>
+        <div class="modal-custome--footer">
+            <div class="btn-common btn-common-pink modal-btn-ok"
+                @@click="model_Publish.isShow = false">已完成</div>
+        </div>
+	</b-modal>
+	<div class="mobile-tips"
+        v-if="isMobile">
+        更全面、完整功能的供應商平台管理系統請從桌面瀏覽
+    </div>
+</div>
+
+@section scripts {
+<script type="text/babel">
+    // 區分桌手機component: tableRow (desktop) / caseItem (mobile)
+    const tableRow = Vue.component("table-row", {
+        props: ["case_data", "colume_width", 'item_selected'],
+        data: function() {
+            return {
+                link:''
+            };
+        },
+        created: function(){
+            this.link = "@Url.Content("~/ecommerce/addproduct")"+'?product_id='+this.case_data.product_id
+            this.imgurl = "@Url.Content("~/ecommerce/RenderImage")"+'?id='+this.case_data.product_image
+        },
+        template:
+            `<transition name="fade">
+                <div class="table-row"
+                     v-bind:id="'row'+case_data.product_id"
+                     v-bind:class="'product_status--'+case_data.product_status">
+                    <div class="table-row--item" v-bind:style="{ width: colume_width.product_checkbox }">
+                        <div class="checkboxitem">
+                            <input type="checkbox"
+                                   v-bind:name="'product_id'"
+                                   v-bind:id="case_data.product_id"
+                                   v-bind:value="case_data.product_id"
+                                   v-on:change="onChange"
+                                   v-bind:checked="isChecked"
+                                   autocomplete="off" />
+                            <label v-bind:for="case_data.product_id"></label>
+                        </div>
+                    </div>
+                    <div class="table-row--item"
+                         v-bind:style="{ width: colume_width.product_image }">
+                        <div class="product-img"
+                             v-bind:style="{'background-image': 'url('+imgurl+')'}"></div>
+                    </div>
+                    <div class="table-row--item text-opacity"
+                         v-bind:style="{ width: colume_width.product_name }">
+                        <span class="limit-12">{{ case_data.product_name }}</span>
+                    </div>
+                    <div class="table-row--item text-opacity"
+                         v-bind:style="{ width: colume_width.product_period }">
+                        <span class="limit-6">{{ case_data.product_period }}</span>
+                    </div>
+                    <div class="table-row--item text-opacity"
+                         v-bind:style="{ width: colume_width.product_price }">
+                        NT$ {{ $options.filters.amountAddDot(case_data.product_price) }}
+                    </div>
+                    <div class="table-row--item text-opacity"
+                         v-bind:style="{ width: colume_width.inventory }">
+                         <span v-if="!!case_data.inventory">{{ case_data.inventory }}</span>
+                    </div>
+                    <div class="table-row--item product-btn-box"
+                         v-bind:style="{ width: colume_width.product_status }">
+                        <div class="product-btn"
+                             v-if="case_data.product_status == 2"
+                             @@click="setPd">下架</div>
+                        <div class="product-btn"
+                             v-else-if="case_data.product_status == 1"
+                             @@click="setPd">上架</div>
+                        <a class="product-btn"
+                           v-bind:href="link">編輯</a>
+                    </div>
+                </div>
+            </transition>`,
+            computed: {
+            isChecked: function() {
+                return (this.item_selected.indexOf(this.case_data.product_id) > -1) && (this.item_selected.length !== 0)
+            }
+        },
+        methods: {
+            onChange: function(e) {
+                this.$emit('input', e);
+                console.log(e);
+            },
+            setPd: function() {
+                let pd_status;
+                if(this.case_data.product_status == 1) {
+                    pd_status = true
+                }else if(this.case_data.product_status == 2) {
+                    pd_status = false
+                }
+                this.$emit('setpd', this.case_data.product_id, pd_status)
+            },
+            parentClicked(num){
+                console.log(num);
+            },            
+        },
+    });
+
+    const caseItem = Vue.component("case-item", {
+        props: ["case_data", 'item_selected'],
+        data: function() {
+            return {
+                isOpen: false
+            };
+        },
+        created: function() {
+            this.link = "@Url.Content("~/ecommerce/addproduct")"+'?product_id='+this.case_data.product_id
+            this.imgurl = "@Url.Content("~/ecommerce/RenderImage")"+'?id='+this.case_data.product_image
+        },
+        template:
+            `<transition name="fade">
+                <div class="case-item"
+                     v-bind:id="'row'+case_data.product_id"
+                     v-bind:class="'product_status--'+case_data.product_status">
+                    <div class="case-top">
+                        <div class="case-top--checkbox">
+                            <div class="checkboxitem">
+                                <input type="checkbox"
+                                       v-bind:name="'product_id'"
+                                       v-bind:id="case_data.product_id"
+                                       v-bind:value="case_data.product_id"
+                                       v-on:change="onChange"
+                                       v-bind:checked="isChecked"
+                                       autocomplete="off" />
+                                <label v-bind:for="case_data.product_id"></label>
+                            </div>
+                        </div>
+                        <div class="case-top--img" v-bind:style="{'background-image': 'url('+imgurl+')'}"></div>
+                        <div class="case-top--name text-opacity"
+                             v-text="case_data.product_name"></div>
+                    </div>
+                    <div class="case-body">
+                        <p class="case-body--period limit-6 text-opacity" v-text="case_data.product_period"></p>
+                        <p class="case-body--price text-opacity">
+                            NT$ {{ $options.filters.amountAddDot(case_data.product_price) }}
+                        </p>
+                        <span v-if="!!case_data.inventory" class="case-body--price">{{ case_data.inventory }}</span>
+                    </div>
+                    <div class="case-footer">
+                        <div class="product-btn product-btn--white"
+                             v-if="case_data.product_status == 2"
+                             @@click="setPd">下架</div>
+                        <div class="product-btn product-btn--white"
+                             v-else-if="case_data.product_status == 1"
+                             @@click="setPd">上架</div>
+                        <a class="product-btn product-btn--edit" v-bind:href="link">編輯</a>
+                    </div>
+                </div>
+            </transition>`,
+        computed: {
+            isChecked: function() {
+                return this.item_selected.indexOf(this.case_data.product_id) > -1;
+            }
+        },
+        methods: {
+            onChange: function(e) {
+                this.$emit('input', e)
+            },
+            selfUpdate(val) {
+                this.message = val;
+            },
+            setPd: function() {
+                let pd_status;
+                if(this.case_data.product_status == 1) {
+                    pd_status = true
+                }else if(this.case_data.product_status == 2) {
+                    pd_status = false
+                }
+                this.$emit('setpd', this.case_data.product_id, pd_status)
+            }
+        }
+    });
+
+    var page = new Vue({
+        el: "#page",
+        mixins: [myMixin],
+        store: store,
+        component: {
+            tableRow,
+            caseItem
+        },
+        data: {
+            productList: @Html.Raw(Json.Encode(ViewBag.ProductList)),
+            apiUrl_List: "",
+            apiUrl_CopyOrDelete: '@Url.Action("CopyOrDelete", "Product")',
+            apiUrl_SetProductStatus: '@Url.Action("SetProductStatus", "Product")',
+            apiUrl_Publish: '@Url.Action("Publish", "Store")',
+            urlPublish: '@ViewBag.publishUrl',
+            urlDownloadImg: '@Url.Action("Image", "Product")',
+            productManageIsDefault: true,
+            isMobile: false,
+            showPdManage: false,
+            model_Common: {
+                title: '提示訊息',
+                content: '',
+                isShow: false,
+                btnValue: '',
+                hasCancel: false,
+                hasOk: true,
+                statusClass: 'modal-custome',
+            },
+            model_pdStatus: {
+                title: '提示訊息',
+                content: '',
+                isShow: false,
+                btnValue: '',
+            },
+            model_Publish: {
+                isShow: false,
+                href: '',
+            },
+            model_pdDelete: {
+                isShow: false
+            },
+            changeFixed: false,
+            resultStatus: 0,
+            columnWidth: {
+                product_checkbox: '60px',
+                product_image: '112px',
+                product_name: '15%',
+                product_period: '110px',
+                product_price: '15%',
+                instock: '15%',
+                inventory: '15%',
+                product_status: '187px'
+            },
+            apiDatas: [],
+            selected: [],
+            setPd: {
+                productId: '',
+                productStatus: false
+            },
+            loadingStatus : 0
+        },
+        created: function() {
+            app.currentPage.productManage = true
+            this.checkSize()
+            window.addEventListener('scroll', () => {
+                this.checkSize()
+            }, true);
+            window.addEventListener('resize', () => {
+                this.checkSize()
+            }, true);
+            this.getTableData();
+
+            if(this.urlPublish !== '' && this.urlPublish !== null)
+            {
+                this.model_Publish.href = this.urlPublish;
+            }
+        },
+        computed: {
+            filteredData: function() {
+                var data = this.apiDatas;
+                return data;
+            },
+            selectAll: {
+                get: function () {
+                    return this.selected.length === this.apiDatas.length && this.apiDatas.length !== 0
+                },
+                set: function (value) {
+                    var selected = [];
+                    if (value) {
+                        this.apiDatas.forEach(function (i) {
+                            selected.push(i.product_id);
+                        });
+                    }
+                    this.selected = selected;
+                }
+            },
+            allPrice: function() {
+                let temp = 0
+                for(let i=0; i < this.apiDatas.length; i++){
+                    for(let j=0; j < this.selected.length; j++) {
+                        if(this.apiDatas[i].case_sn == this.selected[j]) {
+                            temp += this.apiDatas[i].price;
+                        }
+                    }
+                }
+                return temp;
+            }
+        },
+        methods: {
+            checkSize: function() {
+                let scrollTop = document.documentElement.scrollTop ||
+                            document.body.scrollTop ||
+                            document.querySelector('body').scrollTop;
+                if(scrollTop >= 100){
+                    this.changeFixed = true;
+                }else {
+                    this.changeFixed = false;
+                }
+
+                if(this.$store.getters.getWindowWidth <= this.$store.getters.getBreakpoint) {
+                    this.isMobile = true;
+                }else {
+                    this.isMobile = false;
+                }
+            },
+            getTableData: function() {
+                let vm = this
+                this.resultStatus = 0
+                vm.apiDatas = [];
+
+                var data = vm.productList;
+                console.log('ProductList',data);
+                if(!!data) {
+                    for (let index = 0; index < data.length; index++) {
+                            let period ="";
+                            data[index].ProductPeriod.forEach(function(e) {
+                                period += e.PeriodNum + ","
+                        });
+
+                        // TODO: 把ProductLink改成庫存
+                            vm.apiDatas.push({
+                            product_id: data[index].ProductId    ,
+                            product_name: data[index].ProductName,
+                            product_period: period.substring(0, period.length - 1),
+                            product_price: data[index].ProductPrice,
+                            product_status: data[index].ProductStatus,
+                            product_image: data[index].ProductImage ,
+                            instock: data[index].ProductLink,
+                            inventory: data[index].InventoryStatus,
+                        });
+                    }
+                }
+
+                if(vm.apiDatas.length !== 0)
+                {
+                    vm.resultStatus = 2;
+                    vm.productManageIsDefault = false
+                }
+                else
+                {
+                    vm.productManageIsDefault = true
+                    vm.resultStatus = 2;
+                }
+
+            },
+            changeSelect: function(e) {
+                if (e.target.checked) {
+                    this.selected.push(e.target.value)
+                }
+                else {
+                    var index = this.selected.indexOf(e.target.value);
+                    if (index > -1) {
+                        this.selected.splice(index, 1);
+                    }
+                }
+            },
+            copyProduct: function() {
+                let vm = this
+                if(this.selected.length <= 5) {
+                    axios.post(
+                        vm.apiUrl_CopyOrDelete,
+                        {
+                            'productids': vm.selected,
+                            'action': 0
+                        }
+                    )
+                    .then(function (response) {
+                        if (response.data.ReturnCode == 0) {
+                            vm.model_Common.title = '已複製'+ vm.selected.length +'筆產品';
+                            vm.model_Common.statusClass = "modal-custome--success"
+                            vm.model_Common.isShow = true
+                        }else {
+                            vm.model_Common.title = "複製失敗"
+                            vm.model_Common.statusClass = "modal-custome--warring"
+                            model_Common.isShow = true
+                        }
+                    })
+                    .catch(function(error){
+                        vm.model_Common.title = "發生錯誤"
+                        vm.model_Common.statusClass = "modal-custome--error"
+                        vm.model_Common.content = error.Alert
+                        vm.model_Common.isShow = true
+                    });
+                } else {
+                    vm.model_Common.title = "複製商品數量限制5筆以下"
+                    vm.model_Common.statusClass = "modal-custome--warring"
+                    //vm.model_Common.content = error.Alert
+                    vm.model_Common.isShow = true
+
+                }
+            },
+            deleteProduct: function() {
+                let vm = this
+                axios.post(
+                    vm.apiUrl_CopyOrDelete,
+                    {
+                        'productids': vm.selected,
+                        'action': 1
+                    }
+                )
+                .then(function (response) {
+                    if (response.data.ReturnCode == 0) {
+                        vm.model_Common.title = '已刪除'+ vm.selected.length +'筆產品';
+                        vm.model_Common.statusClass = "modal-custome--success"
+                        vm.model_Common.isShow = true
+                    }else {
+                        vm.model_Common.title = "刪除失敗"
+                        vm.model_Common.statusClass = "modal-custome--warring"
+                        vm.model_Common.isShow = true
+                        vm.model_pdDelete.isShow = false
+                    }
+                })
+                .catch(function(error){
+                    vm.model_Common.title = "發生錯誤"
+                    vm.model_Common.statusClass = "modal-custome--error"
+                    vm.model_Common.content = error.Alert
+                    vm.model_Common.isShow = true
+                    model_pdDelete.isShow = false
+                });
+            },
+            storePublish: function() {
+                let vm = this
+                if(this.productManageIsDefault) {
+                    return;
+                }
+                vm.loadingStatus = 1;
+                axios.post(
+                    vm.apiUrl_Publish,
+                )
+                .then(function (response) {
+                    if (response.data.Result.ReturnCode === 0) {
+                        vm.model_Publish.href = response.data.Data
+                        vm.model_Publish.isShow = true
+                    }else {
+                        vm.model_Common.title = "發布失敗"
+                        vm.model_Common.statusClass = "modal-custome--error"
+                        vm.model_Common.content = error.Alert
+                        vm.model_Common.isShow = true
+                    }
+                    vm.loadingStatus = 0;
+                })
+                .catch(function(error){
+                    vm.model_Common.title = "發生錯誤"
+                    vm.model_Common.statusClass = "modal-custome--error"
+                    vm.model_Common.content = error.Alert
+                    vm.model_Common.isShow = true
+                    vm.loadingStatus = 0;
+                });
+            },
+            storePreview: function() {
+            @*var upProduct = 0;
+                page.productList.forEach(function(e) { if(e.ProductStatus === 2){upProduct=+1}});*@
+
+            if(this.productManageIsDefault) {
+                return;
+            }
+
+            location.href = '@Url.Action("storepreview", "ecommerce")';
+
+            @*if(upProduct !== 0) {
+
+                } else {
+                page.model_Common.title = "訊息"
+                        page.model_Common.statusClass = "modal-custome--warning"
+                        page.model_Common.content = "現在無上架商品，無法預覽"
+                        page.model_Common.isShow = true
+                }*@
+            },
+            checkSetPd: function(productId, productStatus) {
+                this.model_pdStatus.title = productStatus ? "確認要上架此產品？" : "確認要下架此產品？"
+                this.model_pdStatus.isShow = true
+                this.setPd.productId = productId
+                this.setPd.productStatus = productStatus
+                console.log("productId:"+this.setPd.productId+",productStatus:"+this.setPd.productStatus)
+            },
+            setProduct: function() {
+                let vm = this
+                this.model_pdStatus.isShow = false
+                console.log("productId:"+vm.setPd.productId+",productStatus:"+vm.setPd.productStatus)
+                var productids = new Array();
+                productids.push(vm.setPd.productId);
+                axios.post(vm.apiUrl_SetProductStatus,
+                    {
+                        'productids': productids,
+                        'status': vm.setPd.productStatus
+                    }
+                )
+                .then(function (response) {
+                    if (response.data.ReturnCode == 0) {
+                        vm.model_Common.title = vm.setPd.productStatus ? "上架成功" : "下架成功"
+                        vm.model_Common.statusClass = "modal-custome--success"
+                        vm.model_Common.isShow = true
+                    }else {
+                        vm.model_Common.title = vm.setPd.productStatus ? "上架失敗" : "下架失敗"
+                        vm.model_Common.statusClass = "modal-custome--warring"
+                        vm.model_Common.isShow = true
+                    }
+                })
+                .catch(function(error){
+                    vm.model_Common.title = "發生錯誤"
+                    vm.model_Common.statusClass = "modal-custome--error"
+                    vm.model_Common.content = error.Alert
+                    vm.model_Common.isShow = true
+                    vm.model_pdStatus.isShow = false
+                });
+            },
+            reloadPage: function() {
+                model_Common.isShow = false;
+                window.history.go(0);
+            }
+        }
+    });
+</script>
+}

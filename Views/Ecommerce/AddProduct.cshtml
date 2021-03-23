@@ -1,0 +1,1796 @@
+﻿@{
+    ViewBag.Title = @ViewBag.Title;
+}
+@section header {
+    <script src="~/Scripts/vendor/vue2Dropzone.js"></script>
+    <script src="~/Scripts/vendor/compressor.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="~/Scripts/vendor/vue2Dropzone.min.css" />
+    @Styles.Render("~/Content/pages/ecommerce/addProduct.min.css")
+}
+
+<style>
+    .vue-dropzone > .dz-preview .dz-remove {
+        position: absolute;
+        z-index: 30;
+        color: #fff;
+        margin-left: 0px;
+        padding: 0px;
+        top: inherit;
+        bottom: 0px;
+        border: 0px #fff solid;
+        text-decoration: none;
+        text-transform: uppercase;
+        font-size: 0;
+        font-weight: 800;
+        letter-spacing: 1.1px;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+<div id="page" class="page">
+	<div class="page-container">
+		<div class="page-top"
+			v-bind:class="changeFixed ? 'fixed' : ''">
+            <p class="page-title" v-text="isEdit ? '編輯商品資訊' : '新增商品'"></p>
+            <div class="page-btn-container"
+                v-bind:class="changeFixed ? 'fixed' : ''">
+				<a class="btn-common btn-common-white" href="@Url.Content("~/ecommerce/productmanage")">取消</a>
+                <div class="btn-common btn-common-pink"
+                    v-if="!isEdit"
+                    @@click="updateProduct(0)"
+                    >新增</div>
+                <div class="btn-common btn-common-pink"
+                    v-if="isEdit"
+                    @@click="modal_save_upadte.isShow = true"
+					>儲存</div>
+			</div>
+        </div>
+        <div class="page-body">
+            <div class="product-form">
+                <div class="block">
+                    <p class="block-title">商品封面圖</p>
+                    <div class="block-content">
+                        <div class="image-upload">
+                            <img v-on:click="openImage()" 
+                                src="@Url.Content("~/Content/images/icon-image-upload.svg")" 
+                                :style="notdisplay"
+                                alt="" 
+                                class="logo_icon">                            
+                                <vue-dropzone 
+                                        :style="display"
+                                        ref="uploadfile" 
+                                        id="dropzone"
+                                        :options="dropzoneOptions"
+                                        v-on:vdropzone-removed-file="openImage()"
+                                        v-bind:required="formElementControl.product_name.required">
+                                </vue-dropzone>
+                            <!-- <img src="@Url.Content("~/Content/images/icon-image-upload.svg")" alt=""> -->
+                        </div>
+                        <p class="input-care">建議最佳圖檔尺寸：500 X 500px</p>
+                    </div>
+                </div>
+                <div class="block">
+                    <p class="block-title">商品資訊</p>
+                    <div class="block-content">
+                        <div class="pb-4 store-form-item">
+                            <div class="fillin-input"
+                                v-bind:class="changeClassStatus(formElementControl.product_name, validation_product_name)" >
+                                <label for="product_name">商品名稱</label>
+                                <input type="text" id="product_name" name="product_name" required placeholder="請輸入商品名稱 ( 20字內 )" maxlength="20"
+                                    v-bind:required="formElementControl.product_name.required"
+                                    v-model.trim="form.product_name" />
+                            </div>
+                            <b-form-invalid-feedback :state="validation_product_name" 
+                                v-if="!formElementControl.product_name.isDefault"
+                                v-text="formElementControl.product_name.invalidFeedback">
+                            </b-form-invalid-feedback>
+                        </div>
+                        <div class="pb-4 store-form-item">
+                            <div class="fillin-input" 
+                                v-bind:class="changeClassStatus(formElementControl.suggest_price, validation_suggest_price)" >
+                                <label for="suggest_price">建議售價</label>
+                                <input type="number" id="suggest_price" name="suggest_price" required placeholder="請輸入建議售價"
+                                    v-bind:required="formElementControl.suggest_price.required"
+                                    v-model.trim="form.suggest_price"
+                                    @@keypress="$options.filters.isNumber($event)" />
+                            </div>
+                            <b-form-invalid-feedback :state="validation_suggest_price" 
+                                v-if="!formElementControl.suggest_price.isDefault"
+                                v-text="formElementControl.suggest_price.invalidFeedback">
+                            </b-form-invalid-feedback>
+                        </div>
+                        <div class="store-form-item">
+                            <div class="fillin-input"
+                                v-bind:class="changeClassStatus(formElementControl.product_price, validation_product_price)" >
+                                <label for="product_price">優惠價</label>
+                                <input type="number" id="product_price" name="product_price" required placeholder="請輸入優惠價"
+                                    v-bind:required="formElementControl.product_price.required"
+                                    v-model.trim="form.product_price" 
+                                    v-on:blur="cal_product_price()" 
+                                    @@keypress="$options.filters.isNumber($event)" />
+                            </div>
+                            <b-form-invalid-feedback :state="validation_product_price" 
+                                v-if="!formElementControl.product_price.isDefault"
+                                v-text="formElementControl.product_price.invalidFeedback">
+                            </b-form-invalid-feedback>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="block-content">
+                        <div class="pb-4 store-form-item">
+                            <label for="productIntroductType1" class="">商品介紹</label>
+                            <div class="row no-gutters">
+                                <div class="radioer col-12 col-md-6">
+                                    <input type="radio" name="productIntroductType" id="productIntroductType1"
+                                        v-model="productIntroductType"
+                                        v-bind:value="1"/>
+                                    <label for="productIntroductType1">新增商品圖文</label>
+                                </div>
+                                <div class="radioer col-12 col-md-6">
+                                    <input type="radio" name="productIntroductType" id="productIntroductType2"
+                                        v-model="productIntroductType"
+                                        v-bind:value="2"/>
+                                    <label for="productIntroductType2">另開產品連結</label>
+                                </div>
+                            </div>
+                            <b-form-invalid-feedback :state="validation_product_introduct_type" 
+                                v-if="!formElementControl.product_introduct_type.isDefault"
+                                v-text="formElementControl.product_introduct_type.invalidFeedback">
+                            </b-form-invalid-feedback>
+                        </div>
+                        <div class="pb-4 store-form-item" v-show="productIntroductType == 1">
+                            <div class="btn-common btn-common-pink btn-pd-info" v-on:click="openImage2()">上傳圖片</div>
+                                <span class="text-pd-info">圖片限制上傳以9張為限</span>
+                                <div class="image-upload2">                          
+                                    <vue-dropzone 
+                                        ref="uploadfile2" 
+                                        id="dropzone2" 
+                                        :options="dropzoneOptions2"></vue-dropzone>
+                            </div>
+                            <label for="product_info" class="period-title required mt-4">產品描述</label>
+                            <div class="fillin-textarea" >
+                                <textarea id="product_info" name="product_info" required maxlength="1000"
+                                    placeholder="請輸入產品描述"
+                                    v-bind:required="formElementControl.product_info.required"
+                                    v-model="form.product_info"></textarea>
+                            </div>
+                            <b-form-invalid-feedback :state="formElementControl.product_info.isValidOk" 
+                                v-if="!formElementControl.product_info.isDefault"
+                                v-text="formElementControl.product_info.invalidFeedback">
+                            </b-form-invalid-feedback>
+                        </div>
+                        <div class="pb-4 store-form-item" v-show="productIntroductType == 2">
+                            <div class="tag-input required">
+                                <input type="text" id="product_link" name="product_link" required placeholder="請輸入產品連結"
+                                    v-bind:required="formElementControl.product_link.required"
+                                    v-model.trim="form.product_link" />
+                            </div>
+                            <b-form-invalid-feedback :state="formElementControl.product_link.isValidOk" 
+                                v-if="!formElementControl.product_link.isDefault"
+                                v-text="formElementControl.product_link.invalidFeedback">
+                            </b-form-invalid-feedback>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="block" v-if="isShowSpecsTagBlock">
+                    <div class="d-flex justify-content-between align-items-center instock-title">
+                        <p class="block-title">商品庫存</p>
+                        <span class="instock-btn"
+                            v-if="!isMobile"
+                            @@click="model_instock.isShow = true">編輯</span>
+                    </div>
+                    <div class="instock-list">
+                        <div class="instock-item"
+                            v-for="(tag, index) in form.product_specs" 
+                            v-bind:id="'tag_'+tag.SpecsId">
+                            <span class="instock-item--tag" v-text="tag.SpecsName"></span>
+                            <div class="instock-item--info" v-text="'庫存 '+tag.SpecsInstockHidden"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="product-form">
+                <div class="block">
+                    <p class="block-title">期數設定</p>
+                    <div class="block-content">
+                        <div class="pb-4 store-form-item">
+                            <label for="product_period_1" class="period-title required">開放期數</label>
+                            <div class="row">
+                                <div class="col-12 col-lg-6">
+                                    <p class="period-type">商品類型一（零利率）</p>
+                                    <div class="checkboxitem mb-3" v-for="(p, index) in period_type_zero_item" v-if="show_zero_period">
+                                        <input type="checkbox" name="product_period" v-bind:id="'product_period_'+index"
+                                               v-bind:class="changeClassStatus(formElementControl.product_period, validation_product_period)"
+                                               v-model.number="form.product_period"
+                                               v-bind:value="p.period_rate_select_data" />
+                                        <label v-bind:for="'product_period_'+index" v-text="p.period"></label>
+                                        <p class="period-desc" v-text="p.period_description"></p>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                    <p class="period-type">商品類型二（低利率）</p>
+                                    <div class="checkboxitem mb-3" v-for="(p, index) in period_type_low_item" v-if="show_low_period">
+                                        <input type="checkbox" name="product_period" v-bind:id="'product_period_1'+index"
+                                               v-bind:class="changeClassStatus(formElementControl.product_period, validation_product_period)"
+                                               v-model.number="form.product_period"
+                                               v-bind:value="p.period_rate_select_data" />
+                                        <label v-bind:for="'product_period_1'+index" v-text="p.period"></label>
+                                        <p class="period-desc" v-text="p.period_description"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="block">
+                    <p class="block-title">商品選項</p>
+                    <div class="block-content">
+                        <div class="pb-4 store-form-item">
+                            <label for="product_specs" class="period-title required">顏色/規格</label>
+                            <div class="tag-input required">
+                                <input type="text" id="product_specs" name="product_specs" placeholder="請輸入顏色/規格 ( 20字內 ）"  maxlength="20"
+                                    v-bind:class="changeClassStatus(formElementControl.product_specs, validation_product_specs)"
+                                    v-model.trim="inputTag"
+                                    v-on:keyup.enter="addTag" />
+                            </div>
+                            <div class="tag-box">
+                                <tag-item
+                                    v-for="data in form.product_specs"
+                                    v-bind:key="data.SpecsId"
+                                    v-bind:tag_data="data.SpecsName"
+                                    v-on:delete_tag="deleteTag"
+                                    ></tag-item>
+                            </div>
+                            <br><br>
+                            <div class="d-flex justify-content-end">
+                                <div class="btn-common btn-common-pink btn-add-tag"
+                                    @@click="addTag"
+                                    >加入</div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="block-content">
+                        <div class="cursor-need add-other-tag-btn"
+                            v-if="!isShowCostomeTagBlock"
+                            @@click="isShowCostomeTagBlock = true" >+ 新增其他選項</div>
+                        <div class="pb-4 store-form-item" v-else >
+                            <div class="row">
+                                <div class="col-6"></div>
+                                <div class="col-6">
+                                    <span class="cursor-need text-right mb-2 float-right"
+                                    @@click="isShowCostomeTagBlock = false" v-on:click="deleteAllCostomeTag">刪除</span>
+                                </div>
+                            </div>
+                            <label for="custome_specs" class="period-title">自訂選項</label>
+                            <div class="fillin-textarea custome_specs" >
+                                <textarea id="custome_specs" name="custome_specs" required 
+                                    placeholder="請輸入選項內容ex. 門市, 分店名稱( 10字內 ）"  maxlength="10"  
+                                    v-model.trim="costomeTag"
+                                    v-on:keyup.enter="addCostomeTag"
+                                ></textarea>
+                            </div>
+                            <div class="tag-box">
+                                <tag-item
+                                    v-for="data in form.custome_specs"
+                                    v-bind:key="data.SpecsId"
+                                    v-bind:tag_data="data.SpecsName"
+                                    v-on:delete_tag="deleteCostomeTag"
+                                    ></tag-item>
+                            </div>
+                            <br><br>
+                            <div class="d-flex justify-content-end">
+                                <div class="btn-common btn-common-pink btn-add-tag"
+                                    @@click="addCostomeTag"
+                                    >加入</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-btn-container bottom">
+            <a class="btn-common btn-common-white" href="@Url.Content("~/ecommerce/productmanage")">取消</a>
+            <div class="btn-common btn-common-pink"
+                v-if="!isEdit"
+                @@click="updateProduct(0)"
+                >新增</div>
+            <div class="btn-common btn-common-pink"
+                v-if="isEdit"
+                @@click="modal_save_upadte.isShow = true"
+                >儲存</div>
+        </div>
+    </div>
+    <!-- modal: 通用訊息 -->
+    <b-modal id="model_Common"
+        v-model="model_Common.isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="model_Common.title"
+        v-bind:hide-header-close="true"
+        v-bind:dialog-class="'modal-custome ' + model_Common.statusClass">
+        <div class="modal-body--content">
+            <p v-html="model_Common.content"></p>
+        </div>
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--cancel"
+                v-if="model_Common.hasCancel"
+                @@click="model_Common.isShow = false">取消</div>
+            <div class="modal-custome-btn btn--ok"
+                v-if="model_Common.hasOk"
+                @@click="commonIsShow">確定</div>
+        </div>
+    </b-modal>
+    <!-- modal: 上下架 -->
+	<b-modal id="model_pdStatus"
+        v-model="model_pdStatus.isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="model_pdStatus.title"
+        v-bind:hide-header-close="true"
+        v-bind:dialog-class="'modal-custome'">
+        <div class="modal-body--content">
+            <p v-html="model_pdStatus.content"></p>
+        </div>
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--cancel"
+                @@click="model_pdStatus.isShow = false">取消</div>
+            <div class="modal-custome-btn btn--ok"
+                @@click="setProduct">確定</div>
+        </div>
+    </b-modal>
+    <!-- modal: 商品庫存 -->
+	<b-modal id="model_instock"
+        v-model="model_instock.isShow"
+        @@hidden="changeProductInstock(false)"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="model_instock.title"
+        v-bind:dialog-class="'modal-instock'">
+        <div class="modal-body--content instock-containter">
+            <div class="row instock-containter--title">
+                <div class="col-6">
+                    <p>規格</p>
+                </div>
+                <div class="col-6">
+                    <p>庫存</p>
+                </div>
+            </div>
+            <div class="row align-items-center instock-containter--item"
+                v-for="(tag, index) in form.product_specs" 
+                v-bind:id="'modal_tag_'+tag.SpecsId">
+                <div class="col-6">
+                    <span class="instock-tag" v-text="tag.SpecsName"></span>
+                </div>
+                <div class="col-6">
+                    <div class="instock-control">
+                        <div class="instock-control--btn sub"
+                            @@click="setProductInstock(tag)"></div>
+                        <input type="number" name="instockInput" id="instockInput" class="instock-control--input" min="0" step="1"
+                            v-bind:value="tag.SpecsInstock" v-on:keyup="tag.SpecsInstock = parseInt($event.target.value, 10)" v-on:blur="checkSpecsInstock(tag, 0)">
+                        <input type="hidden" name="instockHidden" id="instockHidden" 
+                            v-bind:value="tag.SpecsInstockHidden">
+                        <div class="instock-control--btn plus"
+                            @@click="checkSpecsInstock(tag, 1)"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--cancel"
+                @@click="changeProductInstock(false)">取消</div>
+            <div class="modal-custome-btn btn--ok"
+                @@click="changeProductInstock(true)"
+                >確定</div>
+        </div>
+    </b-modal>
+    <!-- modal: 刪除規格項目 -->
+    <b-modal id="modal_spec_delete"
+        v-model="modal_spec_delete.isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="modal_spec_delete.title"
+        v-bind:hide-header-close="true"
+        v-bind:dialog-class="'modal-custome ' + modal_spec_delete.statusClass">
+        <div class="modal-body--content">
+            <p v-html="modal_spec_delete.content"></p>
+        </div>
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--cancel"
+                @@click="modal_spec_delete.isShow = false">取消</div>
+            <div class="modal-custome-btn btn--ok"
+                @@click="checkSpecDelete">確定</div>
+        </div>
+    </b-modal>
+    <!-- modal: 儲存更改 -->
+    <b-modal id="modal_save_upadte"
+        v-model="modal_save_upadte.isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="'儲存更改'"
+        v-bind:hide-header-close="true"
+        v-bind:dialog-class="'modal-custome'">
+        <div class="modal-body--content">
+            <p>是否確認儲存更改的資料？</p>
+        </div>
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--cancel"
+                @@click="modal_save_upadte.isShow = false">取消</div>
+            <div class="modal-custome-btn btn--ok"
+                @@click="updateProduct()">確定</div>
+        </div>
+    </b-modal>
+        <!-- modal: 切換商品介紹訊息 -->
+    <b-modal id="model_type"
+        v-model="model_type.isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="model_type.title"
+        v-bind:hide-header-close="true"
+        v-bind:dialog-class="'modal-custome ' + model_type.statusClass">
+        <div class="modal-body--content">
+            <p v-html="model_type.content"></p>
+        </div>
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--cancel"
+                @@click="stopChangeProductType()">取消</div>
+            <div class="modal-custome-btn btn--ok"
+                @@click="reloadDataByProductType(form.productIntroductType)">確定</div>
+        </div>
+    </b-modal>
+    <div class="mobile-tips mt-5"
+        v-if="isMobile">
+        更全面、完整功能的供應商平台管理系統請從桌面瀏覽
+    </div>
+</div>
+<input type="hidden" id="imgType2" value=""/>
+<input type="hidden" id="imgType3" value="" />
+<input type="hidden" id="submitflag" value="" />
+@section scripts {
+<script src="~/Scripts/vendor/jquery-3.3.1.min.js"></script>
+<script type="text/babel">
+    const tag = Vue.component("tag-item", {
+        props: ["tag_data"],
+        data: function() {
+			return {
+                timer:null
+			};
+		},
+        template:
+            `<span class="tag">
+                {{ tag_data }} 
+                <div class="tag-close"
+                    @@click="isDelete"></div>
+            </span>`,
+        methods: {
+            isDelete: function(e) {
+                this.$emit('delete_tag', this.tag_data)
+            }
+        },
+        beforeDestroy(){
+            clearInterval(this.timer);        
+            this.timer = null;
+        }    
+    })
+
+    var page = new Vue({
+		el: "#page",
+		mixins: [myMixin],
+        store: store,
+        components: {
+            tag,
+            vueDropzone: vue2Dropzone,
+        },
+        data: {
+            apiUrl_AskPaymentList: "",
+            apiUrl_ProductList: '@Url.Action("ProductManage", "Ecommerce")',
+            apiUrl_CopyOrDelete: '@Url.Action("CopyOrDelete", "Product")',
+            apiUrl_SetProductStatus: '@Url.Action("SetProductStatus", "Product")',
+            api_GetInfo: "",
+            api_AddOrModify: '@Url.Action("AddOrModify", "Product")',
+            changeFixed: false,
+            isMobile: false,
+            display: 'display:none',
+            notdisplay: '',
+            isEdit: false,
+            isSend: false,
+            lowPrice: @ViewBag.LowPrice,
+            product_id: '',
+            show_zero_period: true,
+            show_low_period: true,
+			model_Common: {
+                title: '提示訊息',
+				content: '',
+                isShow: false,
+                btnValue: '',
+                hasCancel: false,
+                hasOk: true,
+                statusClass: 'modal-custome',
+            },
+            model_type: {
+                title: '提示訊息',
+				content: '',
+                isShow: false,
+                btnValue: '',
+                hasCancel: true,
+                hasOk: true,
+                statusClass: 'modal-custome',
+            },
+            period_item: [], // { period: "", period_type: 0, // 0 零利率 = 0, 低利率 = 1 period_description : ""}
+            model_pdStatus: {
+				title: '提示訊息',
+				content: '',
+                isShow: false,
+                btnValue: '',
+			},
+            model_instock: {
+                title: '商品庫存',
+				content: '',
+                isShow: false,
+                btnValue: '',
+            },
+            modal_spec_delete: {
+                title: '刪除規格項目',
+				content: '是否確認刪除選取的規格？',
+                isShow: false,
+                btnValue: '',
+            },
+            modal_save_upadte: {
+                isShow: false,
+            },
+            modalCheckSpec: null,
+			changeFixed: false,
+            form: {
+                product_id: '',
+                product_name: '',
+                product_period: [],
+                suggest_price: '',
+                product_price: '',
+                productIntroductType: '',
+                product_link: '',
+                product_image: '',
+                product_fileuuid: '',
+                product_specs: [],
+                productStatus: 2,
+                action: 0,
+                price_origin: '',
+                product_info: '',
+                custome_specs: [],
+                product_images: [],
+                // 用來判斷行為是否為新增或修改送出成功後
+                iscreateorupdate: false,
+            },
+            formElementControl: {
+                product_name: {
+                    isDefault: true,
+                    invalidFeedback: '請輸入商品名稱',
+                    validFeedback: '輸入正確',
+                    isValidOk: false,
+                    required: true
+                },
+                suggest_price: {
+                    isDefault: true,
+                    invalidFeedback: '請輸入建議售價',
+                    validFeedback: '輸入正確',
+                    isValidOk: false,
+                    required: false
+                },
+                product_price: {
+                    isDefault: true,
+                    invalidFeedback: '請輸入商品價格',
+                    validFeedback: '輸入正確',
+                    isValidOk: false,
+                    required: true
+                },
+                product_period: {
+                    isDefault: true,
+                    invalidFeedback: '請選擇開放期數',
+                    validFeedback: '輸入正確',
+                    isValidOk: false,
+                    required: true
+                },
+                product_specs: {
+                    isDefault: true,
+                    invalidFeedback: '請輸入顏色/規格',
+                    validFeedback: '輸入正確',
+                    isValidOk: false,
+                    required: true
+                },
+                product_info: {
+                    isDefault: true,
+                    invalidFeedback: '請輸入產品描述',
+                    validFeedback: '輸入正確',
+                    isValidOk: false,
+                    required: true
+                },
+                product_link: {
+                    isDefault: true,
+                    invalidFeedback: '請輸入產品連結',
+                    validFeedback: '輸入正確',
+                    isValidOk: false,
+                    required: true
+                },
+                product_introduct_type: {
+                    isDefault: false,
+                    invalidFeedback: '請選擇商品介紹',
+                    validFeedback: '輸入正確',
+                    isValidOk: true,
+                    required: true
+                },
+                custome_specs: {
+                    isDefault: false,
+                    invalidFeedback: '請輸入自訂選項',
+                    validFeedback: '輸入正確',
+                    isValidOk: false,
+                    required: false
+                }
+            },
+            productIntroductType: '1',
+            inputTag: '',
+            costomeTag: '',
+            isShowSpecsTagBlock: false,
+            isShowCostomeTagBlock: false,
+            uploadstatus: '',
+            dropzoneOptions: {
+                url: '@Url.Action("UploadImage", "Ecommerce")',   // url: '@Url.Action("UploadImage", "Store")'
+                thumbnailWidth: 200,
+                thumbnailHeight: 200,
+                addRemoveLinks: true,
+                method: "post",
+                maxFiles: 1,
+                maxFilesize: 1, // MB,
+                uploadMultiple: true,
+                parallelUploads: 100,
+                acceptedFiles: ".jpeg,.jpg,.png,.gif,.JPEG,.JPG,.PNG,.GIF",
+                fallback: "瀏覽器不支援，請更新",
+                dictDefaultMessage: "請將圖片拖拉到此或是點擊選擇檔案",
+                dictFileTooBig: "圖片檔案過大無法上傳，請將圖片壓縮至{{maxFilesize}}MB以下再重新上傳圖片檔案",
+                dictInvalidFileType: "圖片格式錯誤無法上傳，請再檢查圖片可支援格式後重新上傳圖片",
+                dictRemoveFile: "刪除",
+                autoProcessQueue: false, // 關閉自動處理
+                headers: { "Case-Header": "xxxxxxxx" }, // 案件編號
+                init: function () {
+                    let vm = this
+
+                    this.on("addedfile", function(file){
+                        //判斷小圖是否已經有圖，沒有圖就也加圖到小圖
+                        //let myDropzone2 = page.$refs.uploadfile2
+                        //var fileobj = { size: file.size, name: file.name, type: file.type, contentId: file.upload.uuid};
+                        //var url = "";
+                        //var url = '@Url.Content("~/ecommerce/RenderImage")'+'?id='+vm.form.product_image;
+                        //if (myDropzone2.getAcceptedFiles().length == 0 && myDropzone2.getRejectedFiles().length == 0) {
+                             ////   myDropzone2.acceptedFiles = this.acceptedFiles
+                            ////myDropzone2.manuallyAddFile(file, file.url);
+                          //  myDropzone2.dropzone.emit('thumbnail', file, file.url);
+                           // myDropzone2.dropzone.emit('complete', fileobj);      
+                        //}
+                    })
+
+                    this.on("processing", function (file) {
+                        new Compressor(file, {
+                            quality: 0.6,
+                            success(result) {
+                                file = result;
+                            },
+                            error(err) {
+                                console.log(err.message);
+                            },
+                        });
+                        console.log("processing");
+                    });
+
+                    this.on("uploadprogress", function (file) {
+                        console.log("uploadprogress");
+                    });
+
+                    this.on("sending", function (file, xhr, formData) {
+                        console.log("sending");
+                        formData.append('remark', '');
+                        formData.append('case_id', '');
+                        formData.append('todo_type', 2);
+                    });
+
+                    this.on("success", function (file, response) {
+                        //console.log('successresponse',response);
+    					if (response.ReturnCode == 0) {
+                            var imgType2 = document.getElementById("imgType2");
+                            var imgType3 = document.getElementById("imgType3");
+                            imgType2.value = "1";
+                            //let myDropzone = this.$refs.uploadfile
+                            // 圖檔上傳成功後，更新商品資訊
+                            console.log("主圖檔上傳成功");
+                            if(imgType2.value === "1" && imgType3.value === "1"){
+                                //page.SendUpdateProduct();
+                                //console.log("主圖檔上傳成功");
+                            }
+					    }else {
+                            page.model_Common.title = "錯誤";
+                            page.model_Common.statusClass = "modal-custome--error"
+                            page.model_Common.content = "圖檔上傳失敗";
+                            page.model_Common.hasCancel = false;
+                            page.model_Common.isShow = true;
+
+                            return false;
+					    }
+                    })
+
+                    this.on("maxfilesexceeded", function (file) {
+                        console.log("maxfilesexceeded");
+                    });
+
+                    this.on("maxfilesreached", function (file) {
+                        console.log("maxfilesreached");
+
+                        if(file.length != 0) {
+                            console.log("maxfilesreachedfile",file);
+                            page.display = '';
+                            page.notdisplay = 'display:none';
+                        }
+                        
+                    });
+
+                    this.on("error", function (file, errorMessage, xhr) {
+                        console.log("error");
+                        console.log(errorMessage);
+                        console.log(xhr);
+                        page.model_Common.title = "錯誤"
+                        page.model_Common.statusClass = "modal-custome--error"
+                        page.model_Common.content = errorMessage
+                        page.model_Common.hasCancel = false
+                        page.model_Common.isShow = true
+                        this.removeFile(file)
+                    });
+
+                    this.on("complete", function () {
+                        console.log("complete");
+                    });
+
+                    this.on("successmultiple", function() {
+                        console.log("successmultiple");
+                        console.log("圖片上傳成功")
+                    })
+                },
+                accept: function (file, done) {
+                    console.log("accept");
+                    var self = this;
+                    done();
+                }
+            },
+            dropzoneOptions2: {
+                url: '@Url.Action("UploadImage", "Ecommerce")', // TODO: 替換成商品圖上傳網址
+                thumbnailWidth: 200,
+                thumbnailHeight: 200,
+                addRemoveLinks: true,
+                method: "post",
+                maxFiles: 9,
+                maxFilesize: 1, // MB,
+                uploadMultiple: true,
+                parallelUploads: 100,
+                acceptedFiles: ".jpeg,.jpg,.png,.gif,.JPEG,.JPG,.PNG,.GIF",
+                fallback: "瀏覽器不支援，請更新",
+                dictDefaultMessage: "請將圖片拖拉到此或是點擊選擇檔案",
+                dictMaxFilesExceeded:"上傳圖片不得超過9張",
+                dictFileTooBig: "圖片檔案過大無法上傳，請將圖片壓縮至{{maxFilesize}}MB以下再重新上傳圖片檔案",
+                dictInvalidFileType: "圖片格式錯誤無法上傳，請再檢查圖片可支援格式後重新上傳圖片",
+                dictUploadCanceled: "圖片上傳已取消",
+                dictRemoveFile: "刪除",
+                autoProcessQueue: false, // 關閉自動處理
+                headers: { "Case-Header": "xxxxxxxx" }, // 案件編號
+                init: function () {
+                    let vm = this
+
+                    this.on("addedfile", function(file){
+                        // this.removeFile(file);
+                    })
+
+                    this.on("processing", function (file) {
+                        new Compressor(file, {
+                            quality: 0.6,
+                            success(result) {
+                                file = result;
+                            },
+                            error(err) {
+                                console.log(err.message);
+                            },
+                        });
+                        console.log("processing");
+                    });
+
+                    this.on("uploadprogress", function (file) {
+                        console.log("uploadprogress");
+                    });
+
+                    this.on("sending", function (file, xhr, formData) {
+                        console.log("sending");
+                        formData.append('remark', '');
+                        formData.append('case_id', '');
+                        formData.append('todo_type', 3);
+                    });
+
+                    this.on("success", function (file, response) {
+                        console.log('successresponse',response);
+    					if (response.ReturnCode == 0) {
+                            var imgType2 = document.getElementById("imgType2");
+                            var imgType3 = document.getElementById("imgType3");
+                            imgType3.value = "1";
+                            // 圖檔上傳成功後，更新商品資訊
+                            console.log("小圖檔上傳成功");
+                            if(imgType2.value === "1" && imgType3.value === "1"){                            
+                                //page.SendUpdateProduct();
+                                //console.log("小圖檔上傳成功");
+                            }
+                            
+					    }else {
+                            page.model_Common.title = "錯誤";
+                            page.model_Common.statusClass = "modal-custome--error"
+                            page.model_Common.content = "圖檔上傳失敗";
+                            page.model_Common.hasCancel = false;
+                            page.model_Common.isShow = true;
+
+                            return false;
+					    }
+                    })
+
+                    this.on("maxfilesexceeded", function (file) {
+                        console.log("maxfilesexceeded");
+                    });
+
+                    this.on("maxfilesreached", function (file) {
+                        console.log("maxfilesreached");
+
+                        if(file.length != 0) {
+                            console.log("maxfilesreachedfile",file);
+                            page.display = '';
+                            page.notdisplay = 'display:none';
+                        }
+                        
+                    });
+
+                    this.on("error", function (file, errorMessage, xhr) {
+                        console.log("error");
+                        console.log(errorMessage);
+                        console.log(xhr);
+                        page.model_Common.title = "錯誤"
+                        page.model_Common.statusClass = "modal-custome--error"
+                        page.model_Common.content = errorMessage
+                        page.model_Common.hasCancel = false
+                        page.model_Common.isShow = true
+                        this.removeFile(file)
+                    });
+
+                    this.on("complete", function () {
+                        console.log("complete");
+                    });
+
+                    this.on("successmultiple", function() {
+                        console.log("successmultiple");
+                        console.log("圖片上傳成功")
+                    })
+                },
+                accept: function (file, done) {
+                    console.log("accept");
+                    var self = this;
+                    done();
+                }
+            },
+        },
+        created: function() {
+			app.currentPage.addProduct = true
+			this.checkSize()
+			window.addEventListener('scroll', () => {
+                this.checkSize()
+			}, true);
+			window.addEventListener('resize', () => {
+                this.checkSize()
+			}, true);
+            this.getPeriodList()
+            this.product_id = this.getUrlParameter("product_id")
+            if(this.product_id !== "") {
+                this.isEdit = true
+                this.getProductInfo()
+            }
+            // window.addEventListener('beforeunload', this.pageClose())
+            //有效是指單獨使用該行指令時，關閉瀏覽器時會彈出詢問視窗
+
+            window.addEventListener('beforeunload', function(event) {
+                // 判斷是否為新增或修改送出成功後    
+                if(!page.form.iscreateorupdate) {
+
+                    event.preventDefault(); //chrome無效, ff有效, ie11有效
+                    event.returnValue = true; //chrome有效, ff無效, ie11有效
+                    return '確定離開當前頁面嗎？ 已編輯的資料不會儲存哦'; //chrome無效, ff無效, ie11有效
+                }
+            });
+
+            window.onbeforeunload = function(event) {
+                // 判斷是否為新增或修改送出成功後  
+                if(!page.form.iscreateorupdate) {
+                    event.preventDefault(); //chrome無效, ff有效, ie11有效
+                    event.returnValue = true; //chrome有效, ff無效, ie11有效
+                    return '確定離開當前頁面嗎？ 已編輯的資料不會儲存哦'; //chrome有效, ff有效, ie11有效
+                }
+            };
+            var submitflag = document.getElementById("submitflag");               
+            submitflag.value = "";
+            //檢查是否已送出圖片就可送出資料
+            this.timer = setInterval(this.CheckProductData, 2000) 
+		},
+        mounted: function() {
+            var vm = this;
+            if(!!vm.form.product_image) {
+             
+                vm.display = '';
+                vm.notdisplay = 'display:none';
+                var file = { size: 1000000, name: "Icon", type: "image/png", contentId: vm.form.product_image};
+                //let file = {name: attaches[i].original_file_name, contentId:attaches[i].id, size:123}
+                //var url = vm.form.product_image;
+                var url = '@Url.Content("~/ecommerce/RenderImage")'+'?id='+vm.form.product_image;
+                //console.log('product_image',vm.form.product_image);
+                //console.log('url',url);
+                this.$refs.uploadfile.manuallyAddFile(file, url);
+                this.$refs.uploadfile.dropzone.emit('thumbnail', file, url);
+                this.$refs.uploadfile.dropzone.emit('complete', file);       
+            }
+             
+            if(vm.form.product_images.length > 0) {
+                vm.display = '';
+                vm.notdisplay = 'display:none';
+
+                for (var step = 0; step < vm.form.product_images.length ; step++) {  
+                    var filed = { size: 1000000, name: "Image_"+vm.form.product_images[step].imageuuid, type: "image/png" };
+                    var urld = '@Url.Content("~/ecommerce/RenderImage")'+'?id='+vm.form.product_images[step].imageuuid;
+                    vm.$refs.uploadfile2.manuallyAddFile(filed, urld);
+                    vm.$refs.uploadfile2.dropzone.emit('thumbnail', filed, urld);
+                    vm.$refs.uploadfile2.dropzone.emit('complete', filed);     
+                }
+/*
+                vm.form.product_images.forEach(function(p, vm){
+                    var filed = { size: 1000000, name: "Image"+step, type: "image/png" };
+                    var urld = '@Url.Content("~/ecommerce/RenderImage")'+'?id='+p.imageuuid;
+                    //console.log('intro_image',p);
+                    vm.$refs.uploadfile2.manuallyAddFile(filed, urld);
+                    vm.$refs.uploadfile2.dropzone.emit('thumbnail', filed, urld);
+                    vm.$refs.uploadfile2.dropzone.emit('complete', filed);                      
+                }); 
+*/                
+            }            
+            //頁面定時檢查是否已圖片送出
+            this.timer = setInterval(() => {
+                setTimeout(this.CheckUpload, 0)
+            }, 1000)
+
+        }, 
+        computed: {
+            period_type_zero_item: function() {
+                var self = this
+                return self.period_item.filter(function (item) {
+                    return item.period_type === 0;
+                })
+            },
+            period_type_low_item: function() {
+                var self = this
+                return self.period_item.filter(function (item) {
+                    return item.period_type === 1;
+                })
+            },
+            validation_product_name: function() {
+                if(this.formElementControl.product_name.isDefault && this.form.product_name.length !== 0) {
+                    this.formElementControl.product_name.isDefault = false
+                }
+                var temp;
+                if(this.form.product_name.length > 1) {
+                    temp = true
+                }else {
+                    temp = false
+                }
+                this.formElementControl.product_name.isValidOk = temp
+                return temp
+            },
+            validation_suggest_price: function() {
+                if(this.formElementControl.suggest_price.isDefault && this.form.suggest_price.length !== 0) {
+                    this.formElementControl.suggest_price.isDefault = false;
+                }
+                
+                var temp = true;
+                // this.formElementControl.suggest_price.invalidFeedback = '請輸入建議售價';
+
+                if(this.form.suggest_price.length === 0) {
+                    this.formElementControl.suggest_price.invalidFeedback = '';
+                }
+
+                if(this.form.suggest_price.length > 0 ) {
+                    var tempprice = this.form.suggest_price.replace(/[^0-9]/ig,"");
+
+                    if(this.form.suggest_price.length !== tempprice.length) {
+                        temp = false;
+                        this.formElementControl.suggest_price.invalidFeedback = '請輸入數字金額';
+                    }
+
+                    if(this.form.suggest_price < 0 && temp) {
+                        temp = false;
+                        this.formElementControl.suggest_price.invalidFeedback = '輸入的建議售價不得為負';
+                    }
+                }               
+
+                this.formElementControl.suggest_price.isValidOk = temp
+                return temp
+            },
+            validation_product_price: function() {
+                if(this.formElementControl.product_price.isDefault && this.form.product_price.length !== 0) {
+                    this.formElementControl.product_price.isDefault = false;
+                }
+
+                var temp = false;
+                this.formElementControl.product_price.invalidFeedback = '請輸入商品價格';
+
+                if(this.form.product_price.length > 0) {
+                    temp = true;
+                }
+
+                var tempprice = this.form.product_price.replace(/[^0-9]/ig,"");
+
+                if(this.form.product_price.length !== tempprice.length) {
+                    temp = false;
+                    this.formElementControl.product_price.invalidFeedback = '請輸入數字金額';
+                }
+
+                if(this.form.product_price < 0 && temp) {
+                    temp = false;
+                    this.formElementControl.product_price.invalidFeedback = '輸入的商品價格不得為負';
+                }
+
+                if(this.form.product_price < this.lowPrice) {
+                    temp = false;
+                    this.formElementControl.product_price.invalidFeedback = '輸入的商品價格最低金額為'+ this.lowPrice;
+                }
+
+                this.formElementControl.product_price.isValidOk = temp
+                return temp
+            },
+            validation_product_period: function() {
+                var temp;
+                if(this.form.product_period.length > 0 ) {
+                    temp = true
+                    this.formElementControl.product_period.isDefault = false
+                }else {
+                    temp = false
+                }
+                this.formElementControl.product_period.isValidOk = temp
+                return temp
+            },
+            validation_product_specs: function() {
+                var temp;
+                if(this.form.product_specs.length > 0 ) {
+                    temp = true
+                    this.formElementControl.product_specs.isDefault = false
+                }else {
+                    temp = false
+                }
+                this.formElementControl.product_specs.isValidOk = temp
+                return temp
+            },
+            validation_custome_specs: function() {
+                var temp;
+                if(this.form.custome_specs.length > 0 ) {
+                    temp = true
+                    this.formElementControl.custome_specs.isDefault = false
+                }else {
+                    temp = false
+                }
+                this.formElementControl.custome_specs.isValidOk = temp
+                return temp
+            },
+            validation_product_introduct_type: function() {
+                var temp = false;
+                if(this.productIntroductType == 1) {
+                    this.formElementControl.product_info.required = true
+                    this.formElementControl.product_link.required = false
+                    if(this.form.product_info.length !== 0) {
+                        this.formElementControl.product_info.isDefault = false;
+                        temp = true
+                    }
+                    
+                    this.formElementControl.product_info.isValidOk = temp
+                }else if(this.productIntroductType == 2){
+                    this.formElementControl.product_info.required = false
+                    this.formElementControl.product_link.required = true
+                    if(this.form.product_link != null && this.form.product_link.length !== 0) {
+                        this.formElementControl.product_link.isDefault = false;
+                        temp = true
+                    }
+                    
+                    this.formElementControl.product_link.isValidOk = temp
+                }else {
+                    this.formElementControl.product_info.required = false
+                    this.formElementControl.product_link.required = false
+                }
+                
+                return true;
+            },
+        },
+        watch: {
+            "form.product_period": function(val) {
+                if(val.length === 0)
+                {
+                    page.show_zero_period = true;
+                    page.show_low_period = true;
+                    return;
+                }
+                if(val[val.length-1].period_type === 0)
+                {
+                    page.show_zero_period = true;
+                    page.show_low_period = false;
+                }
+                else
+                {
+                    page.show_zero_period = false;
+                    page.show_low_period = true;
+                }
+            }
+        },
+        methods: {
+            pageClose: function() {
+                this.modal_spec_delete.title = "刪除規格項目"
+                this.modal_spec_delete.content = "是否確認刪除選取的規格？" 
+                this.modal_spec_delete.isShow = true
+            },
+            cal_product_price: function() {
+                var val = this.form.product_price;
+                if(!!val) {
+                    var periodList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.PeriodList))')
+                    if(!!periodList) {
+                        page.period_item.forEach(function(p){
+                            var params = []; 
+                            params.push(
+                                { 
+                                    // 期數
+                                    Period : p.period,
+                                    //  分期付款利率(名目利率)
+                                    Rate : p.period_rate,
+                                    // 交易金額
+                                    TotalPrice : val,
+                                }
+                            );
+                            axios.post(
+					            '@Url.Action("CalculatePeriodPrice", "Product")',
+                                params
+				            )
+				            .then(function (response) {
+                                p.period_description  = page.$options.filters.amountAddDot(response.data[0]) + "/期";
+                               // p.period_rate_select_data.period_description  = response.data[0] + "/期-利率" + p.period_rate;
+				            })
+				            .catch(function(error){
+					            console.log(error);
+				            });
+                        }); 
+                    }
+                }
+            },
+            openImage: function() {
+                page.display = 'display:none';
+                page.notdisplay = ''; 
+                let myDropzone = this.$refs.uploadfile
+                if(!!myDropzone) {
+                    if (myDropzone.getAcceptedFiles().length == 1 || myDropzone.getRejectedFiles().length == 1) {
+                        myDropzone.dropzone.removeAllFiles(true);
+                        return;
+                    }
+                    myDropzone.$refs.dropzoneElement.click()
+                }
+            },
+            openImage2: function() {
+                //page.display = 'display:none';
+                //page.notdisplay = '';
+                let myDropzone2 = this.$refs.uploadfile2
+                if(!!myDropzone2) {
+                    myDropzone2.$refs.dropzoneElement.click()
+                }
+            },
+            getPeriodList: function() {
+                // Period list
+                let vm = this 
+                let periodList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.PeriodList))');
+                if(!!periodList) {
+                    periodList.PeriodItem.forEach(function(p){
+                        vm.period_item.push(
+                            { 
+                                period: p.Period, 
+                                period_type: p.PeriodType, // 零利率 = 0, 低利率 = 1 
+                                period_description: p.PeriodDescription,
+                                period_rate: p.Rate,
+                                period_rate_select_data : {
+                                    period: p.Period, 
+                                    period_type: p.PeriodType, // 零利率 = 0, 低利率 = 1 
+                                    //period_description: p.PeriodDescription,
+                                }
+                            }
+                        );
+                    });
+                }
+                this.$nextTick(() => { page.cal_product_price() });
+            },
+            checkSize: function() {
+				let scrollTop = document.documentElement.scrollTop ||
+							document.body.scrollTop ||
+							document.querySelector('body').scrollTop;
+				if(scrollTop >= 100){
+                    if(((scrollTop + window.innerHeight) >= (document.body.scrollHeight - 100))&& this.isMobile) {
+                        this.changeFixed = false;
+                        return;
+                    }
+					this.changeFixed = true;
+				}else {
+					this.changeFixed = false;
+				}
+				if(this.$store.getters.getWindowWidth <= this.$store.getters.getBreakpoint) {
+					this.isMobile = true;
+				}else {
+					this.isMobile = false;
+				}
+			},
+            changeClassStatus: function(targetRequired, targetValid) {
+                var requiredClass = targetRequired.required ? 'required' : ''
+                var validClass = targetValid ? 'success' : 'error'
+                var defaultClass = targetRequired.isDefault ? 'default' : ''
+                return [requiredClass, validClass, defaultClass]
+            },
+            getProductInfo: function() {
+                let vm = this 
+                // product info
+                let data = @Html.Raw(Json.Encode(ViewBag.ProductInfo));
+                if(data != null) {
+                    console.log('ProductInfo',data);
+                    vm.isEdit = true; 
+                    vm.form.product_id = data.ProductId;
+                    vm.form.product_name = data.ProductName;
+                    vm.form.product_period = data.ProductPeriod.map(function(e){
+                        return {
+                            period: e.PeriodNum,
+                            period_type: e.PeriodType, // 零利率 = 0, 低利率 = 1 
+                            //period_description: e.PeriodDescription,
+                        }
+                    }),
+                    vm.form.product_price = data.ProductPrice;
+                    vm.form.suggest_price = data.SuggestPrice;
+                    vm.form.product_info = data.ProductInfo;
+                    vm.form.product_link = data.ProductLink;
+                    vm.form.productIntroductType = data.productIntroductType;
+                    vm.productIntroductType =  data.productIntroductType;
+
+                    vm.form.product_image = data.ProductImage;
+                    vm.form.product_fileuuid = data.ProductFileuuid;
+                    vm.form.product_specs = data.ProductSpecs;
+                    vm.form.productStatus = data.ProductStatus;
+                    vm.form.action = 1; //設定為編輯
+                    vm.form.custome_specs = data.CustomeSpecs.map(function(e){
+                        return {
+                            SpecsId: e.SpecsId,
+                            SpecsName: e.SpecsName, 
+                        }
+                    }),
+                    vm.form.product_images = data.ProductImages.map(function(e){
+                        return {
+                            imageuuid: e.Uuid
+                        }
+                    }),
+                    vm.form.intro_image = data.intro_image; //010
+                    vm.form.intro_fileuuid = data.intro_fileuuid; //010
+                    vm.isShowSpecsTagBlock = data.ProductSpecs.length > 0;
+                    vm.isShowCostomeTagBlock = data.CustomeSpecs.length > 0;
+
+                } else {
+                    vm.model_Common.title = "查無此商品"
+					vm.model_Common.statusClass = "modal-custome--warn"
+					vm.model_Common.content = "查無此商品，請新增商品"
+					vm.model_Common.isShow = true
+					vm.model_pdStatus.isShow = false
+                    vm.isEdit = false; 
+                    vm.form.action = 0; //設定為新增
+                }
+				@* axios.post({
+					url: vm.api_GetInfo,
+					methods: 'Post',
+					data: {
+						'product_ids': vm.productId,
+					}
+				})
+				.then(function (response) {
+					if (response.data.ReturnCode == 0) {
+						vm.form = response.data.data
+					}else {
+						vm.model_Common.title = "取得商品資訊失敗"
+						vm.model_Common.statusClass = "modal-custome--warring"
+						vm.model_Common.isShow = true
+					}
+				})
+				.catch(function(error){
+					vm.model_Common.title = "發生錯誤"
+					vm.model_Common.statusClass = "modal-custome--error"
+					vm.model_Common.content = error.Alert
+					vm.model_Common.isShow = true
+					vm.model_pdStatus.isShow = false
+				}); *@
+            },
+            addTag: function() {
+                let vm = this
+                if(this.inputTag == "") 
+                {
+                    vm.model_Common.title = "尚未輸入顏色/規格" 
+                    vm.model_Common.content = "" 
+					vm.model_Common.statusClass = "modal-custome--warning"
+					vm.model_Common.isShow = true
+                    return 
+                }
+                const temp = this.form.product_specs.find(function(value,index,array){
+                    return value.SpecsName === vm.inputTag
+                })
+                if(!!temp) {
+                    this.model_Common.title = "已有重複的顏色/規格"
+                    this.model_Common.content = "" 
+                    this.model_Common.isShow = true
+                    this.inputTag = ""
+                    return
+                }
+                // TODO: 預設在product_specs內加上庫存資訊
+                if(this.inputTag !== "") {
+                    this.isShowSpecsTagBlock = true
+                }
+                this.form.product_specs.push({SpecsId: null, SpecsName:this.inputTag, SpecsInstock: 0, SpecsInstockHidden: 0})
+                this.inputTag = ""
+            },
+            deleteTag: function(tag){
+                this.modalCheckSpec = tag
+                this.modal_spec_delete.title = "刪除規格項目"
+                this.modal_spec_delete.content = "是否確認刪除選取的規格？" 
+                this.modal_spec_delete.isShow = true
+                
+            },
+            checkSpecDelete: function() {
+                let vm = this
+                const temp = this.form.product_specs.filter(function(value,index,array){
+                    return value.SpecsName !== vm.modalCheckSpec
+                })
+                if(temp.length == 0){
+                    this.isShowSpecsTagBlock = false
+                }                    
+                this.form.product_specs = temp
+                this.modal_spec_delete.isShow = false
+            },
+            addCostomeTag: function(){
+                let vm = this
+                if(this.costomeTag == "") 
+                {
+                    vm.model_Common.title = "尚未輸入自訂選項" 
+                    vm.model_Common.content = "" 
+					vm.model_Common.statusClass = "modal-custome--warning"
+					vm.model_Common.isShow = true
+                    return 
+                }
+                const temp = this.form.custome_specs.find(function(value,index,array){
+                    return value.SpecsName === vm.costomeTag
+                })
+                if(!!temp) {
+                    this.model_Common.title = "已有重複的自訂選項"
+                    this.model_Common.content = "" 
+                    this.model_Common.isShow = true
+                    this.costomeTag = ""
+                    return
+                }
+                this.form.custome_specs.push({SpecsId: null, SpecsName:this.costomeTag})
+                this.costomeTag = ""
+            },
+            deleteCostomeTag: function(tag){
+                const temp = this.form.custome_specs.filter(function(value,index,array){
+                    return value.SpecsName !== tag
+                })
+                this.form.custome_specs = temp
+            },
+            deleteAllCostomeTag: function(tag){
+                this.form.custome_specs = [];
+                page.costomeTag = '';
+                page.isShowCostomeTagBlock = false;
+            },
+            checkSetPd: function() {
+				this.model_pdStatus.title = (this.form.productStatus === 1) ? "確定要重新上架此產品？" : "確定要下架此產品？" 
+				this.model_pdStatus.isShow = true
+			},
+            commonIsShow: function() {
+				let vm = this;
+                if(!vm.isSend) {
+                    vm.model_Common.isShow = false;
+                    return;
+                }
+                window.location.href = vm.apiUrl_ProductList;
+            },
+            setProduct: function() {
+				let vm = this 
+				this.model_pdStatus.isShow = false 
+				console.log("productId:"+vm.form.productId+",productStatus:"+vm.form.productStatus)
+				axios.post(
+					vm.apiUrl_SetProductStatus,
+					{
+						'productids': [vm.form.product_id],
+						'status': (vm.form.productStatus === 1)   //status : 上架：true 下架：false
+					}
+				)
+				.then(function (response) {
+					if (response.data.ReturnCode == 0) {
+						vm.model_Common.title = (vm.form.productStatus === 1) ? "上架成功" : "下架成功" 
+						vm.model_Common.statusClass = "modal-custome--success"
+						vm.model_Common.isShow = true
+                        location.reload();
+						// TODO: 重新讀取商品資料列表
+						vm.getProductInfo()
+					}else {
+						vm.model_Common.title = (vm.form.productStatus === 1) ? "上架失敗" : "下架失敗"
+						vm.model_Common.statusClass = "modal-custome--warring"
+						vm.model_Common.isShow = true
+					}
+				})
+				.catch(function(error){
+					vm.model_Common.title = "發生錯誤"
+					vm.model_Common.statusClass = "modal-custome--error"
+					vm.model_Common.content = error.Alert
+					vm.model_Common.isShow = true
+					vm.model_pdStatus.isShow = false
+				});
+            },
+            deleteProduct: function() {
+                let vm = this
+				axios.post(
+					vm.apiUrl_CopyOrDelete,
+					{
+						'productids': [vm.form.product_id],
+						'action': 1
+					}
+				)
+				.then(function (response) {
+					if (response.data.ReturnCode == 0) {
+						vm.model_Common.title = "刪除成功"
+						vm.model_Common.statusClass = "modal-custome--success"
+						vm.model_Common.isShow = true
+                        //TODO: 回到商品列表頁面
+                        window.location.href = '@Url.Action("ecommerce", "productmanage")';
+					}else {
+						vm.model_Common.title = "刪除失敗"
+						vm.model_Common.statusClass = "modal-custome--warring"
+						vm.model_Common.isShow = true
+					}
+				})
+				.catch(function(error){
+					vm.model_Common.title = "發生錯誤"
+					vm.model_Common.statusClass = "modal-custome--error"
+					vm.model_Common.content = error.Alert
+					vm.model_Common.isShow = true
+					model_pdDelete.isShow = false
+				});
+            },
+            uploadAddition: function() {
+                let vm = this
+                let myDropzone = this.$refs.uploadfile
+                // 新增的檔案數量 = 0 並且 載入的檔案數量 = 0
+
+                if (myDropzone.getAcceptedFiles().length == 0 && myDropzone.getRejectedFiles().length == 0){
+                    document.getElementById("submitflag").value = "";
+                    vm.modal_save_upadte.isShow = false;
+                    vm.model_Common.title = "錯誤";
+                    vm.model_Common.content = "請上傳檔案";
+                    vm.model_Common.statusClass = "modal-custome--error"
+                    vm.model_Common.hasCancel = false;
+                    vm.model_Common.isShow = true;
+                    return false;
+                } else if(myDropzone.getRejectedFiles().length > 1) {
+                    document.getElementById("submitflag").value = "";
+                    vm.modal_save_upadte.isShow = false;
+                    vm.model_Common.title = "錯誤";
+                    vm.model_Common.content = "請確認檔案尺寸、數量及檔案類型是否正確";
+                    vm.model_Common.statusClass = "modal-custome--error"
+                    vm.model_Common.hasCancel = false;
+                    vm.model_Common.isShow = true;
+                    return false;
+                } else if (myDropzone.getAcceptedFiles().length > 0) {
+                    vm.form.product_image = '';
+                    vm.form.product_fileuuid = '';
+                    myDropzone.processQueue();
+                } else {
+                    var imgType2 = document.getElementById("imgType2");           
+                    imgType2.value = "1";
+                }
+
+                /* 新增商品圖上傳 ----*/
+                let pdImgDropzone = this.$refs.uploadfile2
+                var imgType3 = document.getElementById("imgType3");           
+                if(pdImgDropzone !== undefined){
+                    if (pdImgDropzone.getAcceptedFiles().length > 0 || pdImgDropzone.getQueuedFiles().length > 0) {
+                        pdImgDropzone.processQueue();
+                    } else {
+                         imgType3.value = "1";
+                    }
+                } else {                                 
+                        imgType3.value = "1";
+                }
+            },
+            updateProduct: function() {     
+                let vm = this          
+                var submitflag = document.getElementById("submitflag");               
+                submitflag.value = "1";
+
+                if(submitflag.value === "1"){
+                    vm.CheckProductData();
+                }
+            },
+            CheckProductData: function(){
+                //檢查是否有按過新增、儲存                
+                var submitflag = document.getElementById("submitflag");               
+                if(submitflag.value === "1"){  //有按過新增、儲存才檢查
+                    let vm = this;
+                    var keyValue = Object.keys(this.formElementControl);
+                    var notValid= [];
+                    for(var i =0 ; i< keyValue.length; i++){
+                        var temp = this.formElementControl[keyValue[i]];
+                        if(temp.required == true && temp.isValidOk == false) {
+                            notValid.push(temp);
+                        }
+                    }
+                    // 圖檔上傳檢核
+                    @*let myDropzone = this.$refs.uploadfile
+                    if(myDropzone.getAcceptedFiles().length == 0 && myDropzone.getRejectedFiles().length == 0) {
+                        notValid.push({ invalidFeedback: '請上傳檔案' });
+                    }*@
+
+                    if(notValid.length == 0) {
+                        vm.uploadAddition();
+                        // 無須更新圖檔的時候
+                        //if(!!vm.form.product_image && !!vm.form.product_fileuuid) {                                             
+                        //}
+                        var imgType2 = document.getElementById("imgType2");
+                        var imgType3 = document.getElementById("imgType3");
+                        if(imgType2.value === "1" && imgType3.value === "1"){
+                            submitflag.value = "";
+                            vm.SendUpdateProduct();
+                        }
+                        
+                    }else {
+                        submitflag.value = "";
+                        this.model_Common.content = '';
+                        for(var i=0; i< notValid.length; i++) {
+                            this.model_Common.content += notValid[i].invalidFeedback + '<br>'
+                        }
+                        this.model_Common.title = '請將必填欄位填寫完成';
+                        this.model_Common.statusClass = 'modal-custome modal-custome--error';
+                        this.model_Common.isShow = true;
+                        
+                    }
+                }
+                
+            },           
+            GetPeriodItem: function(product_period) {
+                var data = page.period_item.filter(function(e){return (e.period === +product_period.period && e.period_type === +product_period.period_type)})[0];
+                if(!!data) {
+                    return data.period_description;
+                } else {
+                    return "";
+                }
+            },            
+            SendUpdateProduct: function() {
+                //if(myDropzone.getAcceptedFiles().length == 0 && myDropzone.getRejectedFiles().length == 0) 
+                let vm = this;
+                vm.isSend = false;
+                // TODO:  在完成 1. 2. 才能作
+                let ProductImages = [];
+                let pdImgDropzone = this.$refs.uploadfile2
+                if(pdImgDropzone !== undefined){
+                    if (pdImgDropzone.getAcceptedFiles().length > 0 || pdImgDropzone.getRejectedFiles().length > 0) {
+                        let rejectedFiles = pdImgDropzone.getRejectedFiles()
+                        for(var i =0 ; i< rejectedFiles.length; i++){
+                            var tempFile= {
+                                Uuid: rejectedFiles[i].name.replace('Image_', ''),
+                                ImageType: "3",
+                                Store_Id: "",
+                                Product_Id:""
+                            };
+                            ProductImages.push(tempFile);
+                        }
+
+                    }
+                }
+
+                if(page.productIntroductType == "1") {
+                    vm.form.product_link = '';
+                }
+
+                if(page.productIntroductType == "2") {
+                    vm.form.product_info = '';
+                }
+
+                let ishead = false ;
+                let producturl = vm.form.product_link;
+                let urlength = producturl.length;
+                
+                if(urlength > 0 )
+                {
+                    if(urlength > 5 )
+                    {
+                        let head = producturl.substring(0,5);
+                        if(head.match('https') != null || head.match('http') != null)
+                        {
+                            ishead = true;
+                        }
+                    }
+
+                    if(!ishead)
+                    {
+                        let maxlength = 192
+                        if(urlength > maxlength)
+                        {
+                            producturl = producturl.substring(0,urlength-(urlength - maxlength));
+                        }
+
+                        producturl = 'https://' + producturl;
+                    }
+                }
+
+				axios.post(vm.api_AddOrModify,
+					{
+                        model: {
+                            ProductId: vm.form.product_id,
+                            ProductName: vm.form.product_name,
+                            ProductPeriod: vm.form.product_period.map(function(e){
+                                return {PeriodNum : e.period, PeriodDescription : page.GetPeriodItem(e), PeriodType : e.period_type}}),
+                            ProductPrice: vm.form.product_price,
+                            SuggestPrice: vm.form.suggest_price,
+                            ProductInfo: vm.form.product_info,
+                            ProductLink: producturl,
+                            ProductType: page.productIntroductType,
+                            ProductImage: vm.form.product_image,
+                            ProductImages: ProductImages,
+                            ProductFileuuid: vm.form.product_fileuuid,
+                            ProductSpecs: vm.form.product_specs,
+                            ProductStatus: vm.form.productStatus,
+                            CustomeSpecs: vm.form.custome_specs
+                        },
+                        action: vm.isEdit,
+                    }
+                )
+				.then(function (response) {
+                    console.log('response',response);
+					if (response.data.ReturnCode == 0) {
+                        vm.form.iscreateorupdate = true;
+    			        vm.model_Common.title = "商品資訊" + (vm.isEdit === 0) ? "建立" : "修改" + "成功";
+					    vm.model_Common.content = response.data.Alert;
+						vm.model_Common.statusClass = "modal-custome--success";
+						vm.model_Common.isShow = true;
+                        vm.isSend = true;
+					}else {
+						vm.model_Common.title = "取得商品資訊失敗"
+					    vm.model_Common.content = response.data.Alert
+						vm.model_Common.statusClass = "modal-custome--warring"
+						vm.model_Common.isShow = true
+					}
+				})
+				.catch(function(error){
+					vm.model_Common.title = "發生錯誤"
+					vm.model_Common.statusClass = "modal-custome--error"
+					vm.model_Common.content = error.Alert
+					vm.model_Common.isShow = true
+					vm.model_pdStatus.isShow = false
+				});
+            },
+            setProductInstock: function(pd){
+                if(pd.SpecsInstock < 0 || pd.SpecsInstock == 0){
+                    pd.SpecsInstock = 0
+                }else {
+                    pd.SpecsInstock -= 1;
+                }
+            },
+            checkSpecsInstock: function(pd, addval){
+                if(isNaN(parseFloat(pd.SpecsInstock))){
+                    pd.SpecsInstock = 0
+                }
+                if(addval > 0)
+                {
+                    pd.SpecsInstock = parseInt(pd.SpecsInstock) + addval
+                }
+            },
+            changeProductInstock: function(isChange){   
+                let vm = this;
+                
+                if(isChange){
+                    vm.form.product_specs.forEach( function ( item, index, array)  {
+                        item.SpecsInstockHidden = item.SpecsInstock;
+                        console.log('item',item );
+                    });
+                }else {
+                    vm.form.product_specs.forEach( function ( item, index, array)  {
+                        item.SpecsInstock = item.SpecsInstockHidden;
+                        console.log('item',item );
+                    });
+                }
+                vm.model_instock.isShow = false;
+            },
+            changeProductType: function(type) {
+                let vm = this;
+                let myDropzone2 = vm.$refs.uploadfile2
+                let isShowAlert = false;
+
+               if(vm.form.action != 0) {
+                    let data = @Html.Raw(Json.Encode(ViewBag.ProductInfo));
+                    if(data != null) {
+                        if(type == 1) {
+                            vm.form.productIntroductType = '2';
+                            if(vm.form.product_link !== data.ProductLink) {
+                                isShowAlert = true;
+                            }
+                        }
+
+                        if(type == 2) {
+                            vm.form.productIntroductType = '1';
+                            if(vm.form.product_info !== data.ProductInfo || myDropzone2.getAcceptedFiles().length > 0 || vm.form.product_images.length !== myDropzone2.getRejectedFiles().length) {
+                                isShowAlert = true;
+                            }
+                        }
+                            
+                        if(isShowAlert) {
+                            vm.model_type.statusClass = "modal-custome--warn";
+                            vm.model_type.content = "離開將會取消異動，確認是否要離開？";
+                            vm.model_type.isShow = true;
+                            vm.productIntroductType = vm.form.productIntroductType; 
+                            vm.form.productIntroductType = type;
+                        }
+                        else {
+                            vm.reloadDataByProductType(type);
+                        }
+                    }
+               } 
+            },
+            reloadDataByProductType: function(type) {
+                let vm = this;
+                let myDropzone2 = vm.$refs.uploadfile2
+                vm.model_type.isShow = false;
+                vm.productIntroductType = type; 
+
+                if(vm.form.action != 0) {
+                    let data = @Html.Raw(Json.Encode(ViewBag.ProductInfo));
+                    if(data != null) {
+                        if(type == 1) {
+                            if(vm.form.product_images.length > 0 ) 
+                            {
+                                @* vm.display = '';
+                                vm.notdisplay = 'display:none'; *@
+                                for (var step = 0; step < vm.form.product_images.length ; step++) {  
+                                    var filed = { size: 1000000, name: "Image_"+vm.form.product_images[step].imageuuid, type: "image/png" };
+                                    var urld = '@Url.Content("~/ecommerce/RenderImage")'+'?id='+vm.form.product_images[step].imageuuid;
+                                    vm.$refs.uploadfile2.manuallyAddFile(filed, urld);
+                                    vm.$refs.uploadfile2.dropzone.emit('thumbnail', filed, urld);
+                                    vm.$refs.uploadfile2.dropzone.emit('complete', filed);     
+                                }
+                            }
+
+                            vm.form.product_info = data.ProductInfo;
+                        }
+                        else {
+                            vm.form.product_link = data.ProductLink;                           
+                        }
+                    }
+               } 
+            },
+            stopChangeProductType: function() {
+                let vm = this;
+                vm.model_type.isShow = false;
+
+                if(vm.productIntroductType == 1) {
+                    productIntroductType1.checked = true;
+                }
+                else {
+                    productIntroductType2.checked = true;
+                }
+
+                return;
+            }
+        }
+    })
+</script>
+}

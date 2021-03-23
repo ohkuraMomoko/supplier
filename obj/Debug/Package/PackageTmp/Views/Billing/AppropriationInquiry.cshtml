@@ -1,0 +1,965 @@
+﻿@{ 
+	ViewBag.Title = "查詢撥款"; 
+} 
+@section header {
+	@Styles.Render("~/Content/pages/billing/AppropriationInquiry.min.css") 
+}
+
+<div id="page" class="page">
+	<div class="page-container">
+		<div class="page-top"
+			v-bind:class="changeFixed ? 'fixed' : ''">
+			<p class="page-title">查詢撥款</p>
+			<div class="page-btn-container">
+				<div class="btn-common btn-common-white"
+					v-on:click="scrollToTop()">回到頂端</div>
+				<div class="btn-common btn-common-white"
+					v-on:click="clearForm()">清除搜尋結果</div>
+				<div class="btn-common btn-common-pink"
+					@@click="createList()">匯出當前明細</div>
+			</div>
+		</div>
+
+		<!-- 條件form，在手機板時可以進行收合 -->
+		<div class="collapse-btn"
+			:class="collapseVisible ? 'active' : 'collapsed'"
+			:aria-expanded="collapseVisible ? 'true' : 'false'"
+			aria-controls="controlCollapse"
+			@@click="collapseVisible = !collapseVisible">
+			<span v-text="collapseText"></span>
+		</div>
+		<!-- 條件form，區分桌手機版本 -->
+		<b-collapse id="controlCollapse" 
+			class="collapse-content"
+			v-model="collapseVisible">
+			<b-form @@submit="onSubmit" class="control-form">
+				<div class="form-row">
+					<span class="form-row--title mb-3">選擇日期：</span>
+					<div class="form-row--content">
+						<div class="radioer mb-3">
+							<input type="radio" name="date_type" id="date_type_1"
+								v-model="form.date_type"
+								v-bind:value="formOptions.date_type[0].value"/>
+							<label for="date_type_1">近期幾天</label>
+						</div>
+						<div class="search-select mb-3">
+							<select v-model.number="form.range_date">
+								<option value="" disabled>請選擇</option>
+								<option
+									v-for="option in formOptions.range_date"
+									v-bind:value="option.value"
+									v-text="option.text">
+								</option>
+							</select>
+						</div>
+						<div class="radioer mb-3">
+							<input type="radio" name="date_type" id="date_type_2"
+								v-model="form.date_type"
+								v-bind:value="formOptions.date_type[1].value"/>
+							<label for="date_type_2">某段時間</label>
+						</div>
+						<div class="datapicker mb-3">
+							<b-form-datepicker
+								v-model="form.start_date"
+								:min="datePicker.minDate"
+								:max="datePicker.maxDate"
+								:date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
+								:hide-header="true"
+								:menu-class="'datepicker-costom'"
+								:no-highlight-today="true"
+								locale="zh"
+								placeholder="請選擇日期"
+							></b-form-datepicker>
+						</div>
+						<div class="datapicker">
+							<b-form-datepicker
+								v-model="form.end_date"
+								:min="datePicker.minDate"
+								:max="datePicker.maxDate"
+								:date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
+								:hide-header="true"
+								:menu-class="'datepicker-costom'"
+								:no-highlight-today="true"
+								locale="zh"
+								placeholder="請選擇日期"
+							></b-form-datepicker>
+						</div>
+					</div>
+                </div>
+                <div class="form-row">
+					<span class="form-row--title mb-3">指定條件：</span>
+					<div class="form-row--content">
+						<div class="search-select mb-3">
+							<select v-model.number="form.search_type">
+								<option value="" disabled>請選擇</option>
+								<option
+									v-for="option in formOptions.search_type"
+									v-bind:value="option.value"
+									v-text="option.text">
+								</option>
+							</select>
+						</div>
+						<div class="form-input search-input">
+							<input type="text" id="order_sn" name="order_sn" class="" placeholder="請輸入"
+								v-model.trim="form.search"/>
+						</div>
+					</div>
+				</div>
+				<button type="submit" :disabled='isSubmit'
+					class="btn-common btn-common-pink btn-search">
+					送出查詢</button>
+			</b-form>
+		</b-collapse>
+		<!-- 條件form，desktop  -->
+		<div class="control desktop">
+			<p class="control--title">選擇任一條件即可進行查詢：</p>
+			<b-form @@submit="onSubmit" class="control-form">
+				<div class="form-row">
+					<span class="form-row--title">選擇日期：</span>
+					<div class="form-row--content">
+						<div class="date-row">
+							<div class="date-row--item">
+								<div class="radioer mr-md-4">
+									<input type="radio" name="date_type" id="date_type_1"
+										v-model.number="form.date_type"
+										v-bind:value="formOptions.date_type[0].value"/>
+									<label for="date_type_1">近期幾天</label>
+								</div>
+								<div class="search-select mr-md-4">
+									<select v-model.number="form.range_date">
+										<option value="" disabled>請選擇</option>
+										<option
+											v-for="option in formOptions.range_date"
+											v-bind:value="option.value"
+											v-text="option.text">
+										</option>
+									</select>
+								</div>
+							</div>
+							<div class="date-row--item">
+								<div class="radioer mr-md-4">
+									<input type="radio" name="date_type" id="date_type_2"
+										v-model.number="form.date_type"
+										v-bind:value="formOptions.date_type[1].value"/>
+									<label for="date_type_2">某段時間</label>
+								</div>
+								<div class="datapicker mr-md-4">
+									<b-form-datepicker
+										v-model="form.start_date"
+										:min="datePicker.minDate"
+										:max="datePicker.maxDate"
+										:date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
+										:hide-header="true"
+										:menu-class="'datepicker-costom'"
+										:no-highlight-today="true"
+										locale="zh"
+										placeholder="請選擇日期"
+									></b-form-datepicker>
+								</div>
+								<div class="datapicker">
+									<b-form-datepicker
+										v-model="form.end_date"
+										:min="datePicker.minDate"
+										:max="datePicker.maxDate"
+										:date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
+										:hide-header="true"
+										:menu-class="'datepicker-costom'"
+										:no-highlight-today="true"
+										locale="zh"
+										placeholder="請選擇日期"
+									></b-form-datepicker>
+								</div>
+							</div>
+						</div>
+						
+					</div>
+                </div>
+                <div class="form-row">
+					<span class="form-row--title">指定條件：</span>
+					<div class="form-row--content">
+						<div class="search-select mr-md-4">
+							<select v-model.number="form.search_type">
+								<option value="" disabled>請選擇</option>
+								<option
+									v-for="option in formOptions.search_type"
+									v-bind:value="option.value" 
+									v-text="option.text">
+								</option>
+							</select>
+						</div>
+						<div class="form-input search-input">
+							<input type="text" id="order_sn" name="order_sn" class="" placeholder="請輸入"
+								v-model="form.search"/>
+						</div>
+					</div>
+				</div>
+				<button type="submit" :disabled='isSubmit'
+					class="btn-common btn-common-pink btn-search">
+					送出查詢</button>
+			</b-form>
+		</div>
+		<!-- 撥款概況，mobile -->
+		<div class="overview-btn"
+			v-if="isShowOverview && isMobile"
+			v-bind:class="changeFixed ? 'fixed' : ''"
+			@@click="isShowOverviewMobile = true">撥款概況</div>
+		<transition name="fade">
+			<div class="overview-mobile"
+				v-bind:class="isShowOverviewMobile ? 'display-show' : ''">
+				<div class="overview-mobile--close"
+					@@click="isShowOverviewMobile = false">
+					<img src="@Url.Content("~/Content/images/icon-navigation-close-black.svg")" alt="">
+				</div>
+				<p class="overview--title">撥款概況</p>
+				<div class="overview-control overview-control--reorder">
+					<div class="overview-control--item">
+						撥款日期<div class="arrow"></div>
+					</div>
+					<div class="overview-control--item num">
+						筆數<div class="arrow"></div>
+					</div>
+					<div class="overview-control--item">
+						撥款金額<div class="arrow"></div>
+					</div>
+				</div>
+				<div class="overview-content">
+					<overview-item 
+						v-for="(data, index) in apiDatas_overview"
+						:key="'overview'+index"
+						v-bind:data="data"
+					></overview-item>
+				</div>
+			</div>
+		</transition>
+        <p class="care-text">❈ 紅底表示該筆交易為申請取消的扣款，扣款或費用不計入右側撥款筆數中</p>
+		<!-- block: result -->
+		<!-- resultStatus: 0(loading) / 1(查詢無資料/尚未查詢) / 2(正常返回結果) -->
+		<div v-if="!collapseVisible">
+			<div class="d-flex justify-content-between">
+				<div class="result"
+					v-bind:class="isShowOverview && !isMobile ? 'hasoverview' : '' " >
+					<div class="result--null" v-if="resultStatus === 0">
+                        <img src="@Url.Content("~/Content/images/icon-searchlist-loading.gif")" alt="" class="center pic">
+                        <p class="desc">正在為您努力載入...</p>
+                    </div>
+                     <div class="result--null" v-else-if="resultStatus === 3">
+                        <img src="@Url.Content("~/Content/images/icon-searchlist-none-result.svg")" alt="" class="center pic">
+                        <p class="title" style="font-weight: bold;">尚未有符合的搜尋結果</p>
+                        <p class="sub-title">請試試其他搜尋條件或篩選方式</p>
+                    </div>
+                    <div class="result--null" v-else-if="resultStatus === 1">
+                        <img src="@Url.Content("~/Content/images/icon-searchlist-none-result.svg")" alt="" class="center pic">
+                        <p class="title" style="font-weight: bold;">請輸入搜尋條件</p>
+                        <p class="sub-title">請輸入搜尋條件或選擇其他篩選方式</p>
+                    </div>
+                    <div class="result--ok" v-else-if="resultStatus === 2">
+						<p class="result--title">查詢結果</p>
+						
+                        <!-- rwd: 查詢結果 mobile -->
+                        <div v-if="isMobile"
+							class="mobile-box">
+                            <case-item
+                                v-for="data in filteredData"
+                                :key="data.case_sn"
+                                v-bind:case_data="data"></case-item>
+                        </div>
+                        <!-- rwd: 查詢結果 desktop -->
+                        <div class="table-box" v-else>
+                            <div class="table-control table-control--reorder">
+								<div class="table-control--arrow"></div>
+                                <div class="table-control--item"
+                                    v-on:click="sortBy('appropriation_date')"
+                                    v-bind:style="{ width: columnWidth.appropriation_date }">
+                                    撥款日期<div class="arrow"></div>
+                                </div>
+                                <div class="table-control--item"
+                                    v-on:click="sortBy('store')"
+                                    v-bind:style="{ width: columnWidth.store }">
+                                    門市 <div class="arrow"></div>
+                                </div>
+                                <div class="table-control--item"
+                                    v-on:click="sortBy('order_sn')"
+                                    v-bind:style="{ width: columnWidth.order_sn }">
+                                    訂單編號<div class="arrow"></div>
+                                </div>
+                                <div class="table-control--item"
+                                    v-on:click="sortBy('case_sn')"
+                                    v-bind:style="{ width: columnWidth.case_sn }">
+                                    案件編號<div class="arrow"></div>
+                                </div>
+                                <div class="table-control--item"
+                                    v-on:click="sortBy('applicant')"
+                                    v-bind:style="{ width: columnWidth.applicant }">
+                                    申請人<div class="arrow"></div>
+                                </div>
+                                <div class="table-control--item"
+                                    v-on:click="sortBy('period')"
+                                    v-bind:style="{ width: columnWidth.period }">
+                                    期數<div class="arrow"></div>
+                                </div>
+                                <div class="table-control--item"
+                                    v-on:click="sortBy('price')"
+                                    v-bind:style="{ width: columnWidth.price }">
+                                    交易金額<div class="arrow"></div>
+                                </div>
+                            </div>
+                            <div class="table-content">
+                                <table-row
+                                    v-for="data in filteredData"
+                                    :key="data.case_sn"
+                                    v-bind:case_data="data"
+                                    v-bind:colume_width="columnWidth"
+                                ></table-row>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="overview" v-if="isShowOverview && !isMobile">
+                    <p class="overview--title">撥款概況</p>
+                    <div class="overview-control overview-control--reorder">
+                        <div class="overview-control--item">
+                            撥款日期<div class="arrow"></div>
+                        </div>
+                        <div class="overview-control--item num">
+                            筆數<div class="arrow"></div>
+                        </div>
+                        <div class="overview-control--item">
+                            撥款金額<div class="arrow"></div>
+                        </div>
+					</div>
+					<div class="overview-content">
+						<overview-item 
+							v-for="(data, index) in apiDatas_overview"
+							:key="'overview'+index"
+							v-bind:data="data"
+						></overview-item>
+					</div>
+                </div>
+            </div>
+
+			<!-- <b-pagination class="mt-5 table-pagination"
+				v-if="resultStatus === 2"
+				v-model="pagination.currentPage"
+				:total-rows="pagination.rows"
+				:per-page="pagination.perPage"
+				:page-class="'table-pagination--item'"
+				:first-class="'table-pagination--first'"
+				:last-class="'table-pagination--last'"
+				:next-class="'d-none'"
+				:prev-class="'d-none'"
+				@@input="changePage(pagination.currentPage);">
+				<template v-slot:first-text>
+					<img src="@Url.Content("~/Content/images/icon-arrow-foward-left-darkgrey.svg")">
+				</template>
+				<template v-slot:last-text>
+					<img src="@Url.Content("~/Content/images/icon-arrow-foward-right-darkgrey.svg")">
+				</template>
+				<template v-slot:prev-text><span >Prev</span></template>
+				<template v-slot:next-text><span class="">Next</span></template>
+				<template v-slot:page="page">
+                    <b v-if="page.active">{{ page.page }}</b>
+                    <i v-else>{{ page.page }}</i>
+                </template>
+			</b-pagination> -->
+		</div>
+	</div>
+	
+	<div class="mobile-tips-box">
+		<div class="bottom-control"
+			v-if="resultStatus === 2">
+			<div class="bottom-control--item"
+				v-on:click="clearForm()">清空搜尋結果</div>
+			<div class="bottom-control--item"
+				v-on:click="scrollToTop()">回到頂端</div>
+		</div>
+		<div class="mobile-tips"
+			v-bind:class="{active: resultStatus === 2}">更全面、完整功能的供應商平台管理系統請從桌面瀏覽</div>
+	</div>
+	
+	<!-- modal: 通用訊息 -->
+    <b-modal id="model_Common"
+        v-model="model_Common.isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="model_Common.title"
+        v-bind:hide-header-close="true"
+        v-bind:dialog-class="model_Common.statusClass">
+        <div class="modal-body--content">
+            <p v-html="model_Common.content"></p>
+        </div>
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--cancel"
+                v-if="model_Common.hasCancel"
+                @@click="model_Common.isShow = false">取消</div>
+            <div class="modal-custome-btn btn--ok"
+                v-if="model_Common.hasOk"
+                @@click="model_Common.isShow = false">確定</div>
+        </div>
+    </b-modal>
+</div>
+
+@section scripts {
+<script type="text/babel">
+	// 區分桌手機component: tableRow (desktop) / caseItem (mobile)
+	const tableRow = Vue.component("table-row", {
+		props: ["case_data", "colume_width"],
+		data: function() {
+			return {
+				isOpen: false
+			};
+		},
+		created: function() {},
+		template: 
+			`<div v-bind:id="'row'+case_data.case_sn">
+				<div class="table-row cursor-need" 
+                    v-bind:class="case_data.isCancel ? 'cancel' : '' "
+					@@click="changeDetailShow">
+					<div class="table-row--arrow"
+						v-bind:class="isOpen ? 'open' : '' "></div>
+                    <div class="table-row--item" 
+                        v-bind:style="{ width: colume_width.appropriation_date }">
+                        {{ case_data.appropriation_date }}
+                    </div>
+                    <div class="table-row--item" 
+                        v-bind:style="{ width: colume_width.store }">
+                        <p class="limit-6">{{ case_data.store }}</p>
+                    </div>
+                    <div class="table-row--item" 
+                        v-bind:style="{ width: colume_width.order_sn }">
+                        <p class="limit-6">{{ case_data.order_sn }}</p>
+                    </div>
+                    <div class="table-row--item" 
+                        v-bind:style="{ width: colume_width.case_sn }">
+                        <p class="limit-6">{{ case_data.case_sn }}</p>
+                    </div>
+                    <div class="table-row--item" 
+                        v-bind:style="{ width: colume_width.applicant }">
+                        <p class="limit-3">{{ case_data.applicant }}</p>
+                    </div>
+                    <div class="table-row--item" 
+                        v-bind:style="{ width: colume_width.period }">
+                        {{ case_data.period }}
+                    </div>
+                    <div class="table-row--item" 
+                        v-bind:style="{ width: colume_width.price }">
+                        <div class="case-money">
+							<img src="@Url.Content("~/Content/images/icon-case-amounts-red.svg")" alt=""
+								v-if="case_data.isCancel">
+                            <img src="@Url.Content("~/Content/images/icon-case-amounts.svg")" alt=""
+								v-else>
+                            {{ $options.filters.amountAddDot(case_data.price) }}
+                        </div>
+                    </div>
+                </div>
+				<transition name="fade">
+					<div class="table-row--detail" v-if="isOpen">
+						<div class="detail-item">
+							<div class="detail-item--title">
+								<p class="datil-item--data">撥款日期</p>
+								<p class="datil-item--data">申請日期</p>
+								<p class="datil-item--data">門市</p>
+								<p class="datil-item--data">訂單編號</p>
+								<p class="datil-item--data">案件編號</p>
+							</div>
+							<div class="detail-item--data">
+								<p v-text="case_data.appropriation_date"></p>
+								<p v-text="case_data.date"></p>
+								<p v-text="case_data.store"></p>
+								<p v-text="case_data.order_sn"></p>
+								<p v-text="case_data.case_sn"></p>
+							</div>
+						</div>
+						<div class="detail-item">
+							<div class="detail-item--title">
+								<p class="datil-item--data">申請人</p>
+								<p class="datil-item--data">交易金額</p>
+								<p class="datil-item--data">期數</p>
+								<p class="datil-item--data">利率別</p>
+								<p class="datil-item--data">撥款金額</p>
+							</div>
+							<div class="detail-item--data">
+								<p v-text="case_data.applicant"></p>
+								<p v-text="$options.filters.amountAddDot(case_data.price)"></p>
+								<p v-text="case_data.period"></p>
+								<p v-text="case_data.interest_rate_type"></p>
+								<p v-text="$options.filters.amountAddDot(case_data.appropriation_price)"></p>
+							</div>
+						</div>
+					</div>
+				</transition>
+			</div>`,
+		methods: {
+			changeDetailShow() {
+				this.isOpen = !this.isOpen
+			}
+		}
+	});
+
+	const caseItem = Vue.component("case-item", {
+		props: ["case_data"],
+		data: function() {
+			return {
+				isOpen: false
+			};
+		},
+		created: function() {},
+		template: 
+			`<div v-bind:id="'row'+case_data.case_sn">
+				<div class="case-item appropriant" 
+					v-bind:class="[case_data.isCancel ? 'cancel' : '' ,
+						isOpen ? 'open' : '']">
+                    <div class="case-content"
+						@@click="changeDetailShow">
+                        <div class="case-content-row">
+							<span class="case-name"
+								v-if="case_data.isCancel">
+                                <img src="@Url.Content("~/Content/images/icon-user-white.svg")" alt="">
+                                {{ case_data.applicant }}
+                            </span>
+                            <span class="case-name"
+								v-else>
+                                <img src="@Url.Content("~/Content/images/icon-user-pink.svg")" alt="">
+                                {{ case_data.applicant }}
+                            </span>
+                        </div>
+                        <div class="case-content-row">
+							<span class="case-money">
+                                <img src="@Url.Content("~/Content/images/icon-case-amounts-red.svg")" alt=""
+									v-if="case_data.isCancel">
+								<img src="@Url.Content("~/Content/images/icon-case-amounts-pink.svg")" alt=""
+									v-else>
+                                {{ $options.filters.amountAddDot(case_data.price) }}
+                            </span>
+                        </div>
+                    </div>
+					<div class="case-detail" v-if="isOpen">
+						<div class="detail-item">
+							<div class="detail-item--title">
+								<p>撥款日期</p>
+								<p>申請日期</p>
+								<p>門市</p>
+								<p>訂單編號</p>
+								<p>案件編號</p>
+								<p>期數</p>
+								<p>利率別</p>
+								<p>撥款金額</p>
+							</div>
+							<div class="detail-item--data">
+								<p v-text="case_data.appropriation_date"></p>
+								<p v-text="case_data.date"></p>
+								<p v-text="case_data.store"></p>
+								<p v-text="case_data.order_sn"></p>
+								<p v-text="case_data.case_sn"></p>
+								<p v-text="case_data.period"></p>
+								<p v-text="case_data.interest_rate_type"></p>
+								<p>{{ $options.filters.amountAddDot(case_data.appropriation_price) }}</p>
+							</div>
+						</div>
+					</div>
+					<div class="case-footer" v-else >
+						<span class="case-footer--time">撥款日期：{{ case_data.appropriation_date }}</span>
+						<span class="case-shop">
+							<img src="@Url.Content("~/Content/images/icon-store-pink.svg")" alt="">
+							{{ case_data.store }}
+						</span>
+					</div>
+                </div>
+			</div>`,
+		methods: {
+			changeDetailShow() {
+				this.isOpen = !this.isOpen
+			}
+		}
+	});
+
+	// component: 撥款概況 
+	const overviewItem = Vue.component("overview-item", {
+		props: ["data"],
+		data: function() {
+			return {
+				
+			};
+		},
+		created: function() {},
+		template: 
+			`<div class="overview-item">
+				<div class="overview-item--data" v-text="data.appropriation_date"></div>
+					<div class="overview-item--data num" v-text="data.number"></div>
+					<div class="overview-item--data">
+						<img src="@Url.Content("~/Content/images/icon-case-amounts.svg")" alt="">
+						{{ $options.filters.amountAddDot(data.appropriation_price) }}
+					</div>
+			</div>`
+	});
+
+	var page = new Vue({
+		el: "#page",
+		mixins: [myMixin],
+		store: store,
+		component: {
+			tableRow,
+			caseItem,
+			overviewItem
+		},
+		data: {
+			isSubmit: false,
+			isMobile: false,
+			apiUrl_AppropriationInquiry: '',
+			isShowOverview: false,
+			isShowOverviewMobile: false,
+			model_Common: {
+                title: '提示訊息',
+				content: '',
+                isShow: false,
+                btnValue: '',
+                hasCancel: false,
+                hasOk: true,
+                statusClass: 'modal-custome',
+            },
+			collapseText: '選擇任一條件即可進行查詢',
+			collapseVisible: false,
+            apiUrl: '@Url.Action("AppropriationInquiry", "Billing")',
+			columnWidth: {
+				appropriation_date: "14%",
+                store: "14%",
+                order_sn: "14%",
+                case_sn: "14%",
+                applicant: "14%",
+                period: "14%",
+                price: "14%"
+			},
+			datePicker: {
+				today: new Date(),
+				minDate: new Date(),
+				maxDate: new Date()
+			},
+			formOptions: {
+				search_type: [
+					{ value: 1, text: "訂單編號" },
+					{ value: 2, text: "身分證字號" },
+					{ value: 3, text: "姓名" },
+					{ value: 4, text: "案件編號" },
+					{ value: 5, text: "車牌號碼" }
+				],
+				date_type: [
+					{ value: 1, text: "近期幾天" },
+					{ value: 2, text: "某段時間" }
+				],
+				range_date: [
+					{ value: 1, text: "當日" },
+					{ value: 2, text: "近3天" },
+					{ value: 3, text: "近30天" },
+					{ value: 4, text: "近60天" }
+				],
+			},
+			form: {
+				search_type: "",
+				search: "",
+				date_type: "",
+				range_date: "",
+				start_date: "",
+				end_date: ""
+			},
+			apiDatas: [],
+			apiDatas_overview: [],
+			sortKey: "",
+			sortOrders: {},
+			resultStatus: 1,
+			pagination: {
+				limit: 9,
+				rows: 200, /* TODO: 替換為API回來的total_num總頁數 */
+				perPage: 20,
+				currentPage: 1
+			},
+			changeFixed: false
+		},
+		created: function() {
+			app.currentPage.AppropriationInquiry = true
+			this.checkSize()
+			window.addEventListener('scroll', () => {
+                this.checkSize()
+			}, true);
+			window.addEventListener('resize', () => {
+                this.checkSize()
+			}, true);
+
+			this.settingDatepicker();
+			// this.getTableData(this.pagination.currentPage);
+		},
+		mounted: function() {
+			console.log(this.$store.getters.getWindowWidth);
+		},
+		computed: {
+			filteredData: function() {
+				var data = this.apiDatas;
+				return data;
+			}
+		},
+		methods: {
+			checkSize: function() {
+				let scrollTop = document.documentElement.scrollTop ||
+							document.body.scrollTop ||
+							document.querySelector('body').scrollTop;
+				if(scrollTop >= 100){
+					this.changeFixed = true;
+				}else {
+					this.changeFixed = false;
+				}
+
+				if(this.$store.getters.getWindowWidth <= this.$store.getters.getBreakpoint) {
+					this.isMobile = true;
+				}else {
+					this.isMobile = false;
+				}
+			},
+			settingDatepicker: function() {
+				//The props accept a date string in the format of YYYY-MM-DD or a Date object.
+				this.datePicker.minDate = moment().subtract(60, 'day').format("YYYY-MM-DD");
+				this.datePicker.maxDate = moment().format("YYYY-MM-DD");
+				this.datePicker.today = moment().format("YYYY-MM-DD");
+			},
+			getTableData: function(currentPage) {
+				let vm = this;
+				this.resultStatus = 0;
+                vm.apiDatas = [];
+                vm.apiDatas_overview = [];
+				
+                axios.post(vm.apiUrl, {
+					SearchType: vm.form.search_type,
+					Search: vm.form.search,
+					DateType: vm.form.date_type,
+					RangeDate: vm.form.range_date,
+					StartDt:  moment(vm.form.start_date).format("YYYYMMDD"),
+					EndDt: moment(vm.form.end_date).format("YYYYMMDD"),
+				})
+                .then(function (response) {
+                    console.log(response);
+                    if (response.data.Result.ReturnCode == 0 && response.data.Data.Cases.length !== 0) {
+                        
+                        // 組成查詢結果列表
+				        for (let index = 0; index < response.data.Data.Cases.length; index++) {
+					        vm.apiDatas.push({
+						        appropriation_date: response.data.Data.Cases[index].AppropriationDate,
+						        date: response.data.Data.Cases[index].CreateDt,
+						        store: response.data.Data.Cases[index].StoreName,
+                                order_sn: response.data.Data.Cases[index].OrderId,
+                                case_sn: response.data.Data.Cases[index].AppNo,
+						        applicant: response.data.Data.Cases[index].CustName,
+                                price: Math.abs(response.data.Data.Cases[index].TransactionAmount),
+						        period: response.data.Data.Cases[index].Period,
+						        appropriation_price: Math.abs(response.data.Data.Cases[index].AppropriationAmount),
+						        interest_rate_type: response.data.Data.Cases[index].InterestRateType,
+						        isCancel: +(response.data.Data.Cases[index].AppropriationAmount) > 0 ? false: true,
+					        });
+				        }
+                        
+                        // 組成撥款概況資訊列表
+				        for (let index = 0; index < response.data.Data.Sums.length; index++) {
+					        vm.apiDatas_overview.push({
+						        appropriation_date: response.data.Data.Sums[index].AppropriationDate,
+						        number: response.data.Data.Sums[index].CaseCount,
+						        appropriation_price: response.data.Data.Sums[index].AppropriationPrice
+					        });
+				        }
+
+                        // 分頁筆數處理
+				        vm.pagination.rows = response.data.Data.Cases.length;
+
+                        console.log(vm.apiDatas);
+                        console.log(vm.apiDatas_overview);
+
+    				    // api回來正常有資料，resultStatus=2
+				        vm.resultStatus = 2;
+						//重新抓資料之後，頁面向上滑動
+                    	vm.scrollToTop()
+
+				        // resultStatus=2 && 是否有撥款概況資訊
+				        if(vm.resultStatus == 2 && vm.apiDatas_overview.length > 0){
+					        vm.isShowOverview = true
+				        }else {
+					        vm.isShowOverview = false
+				        }
+
+    				    // 資料排序
+				        if (vm.apiDatas[0]) {
+					        let keys = Object.keys(vm.apiDatas[0]);
+					        for (let i = 0; i < keys.length; i++) {
+						        vm.sortOrders[keys[i]] = 1;
+					        }
+				        }
+						page.isSubmit = false;
+                        return;
+                    } else {
+                        if(response.data.Result.ReturnCode == -1) {
+                            vm.model_Common.content = response.data.Result.Alert;
+                            vm.model_Common.statusClass = 'modal-custome modal-custome--error';
+                            vm.model_Common.hasCancel = false;
+                            vm.model_Common.isShow = true;
+                        }
+                        else { 
+                            vm.resultStatus = 3;
+                            vm.model_Common.content = "查無資料";
+                            vm.model_Common.statusClass = 'modal-custome modal-custome--warring';
+                            vm.model_Common.hasCancel = false;
+                            vm.model_Common.isShow = true;
+                        }
+						page.isSubmit = false;
+                    }
+
+    				// TODO: 若api回來沒有資料，resultStatus=3
+				   // vm.resultStatus = 1;
+                })
+                .catch(function (error) {
+                    console.log(error)
+					page.isSubmit = false;
+                });
+			},
+			onSubmit: function(evt) {
+				page.isSubmit = true;
+				let vm = this
+				evt.preventDefault();
+				// alert(JSON.stringify(this.form));
+				if(vm.form.search_type != "" && vm.form.search == "") {
+					vm.model_Common.isShow = true
+					vm.model_Common.content = "已選擇搜尋條件，請輸入查詢字詞"
+					page.isSubmit = false;
+					return
+				}else if(vm.form.date_type == 1 && vm.form.range_date == "" ){
+					vm.model_Common.isShow = true
+					vm.model_Common.content = "搜尋日期選擇近期幾天，請選擇範圍"
+					page.isSubmit = false;
+					return
+				}else if(vm.form.date_type == 2 && (vm.form.start_date == "" || vm.form.end_date == "")) {
+					vm.model_Common.isShow = true
+					vm.model_Common.content = "搜尋日期選擇某段時間，請選擇日期開始日及結束日"
+					page.isSubmit = false;
+					return
+				}
+				else if(vm.form.search_type == "" && vm.form.date_type == ""){
+					vm.model_Common.isShow = true
+					vm.model_Common.content = "請選擇任一條件"
+					page.isSubmit = false;
+					return
+				}else if(vm.form.date_type == 2 && !moment(vm.form.start_date).isSameOrBefore(vm.form.end_date)){
+					vm.model_Common.isShow = true;
+					vm.model_Common.content = "迄日不可大於起日";
+					page.isSubmit = false;
+					return;
+				}else {
+					this.collapseVisible = false;
+					this.collapseText = '更換查詢條件';
+					this.getTableData(this.pagination.currentPage)
+				}
+
+			},
+			sortBy: function(key) {
+				var sortKey = key;
+				this.sortOrders[sortKey]  = this.sortOrders[sortKey] * -1;
+				var order = this.sortOrders[sortKey];
+				var data = this.apiDatas;
+
+				if (sortKey) {
+					data = data.slice().sort(function(a, b) {
+						a = a[sortKey];
+						b = b[sortKey];
+						return (a === b ? 0 : a > b ? 1 : -1) * order;
+					});
+					this.apiDatas = data;
+				}
+			},
+			changePage: function(currentPage) {
+				console.log(currentPage);
+				// get api data
+				this.getTableData(this.pagination.currentPage);
+			},
+			clearForm: function() {
+				this.resultStatus = 1
+				this.form.search_type = ""
+				this.form.search = ""
+				this.form.date_type = ""
+				this.form.range_date = ""
+				this.form.start_date = ""
+				this.form.end_date = ""
+				this.apiDatas_overview = []
+				this.isShowOverview = false
+			},
+			createList: function() {
+			
+				axios({
+                  url: '@Url.Action("DownloadStatement", "Billing")', //your url
+                  method: 'Post',
+                  responseType: 'blob', // important
+                  data: {
+					SearchType: page.form.search_type,
+					Search: page.form.search,
+					DateType: page.form.date_type,
+					RangeDate: page.form.range_date,
+					StartDt:  (!!page.form.start_date) ? moment(page.form.start_date).format("YYYYMMDD"): null,
+					EndDt: (!!page.form.end_date) ? moment(page.form.end_date).format("YYYYMMDD"): null,
+				  }	
+                }).then((response) => {
+					var filename = response.headers.filename;
+                    if (navigator.msSaveBlob) {
+                        // for ie
+                        return navigator.msSaveBlob(response.data, filename);
+                    } else {
+                        // for other
+						const url = window.URL.createObjectURL(new Blob([response.data]));
+						const link = document.createElement('a');
+						link.href = url;
+						link.setAttribute('download', filename); //or any other extension
+						document.body.appendChild(link);
+						link.click();
+                    }
+                  
+                   //匯出明細流程
+				   this.toast('已匯出明細')
+                }).catch(function(error){
+                    console.log(error);
+                    vm.toast('匯出明細失敗')
+                });
+
+				//匯出明細流程
+
+                @* var datas = [];
+                for(var i = 0; i < page.apiDatas.length; i++)
+                {
+                    datas.push({
+                        "appropriationdate": page.apiDatas[i].appropriation_date,
+                        "store": page.apiDatas[i].store,
+                        "ordersn": page.apiDatas[i].order_sn,
+                        "casesn": page.apiDatas[i].case_sn,
+                        "applicant": page.apiDatas[i].applicant,
+                        "price":  page.apiDatas[i].price,
+                        "period": page.apiDatas[i].period,
+                    })
+                }
+               
+                axios({
+                  url: '@Url.Action("GetCurrentDetail", "Billing")', //your url
+                  method: 'Post',
+                  responseType: 'blob', // important
+                  data: {
+                      "datas": datas
+                  }
+                }).then((response) => {
+                    if (navigator.msSaveBlob) {
+                        // for ie
+                        return navigator.msSaveBlob(response.data, 'file.xlsx');
+                    } else {
+                        const url = window.URL.createObjectURL(new Blob([response.data]));
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', 'file.xlsx'); //or any other extension
+                        document.body.appendChild(link);
+                        link.click();
+                    }
+                  
+                   //匯出明細流程
+				   this.toast('已匯出明細')
+                }); *@
+			},
+		}
+	});
+</script>
+}

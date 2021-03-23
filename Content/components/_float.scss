@@ -1,0 +1,156 @@
+﻿/* @site: 2019企085
+ * @author: nikki
+ * @update: nikki 
+ * @page: all page
+ * @description: 所有頁面上的浮動元件
+ */
+
+/* element: float-apply */
+.float-apply {
+    width: 96px;
+    height: 96px;
+    position: fixed;
+    right: 3%;
+    top: 16%;
+    z-index: 10;
+}
+@include rwd(#{$ipad - 1px}){
+    .float-apply{
+        display: none;
+    }
+}
+.float-line {
+    width: 96px;
+    height: 96px;
+    position: fixed;
+    left: 5%;
+    bottom: 5%;
+    z-index: 1073;
+    cursor: pointer;
+    &:after {
+        content: '';
+        position: absolute;
+        left: 0px;
+        top: -4px;
+        width: 102%;
+        height: 102%;
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-image: url("images/contact_iconX.svg");
+        opacity: 0;
+        transition: opacity 0.3s linear;
+    }
+    &.active {
+        &:after {
+            opacity: 1;
+        }
+    }
+}
+@include rwd(#{$ipad - 1px}){
+    .float-line{
+        display: none;
+    }
+}
+
+.line-modal.modal-dialog{
+    max-width: 21.5rem;
+    width: 90%;
+    position: absolute;
+    left: 5%;
+    bottom: 20%;
+    margin: 0;
+    .modal-content {
+        padding: 0;
+    }
+}
+
+.line-header {
+    border-radius: 10px 10px 0 0;
+    background-color: #185380;
+    text-align: center;
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.25rem;
+    letter-spacing: 0.04rem;
+    line-height: 3.94rem;
+}
+.line-content {
+    border-radius: 0 0 10px 10px;
+    background-color: #fff;
+    color: #787878;
+    text-align: center;
+    padding: 1.56rem 0;
+    position: relative;
+    &:after {
+        content: '';
+        position: absolute;
+        right: 5%;
+        top: 0;
+        width: 5.5rem;
+        height: 5.5rem;
+        background-image: url(images/line_icon.png);
+    }
+    .line-qrcode {
+        width: 10rem;
+        height: 10rem;
+        display: block;
+        margin: 0 auto;
+        border: 3px solid #454545;
+    }
+    .line-color{
+        color: #00BD00;
+    } 
+    .line-text {
+        text-align: left;
+        padding-left: 5%;
+        margin-bottom: 0.94rem;
+        >span {
+            font-size: 1.2em;
+        }
+        &2{
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        &3 {
+            color: #4a4a4a;
+            font-weight: bold;
+        }
+        &5 {
+            font-size: 1.13rem;
+            letter-spacing: 0.04rem;
+            margin-bottom: 1rem;
+            margin-top: 0.56rem;
+        }
+    }
+}
+
+.float-mob-line,
+.float-mob-apply {
+    display: none;
+    width: 45%;
+    height: 3rem;
+    line-height: 3rem;
+    text-align: center;
+    color: #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+    position: fixed;
+    bottom: 0;
+    z-index: 5;
+}
+.float-mob-line {
+    border-radius: 0 15px 0 0;
+    background-color: #787878;
+    left: 0;
+}
+.float-mob-apply {
+    border-radius: 15px 0 0 0;
+    background-color: #0E76BD;
+    right: 0;
+}
+@include rwd(#{$ipad - 1px}){
+    .float-mob-line,
+    .float-mob-apply {
+        display: block;
+    }
+}

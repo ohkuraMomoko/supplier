@@ -1,0 +1,719 @@
+﻿ 
+@{
+    ViewBag.Title = "編輯商店資訊";
+}
+@section header {
+    <script src="~/Scripts/vendor/vue2Dropzone.js"></script>
+    <script src="~/Scripts/vendor/compressor.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="~/Scripts/vendor/vue2Dropzone.min.css" />
+    @Styles.Render("~/Content/pages/ecommerce/maintainStore.min.css")
+}
+
+
+<div id="page" class="page">
+	<div class="page-container">
+		<div class="page-top"
+			v-bind:class="changeFixed ? 'fixed' : ''">
+            <p class="page-title" v-text="isEdit ? '編輯商店資訊' : '建立商店'"></p>
+            <div class="page-btn-container">
+                <div class="btn-common btn-common-pink" 
+                    v-if="!isEdit && !isMobile"
+                    @@click="sendEdit(0)">建立</div>
+                <a class="btn-common btn-common-white" href="@Url.Content("~/ecommerce/productmanage")"
+                    v-if="isEdit">取消</a>
+                <div class="btn-common btn-common-pink"
+                    v-if="isEdit"
+                    @@click="sendEdit(1)">確認編輯</div>
+			</div>
+        </div>
+        <div class="page-body">
+            <div class="store-form">
+                <div class="pb-4 store-form-item">
+                    <div class="fillin-input"
+                         v-bind:class="changeClassStatus(formElementControl.title, validation_title)">
+                        <label for="title">大標題</label>
+                        <input type="text" id="title" name="title" required placeholder="請輸入大標題 ( 15字內 )" maxlength="15"
+                               v-bind:required="formElementControl.title.required"
+                               v-model="form.title" />
+                        <!-- <img src="@Url.Content("~/Content/images/icon-dialog-close-grey.svg")" alt="" class="del-btn"
+                            @@click="form.title = ''">     -->
+                    </div>
+                    <b-form-invalid-feedback :state="validation_title"
+                                             v-if="!formElementControl.title.isDefault"
+                                             v-text="formElementControl.title.invalidFeedback">
+                    </b-form-invalid-feedback>
+                </div>
+                <div class="pb-4 store-form-item">
+                    <div class="fillin-input"
+                         v-bind:class="changeClassStatus(formElementControl.subtitle, validation_subtitle)">
+                        <label for="subtitle">小標題</label>
+                        <input type="text" id="subtitle" name="subtitle" required placeholder="請輸入小標題 ( 15字內 )" maxlength="15"
+                               v-bind:required="formElementControl.subtitle.required"
+                               v-model="form.subtitle" />
+                        <!-- <img src="@Url.Content("~/Content/images/icon-dialog-close-grey.svg")" alt="" class="del-btn"
+                @@click="form.subtitle = ''">     -->
+                    </div>
+                    <b-form-invalid-feedback :state="validation_subtitle"
+                                             v-if="!formElementControl.subtitle.isDefault"
+                                             v-text="formElementControl.subtitle.invalidFeedback">
+                    </b-form-invalid-feedback>
+                </div>
+                <div class="pb-4 store-form-item">
+                    <div class="fillin-input"
+                         v-bind:class="changeClassStatus(formElementControl.address, validation_address)">
+                        <label for="address">聯絡地址</label>
+                        <input type="text" id="address" name="address" required placeholder="請輸入聯絡地址" maxlength="250"
+                               v-bind:required="formElementControl.address.required"
+                               v-model="form.address" />
+                        <!-- <img src="@Url.Content("~/Content/images/icon-dialog-close-grey.svg")" alt="" class="del-btn"
+                @@click="form.address = ''">     -->
+                    </div>
+                    <b-form-invalid-feedback :state="validation_address"
+                                             v-if="!formElementControl.address.isDefault"
+                                             v-text="formElementControl.address.invalidFeedback">
+                    </b-form-invalid-feedback>
+                </div>
+                <div class="pb-4 store-form-item">
+                    <div class="fillin-input"
+                         v-bind:class="changeClassStatus(formElementControl.phone, validation_phone)">
+                        <label for="phone">聯絡電話</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="請輸入聯絡電話" maxlength="10"
+                               v-bind:required="formElementControl.phone.required"
+                               v-model="form.phone" />
+                        <!-- <img src="@Url.Content("~/Content/images/icon-dialog-close-grey.svg")" alt="" class="del-btn"
+                @@click="form.phone = ''">     -->
+                    </div>
+                    <b-form-invalid-feedback :state="validation_phone"
+                                             v-if="!formElementControl.phone.isDefault"
+                                             v-text="formElementControl.phone.invalidFeedback">
+                    </b-form-invalid-feedback>
+                </div>
+                <p class="subtitle">線上小編</p>
+                <div class="pb-4 store-form-item">
+                    <div class="fillin-input">
+                        <label for="lineid">Line ID</label>
+                        <input type="text" id="lineid" name="lineid" placeholder="例：&#64;store-id"
+                               v-model="form.lineid" maxlength="200" />
+                    </div>
+                </div>
+                <div class="pb-4 store-form-item">
+                    <div class="fillin-input">
+                        <label for="facebookid">FB粉絲團</label>
+                        <input type="text" id="facebookid" name="facebookid" placeholder="例：&#64;FB.store"
+                               v-model="form.facebookid" maxlength="200" />
+                    </div>
+                </div>
+                <div class="pb-4 store-form-item">
+                    <div class="fillin-input">
+                        <label for="igurl">IG專頁</label>
+                        <input type="text" id="igurl" name="igurl" placeholder="例：&#64;IG.store"
+                               v-model="form.igurl" maxlength="200" />
+                    </div>
+                </div>
+                <div class="pb-4 store-form-item">
+                    <div class="fillin-input">
+                        <label for="storeurl">其他網址</label>
+                        <input type="text" id="storeurl" name="storeurl" placeholder="例：https://www.instagram.com/store_name/"
+                               v-model="form.storeurl" maxlength="200" />
+                    </div>
+                </div>
+                <div class="pb-4 store-form-item">
+                    <div class="fillin-textarea"
+                         v-bind:class="changeClassStatus(formElementControl.delivery_note, validation_delivery_note)">
+                        <label for="delivery_note">配送說明</label>
+                        <textarea id="delivery_note" name="delivery_note" required maxlength="200"
+                                  placeholder="請填寫您商店的商品配送方式（郵寄、快遞、面交）、預計配送等待時間等資訊。並告知消費者於分期審核通過後，等待廠商電話聯繫，以便確認送貨資訊。（200字內）"
+                                  v-bind:required="formElementControl.delivery_note.required"
+                                  v-model="form.delivery_note"></textarea>
+                    </div>
+                    <b-form-invalid-feedback :state="validation_delivery_note"
+                                             v-if="!formElementControl.delivery_note.isDefault"
+                                             v-text="formElementControl.delivery_note.invalidFeedback">
+                    </b-form-invalid-feedback>
+                </div>
+                <div class="pb-4 store-form-item">
+                    <div class="fillin-textarea"
+                         v-bind:class="changeClassStatus(formElementControl.other_instructions, validation_other_instructions)">
+                        <label for="other_instructions">其他說明</label>
+                        <textarea id="other_instructions" name="other_instructions" required maxlength="200"
+                                  placeholder="請填寫其他注意事項或另收費用與資料（例如：機車產品另收燃料費、規費、刻印章等費用）（200字內）"
+                                  v-bind:required="formElementControl.other_instructions.required"
+                                  v-model="form.other_instructions"></textarea>
+                    </div>
+                    <b-form-invalid-feedback :state="validation_other_instructions"
+                                             v-if="!formElementControl.other_instructions.isDefault"
+                                             v-text="formElementControl.other_instructions.invalidFeedback">
+                    </b-form-invalid-feedback>
+                </div>
+                <div class="pb-4 store-form-item">
+                    <div class="fillin-input required">
+                        <label for="logo_Path">上傳logo</label>
+                        <input type="text"
+                               id="logo_Path"
+                               name="logo_Path"
+                               v-model="form.logo_Path"
+                               disabled />
+                        <img v-on:click="openImage()" src="@Url.Content("~/Content/images/icon-img-upload-small.svg")" alt="" class="logo_icon">
+                    </div>
+                    <p class="input-care">建議最佳圖檔尺寸：500X100px</p>
+                    <div class="dropzone-box">
+                        <vue-dropzone :style="display"
+                                      ref="uploadfile"
+                                      id="dropzone"
+                                      v-on:vdropzone-removed-file="openImage()"
+                                      :options="dropzoneOptions"></vue-dropzone>
+                    </div>
+                </div>
+                <div class="btn-common btn-common-pink mt-4" style="width: 100%;"
+                     v-if="!isEdit && isMobile"
+                     @@click="sendEdit(0)">建立</div>
+                <div class="btn-common btn-common-pink mt-4" style="width: 100%;"
+                     v-if="isEdit && isMobile"
+                     @@click="sendEdit(1)">確認編輯</div>
+                <a class="btn-common btn-common-white mt-2" href="@Url.Content("~/ecommerce/productmanage")" style="display: block; width: 100%;"
+                   v-if="isEdit && isMobile">取消</a>
+            </div>
+            <div class="store-img">
+                <img src="@Url.Content("~/Content/images/ec-image-shop-info-sample.png")" alt="">
+            </div>
+        </div>
+    </div>
+    <!-- modal: 通用訊息 -->
+    <b-modal id="model_Common"
+        v-model="model_Common.isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="model_Common.title"
+        v-bind:hide-header-close="true"
+        v-bind:dialog-class="'modal-custome ' + model_Common.statusClass">
+        <div class="modal-body--content">
+            <p v-html="model_Common.content"></p>
+        </div>
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--cancel"
+                v-if="model_Common.hasCancel"
+                @@click="model_Common.isShow = false">取消</div>
+            <div class="modal-custome-btn btn--ok"
+                v-if="model_Common.hasOk"
+                @@click="movingToList()">確定</div>
+        </div>
+    </b-modal>
+    <div class="mobile-tips"
+        v-if="isMobile">
+        更全面、完整功能的供應商平台管理系統請從桌面瀏覽
+    </div>
+</div>
+
+
+@section scripts {
+<script type="text/babel">
+    var page = new Vue({
+		el: "#page",
+		mixins: [myMixin],
+		store: store,
+        components: {
+            vueDropzone: vue2Dropzone,
+        },
+		data: {
+            apiUrl_Info: "@Url.Action("GetInfo", "Store")",
+            apiUrl_CreateAndModify: "@Url.Action("CreateAndModify", "Store")",
+            apiUrl_ProductList: '@Url.Action("ProductManage", "Ecommerce")',
+            isMobile: @(ViewBag.isMobile?"true":"false"),
+            changeFixed: false,
+            type: 0,
+            display: 'display:none',
+            isUpdate: false,
+			model_Common: {
+                title: '提示訊息',
+				content: '',
+                isShow: false,
+                btnValue: '',
+                hasCancel: false,
+                hasOk: true,
+                statusClass: 'modal-custome',
+            },
+            isEdit: @(ViewBag.isEdit?"true":"false"),
+            form: {
+                title: '',
+                subtitle: '',
+                address: '',
+                phone: '',
+                delivery_note: '',
+                deploy_status: '',
+                other_instructions: '',
+                logo_Path: '',
+                logo_fileuuid: '',
+                action: 0,
+                igurl: '',
+                lineid: '',
+                facebookid: '',
+                storeurl: ''
+            },
+            formElementControl: {
+                title: {
+                    isDefault: true,
+                    invalidFeedback: '請輸入大標題',
+                    validFeedback: '輸入正確',
+                    isValidOk: false,
+                    required: true
+                },
+                subtitle: {
+                    isDefault: true,
+                    invalidFeedback: '請輸入小標題',
+                    validFeedback: '輸入正確',
+                    isValidOk: false,
+                    required: true
+                },
+                address: {
+                    isDefault: true,
+                    invalidFeedback: '請輸入地址',
+                    validFeedback: '輸入正確',
+                    isValidOk: false,
+                    required: true
+                },
+                phone: {
+                    isDefault: true,
+                    invalidFeedback: '請輸入電話',
+                    validFeedback: '輸入正確',
+                    isValidOk: false,
+                    required: true
+                },
+                delivery_note: {
+                    isDefault: true,
+                    invalidFeedback: '請輸入配送說明',
+                    validFeedback: '輸入正確',
+                    isValidOk: false,
+                    required: true
+                },
+                other_instructions: {
+                    isDefault: true,
+                    invalidFeedback: '請輸入其他說明',
+                    validFeedback: '輸入正確',
+                    isValidOk: false,
+                    required: true
+                },
+            },
+            dropzoneOptions: {
+                url: "@Url.Action("UploadImage", "Ecommerce")",
+                thumbnailWidth: 200,
+                thumbnailHeight: 200,
+                addRemoveLinks: true,
+                thumbnailMethod: "crop",//contain or crop. 
+                method: "post",
+                maxFiles: 1,
+                maxFilesize: 1, // MB,
+                uploadMultiple: true,
+                parallelUploads: 100,
+                acceptedFiles: ".jpeg,.jpg,.png,.gif,.JPEG,.JPG,.PNG,.GIF",
+                fallback: "瀏覽器不支援，請更新",
+                dictDefaultMessage: "請將圖片拖拉到此或是點擊選擇檔案",
+                dictFileTooBig: "圖片檔案過大無法上傳，請將圖片壓縮至{{maxFilesize}}MB以下再重新上傳圖片檔案",
+                dictInvalidFileType: "圖片格式錯誤無法上傳，請再檢查圖片可支援格式後重新上傳圖片",
+                dictRemoveFile: "刪除",
+                autoProcessQueue: false, // 關閉自動處理
+                headers: { "Case-Header": "xxxxxxxx" }, // 案件編號
+                init: function () {
+                    let vm = this
+                    this.on("processing", function (file) {
+                        new Compressor(file, {
+                            quality: 0.6,
+                            success(result) {
+                                file = result;
+                            },
+                            error(err) {
+                                console.log(err.message);
+                            },
+                        });
+                        console.log("processing");
+                    });
+
+                    this.on("uploadprogress", function (file) {
+                        console.log("uploadprogress");
+                    });
+
+                    this.on("sending", function (file, xhr, formData) {
+                        console.log("sending");
+                        formData.append('remark', '');
+                        formData.append('case_id', '');
+                        formData.append('todo_type', 0);
+                    });
+
+                    this.on("success", function (file, response) {
+                        console.log('successresponse',response);
+    					if (response.ReturnCode == 0) {
+
+                            // 圖檔上傳成功後，更新商品資訊
+                            page.sendStoreData();
+					    }else {
+                            page.model_Common.title = "錯誤";
+                            page.model_Common.content = "圖檔上傳失敗";
+                            page.model_Common.hasCancel = false;
+                            page.model_Common.isShow = true;
+
+                            return false;
+					    }
+                    })
+
+                    this.on("maxfilesexceeded", function (file) {
+                        console.log("maxfilesexceeded");
+                    });
+
+                    this.on("maxfilesreached", function (file) {
+                        console.log("maxfilesreached");
+                    });
+
+                    this.on("error", function (file, errorMessage, xhr) {
+                        console.log("error");
+                        console.log(errorMessage);
+                        console.log(xhr);
+                        let userAgent = window.navigator.userAgent;
+                        let isIE = (userAgent.indexOf('MSIE') > 0) || (userAgent.indexOf('Trident/') > 0);
+                        let isEdge = userAgent.indexOf('Edge/') > 0;
+                        if(errorMessage.indexOf("upload") > 0 && (isIE || isEdge)) {
+                            console.log("ie");
+                            this.removeFile(file);
+                            page.openImage();
+                        }else {
+                            page.model_Common.title = "錯誤"
+                            page.model_Common.content = errorMessage
+                            page.model_Common.hasCancel = false
+                            page.model_Common.isShow = true
+                            this.removeFile(file);
+                        }
+                    });
+
+                    this.on("complete", function () {
+                        console.log("complete");
+                    });
+
+                    this.on("successmultiple", function() {
+                        console.log("successmultiple");
+                        console.log("圖片上傳成功")
+                    })
+                    
+                },
+                accept: function (file, done) {
+                    var self = this;
+
+                    // 顯示 uploadfile
+                    page.display = '';
+                    done();
+                }
+            },
+        },
+        created: function() {
+            app.currentPage.MaintainStore = true
+
+			this.checkSize()
+			window.addEventListener('scroll', () => {
+                this.checkSize()
+			}, true);
+			window.addEventListener('resize', () => {
+                this.checkSize()
+			}, true);
+
+            this.checkStoreInfo()
+        },
+        mounted: function() {
+            var vm = this;
+            if(!!vm.form.logo_fileuuid) {
+                vm.display = '';
+                vm.notdisplay = 'display:none';
+                var file = { size: 1000000, name: "Icon", type: "image/png" , contentId: vm.form.logo_fileuuid};
+                var url = '@Url.Content("~/ecommerce/RenderImage")'+'?id='+vm.form.logo_fileuuid;
+                console.log('logo_fileuuid',vm.form.logo_fileuuid);
+                this.$refs.uploadfile.manuallyAddFile(file, url);
+                this.$refs.uploadfile.dropzone.emit('thumbnail', file, url);
+                this.$refs.uploadfile.dropzone.emit('complete', file);    
+            }
+        }, 
+        computed: {
+            validation_title: function() {
+                if(this.formElementControl.title.isDefault && this.form.title.length !== 0) {
+                    this.formElementControl.title.isDefault = false
+                }
+                var temp;
+                if(this.form.title.length > 1) {
+                    temp = true
+                }else {
+                    temp = false
+                }
+                this.formElementControl.title.isValidOk = temp
+                return temp
+            },
+            validation_subtitle: function() {
+                if(this.formElementControl.subtitle.isDefault && this.form.subtitle.length !== 0) {
+                    this.formElementControl.subtitle.isDefault = false
+                }
+                var temp;
+                if(this.form.subtitle.length > 1) {
+                    temp = true
+                }else {
+                    temp = false
+                }
+                this.formElementControl.subtitle.isValidOk = temp
+                return temp
+            },
+            validation_address: function() {
+                if(this.formElementControl.address.isDefault && this.form.address.length !== 0) {
+                    this.formElementControl.address.isDefault = false
+                }
+                var temp;
+                if(this.form.address.length > 1) {
+                    temp = true
+                }else {
+                    temp = false
+                }
+                this.formElementControl.address.isValidOk = temp
+                return temp
+            },
+            validation_phone: function() {
+                var errorMessage = '請輸入電話';
+                var temp = false;
+                var req = new RegExp(/((?=(0))[0-9]{10})$/);
+
+                if(this.form.phone.length !== 0) {
+                    errorMessage = '請輸入正確電話格式';
+                    this.formElementControl.phone.isDefault = false
+                }
+
+                if(req.test(this.form.phone)) {
+                    temp = true
+                }
+
+                this.formElementControl.phone.isValidOk = temp
+                this.formElementControl.phone.invalidFeedback = errorMessage;
+
+                return temp
+            },
+            validation_delivery_note: function() {
+                if(this.formElementControl.delivery_note.isDefault && this.form.delivery_note.length !== 0) {
+                    this.formElementControl.delivery_note.isDefault = false
+                }
+                var temp;
+                if(this.form.delivery_note.length > 1) {
+                    temp = true
+                }else {
+                    temp = false
+                }
+                this.formElementControl.delivery_note.isValidOk = temp
+                return temp
+            },
+            validation_other_instructions: function() {
+                if(this.formElementControl.other_instructions.isDefault && this.form.other_instructions.length !== 0) {
+                    this.formElementControl.other_instructions.isDefault = false
+                }
+                var temp;
+                if(this.form.other_instructions.length > 1) {
+                    temp = true
+                }else {
+                    temp = false
+                }
+                this.formElementControl.other_instructions.isValidOk = temp
+                return temp
+            },
+        },
+        methods: {
+            openImage: function() {
+                let myDropzone = this.$refs.uploadfile
+                if(!!myDropzone) {
+                    if (myDropzone.getAcceptedFiles().length == 1 || myDropzone.getRejectedFiles().length == 1) {
+                        myDropzone.dropzone.removeAllFiles(true);
+                        return;
+                    }
+                    myDropzone.$refs.dropzoneElement.click();
+                }
+            },
+            checkSize: function() {
+				let scrollTop = document.documentElement.scrollTop ||
+							document.body.scrollTop ||
+							document.querySelector('body').scrollTop;
+				if(scrollTop >= 100){
+					this.changeFixed = true;
+				}else {
+					this.changeFixed = false;
+				}
+
+				if(this.$store.getters.getWindowWidth <= this.$store.getters.getBreakpoint) {
+					this.isMobile = true;
+				}else {
+					this.isMobile = false;
+				}
+			},
+            uploadAddition: function() {
+                let vm = this
+                let myDropzone = this.$refs.uploadfile
+
+                // 新增的檔案數量 = 0 並且 載入的檔案數量 = 0
+                if (myDropzone.getAcceptedFiles().length == 0 && myDropzone.getRejectedFiles().length == 0) {
+                    vm.model_Common.title = "錯誤";
+                    vm.model_Common.content = "請上傳檔案";
+                    vm.model_Common.hasCancel = false;
+                    vm.model_Common.isShow = true;
+                    return false;
+                } else if(myDropzone.getRejectedFiles().length > 1) {
+                    vm.model_Common.title = "錯誤";
+                    vm.model_Common.content = "請確認檔案尺寸、數量及檔案類型是否正確"
+                    vm.model_Common.hasCancel = false;
+                    vm.model_Common.isShow = true;
+                    return false;
+                } else if (myDropzone.getAcceptedFiles().length > 0) {
+                    vm.form.logo_Path = '';
+                    vm.form.logo_fileuuid = '';
+                    console.log("processQueue");
+                    myDropzone.processQueue();
+                }
+            },
+            checkStoreInfo: function() {
+                let vm = this 
+                if(vm.isEdit) {
+                    var data = @Html.Raw(Json.Encode(ViewBag.StoreInfo));
+                    console.log(data);
+                    vm.form = {
+                        title: data.Title,
+                        subtitle: data.SubTitle,
+                        address: data.Address,
+                        phone: data.Phone,
+                        delivery_note: data.DeliveryNote,
+                        deploy_status: data.DeployStatus,
+                        other_instructions: data.OtherInstructions,
+                        lineid: data.LineId,
+                        facebookid: data.FacebookId,
+                        storeurl: data.StoreUrl,
+                        igurl: data.IGUrl,
+                        logo_Path: data.LogoPath,
+                        logo_fileuuid: data.LogoFileuuid,
+                    }
+                }
+            },
+            changeClassStatus: function(targetRequired, targetValid) {
+                var requiredClass = targetRequired.required ? 'required' : ''
+                var validClass = targetValid ? 'success' : 'error'
+                var defaultClass = targetRequired.isDefault ? 'default' : ''
+                return [requiredClass, validClass, defaultClass]
+            },
+            sendEdit: function(type) {
+                let vm = this 
+                if(type === null || type === '') {
+                    return;
+                }
+    
+                var keyValue = Object.keys(this.formElementControl);
+                var notValid= [];
+                vm.type = type;
+
+                for(var i =0 ; i< keyValue.length; i++){
+                    var temp = this.formElementControl[keyValue[i]];
+                    if(temp.required == true && temp.isValidOk == false) {
+                        notValid.push(temp);
+                    }
+                }
+                
+                let myDropzone = this.$refs.uploadfile;
+                
+                if (myDropzone.getAcceptedFiles().length == 0 && myDropzone.getRejectedFiles().length == 0) {
+                    if(vm.form.logo_Path === '' || vm.form.logo_Path === null) {
+                        notValid.push({ invalidFeedback: '請上傳檔案' });
+                    }
+                }
+
+                if(notValid.length == 0) {
+                    vm.uploadAddition();
+
+                    // 無須更新圖檔的時候
+				    if(!!vm.form.logo_Path && !!vm.form.logo_fileuuid) {
+                        vm.sendStoreData();
+                    }
+                }else {
+                    this.model_Common.content = '';
+                    for(var i=0; i< notValid.length; i++) {
+                        this.model_Common.content += notValid[i].invalidFeedback + '<br>'
+                    }
+                    this.model_Common.title = '請將必填欄位填寫完成';
+                    this.model_Common.statusClass = 'modal-custome modal-custome--error';
+                    this.model_Common.isShow = true;
+                }
+            },
+            sendStoreData: function() {
+                let vm = this ;
+                vm.isUpdate = false;
+                let ishead = false ;
+                let storeurl = vm.form.storeurl;
+                let urlength = storeurl.length;
+                
+                if(urlength > 0 )
+                {
+                    if(urlength > 5 )
+                    {
+                        let head = storeurl.substring(0,5);
+                        if(head.match('https') != null || head.match('http') != null)
+                        {
+                            ishead = true;
+                        }
+                    }
+
+                    if(!ishead)
+                    {
+                        let maxlength = 192
+                        if(urlength > maxlength)
+                        {
+                            storeurl = storeurl.substring(0,urlength-(urlength - maxlength));
+                        }
+
+                        storeurl = 'https://' + storeurl;
+                    }
+                }
+
+                axios.post(vm.apiUrl_CreateAndModify, {
+                    title: vm.form.title,
+                    subtitle: vm.form.subtitle,
+                    address: vm.form.address,
+                    phone: vm.form.phone,
+                    lineid: vm.form.lineid,
+                    facebookid: vm.form.facebookid,
+                    storeurl: storeurl,
+                    igurl: vm.form.igurl,
+                    deliveryNote: vm.form.delivery_note,
+                    deployStatus: vm.form.deploy_status,
+                    otherInstructions: vm.form.other_instructions,
+                    logoPath: vm.form.logo_Path,
+                    logoFileuuid: vm.form.logo_fileuuid,
+                    action: (vm.isEdit)?1:0 //0: 新增 1: 修改 ,
+                })
+                .then(function (response) {
+                    console.log('response',response);
+                    if (response.data.ReturnCode == 0) {
+                    console.log('type',vm.type);
+                        vm.form.logo_Path = response.data.ReturnMsg;
+                        vm.model_Common.title = vm.type == 0 ? "建立商店成功" : "編輯商店成功";
+                        vm.model_Common.statusClass = "modal-custome--success";
+                        vm.model_Common.content = response.data.Alert;
+                        vm.model_Common.isShow = true;
+                        vm.isUpdate = true;
+                    }else {
+                        vm.model_Common.title = vm.type == 0 ? "建立商店失敗" : "編輯商店失敗";
+                        vm.model_Common.statusClass = "modal-custome--error";
+                        vm.model_Common.content = response.data.Alert;
+                        vm.model_Common.isShow = true;
+                    }
+                })
+                .catch(function(error){
+                    console.log('error',error);
+                    vm.model_Common.title = "發生錯誤"
+                    vm.model_Common.statusClass = "modal-custome--error";
+                    vm.model_Common.content = error.Alert;
+                    vm.model_Common.isShow = true;
+                });
+            },
+            movingToList: function() {
+                let vm = this ;
+                vm.model_Common.isShow = false
+
+                if(vm.isUpdate) {
+            	    window.location.href = vm.apiUrl_ProductList;
+                }
+            }
+        }
+    })
+</script>
+}

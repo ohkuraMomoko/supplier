@@ -1,0 +1,171 @@
+﻿@{
+    ViewBag.Title = "忘記密碼";
+    Layout = "~/Views/Shared/_LayoutNotMenu.cshtml";
+}
+@section header {
+    @Styles.Render("~/Content/pages/home/forgetPW.min.css")
+}
+
+<div id="app">
+    <div class="forget-container">
+
+        <!-- STEP.1 忘記密碼表單 -->
+        <b-form v-if="forgetStaus === 1 "
+                @@submit="onSubmit"
+                class="forget-content">
+            <h2 class="forget-content--title">重設您的密碼</h2>
+            <div class="form-item">
+                <b-form-input id="unifiedBusinessNo"
+                    class="form-item--input"
+                    v-model="form.unifiedBusinessNo"
+                    type="number"
+                    pattern="\d{8}"
+                    title="請輸入正確的統編"
+                    onkeydown="javascript: return event.keyCode == 69 ? false : true"
+                    required></b-form-input>
+                <label class="form-item--label" for="unifiedBusinessNo"
+                    v-bind:class="{ active: form.unifiedBusinessNo!=='' }">供應商統編</label>
+            </div>
+            <div class="form-item">
+                <b-form-input id="account"
+                    class="form-item--input"
+                    v-model="form.account"
+                    type="number"
+                    pattern="^\d{8,10}$"
+                    title="請輸入正確的手機或市話號碼"
+                    onkeydown="javascript: return event.keyCode == 69 ? false : true"
+                    required></b-form-input>
+                <label class="form-item--label" for="account"
+                    v-bind:class="{ active: form.account!=='' }">帳號(手機或市話號碼）</label>
+            </div>
+            <div class="login-content--footer">
+                <b-button type="submit" :disabled='isSubmit' variant="primary" class="center btn-common btn-login">送出</b-button>
+                <a href="@Url.Content("~/home/login")" class="center btn-common link-back">取消</a>
+            </div>
+        </b-form>
+
+        <!-- STEP.2.1 結果(無請款權限) -->
+        <div v-else-if="forgetStaus === 2"
+             class="result">
+            <img src="@Url.Content("~/Content/images/icon-confirm-success.svg")" alt="" class="center result--pic">
+            <h3 class="result--title">密碼已重置成功</h3>
+            <p class="result--desc">{{ message }}</p>
+            <a href="@Url.Content("~/home/login")" class="center btn-common link-back-white">重新登入</a>
+        </div>
+    </div>
+    <b-modal id="msgModal"
+        v-model="modal.isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="modal.title"
+        v-bind:hide-header-close="true"
+        v-bind:dialog-class="modal.statusClass">
+        <div class="modal-body--content">
+            <p v-html="modal.content"></p>
+        </div>
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--cancel"
+                v-if="modal.hasCancel"
+                @@click="hideModal">取消</div>
+            <div class="modal-custome-btn btn--ok"
+                v-if="modal.hasOk"
+                @@click="okModal">確定</div>
+        </div>
+    </b-modal> 
+</div>
+
+@section scripts {
+    <script>
+	var app = new Vue({
+		el: "#app",
+		data: {
+            isSubmit: false,
+            breakPoint: 1140,
+            apiUrl: '@Url.Action("ReSetPassWord", "Home")',
+            apiDowntimeUrl: '@Url.Action("DowntimeCheck", "Home")',
+			window: {
+                width: 0,
+                height: 0
+            },
+            forgetStaus: 1,
+            form: {
+                unifiedBusinessNo: '',
+                account: '',
+                verificationCode: ''
+            },
+            message: '',
+            modal: {
+                title: '',
+                content: '',
+                isShow: false,
+                btnValue: '',
+                hasCancel: false,
+                hasOk: true,
+                statusClass: 'modal-custome',
+            },
+		},
+		created: function() {
+			window.addEventListener('resize', this.handleResize);
+            this.getDowntimeCheck();
+            this.handleResize();
+		},
+		methods: {
+            handleResize: function() {
+                this.window.width = window.innerWidth;
+                this.window.height = window.innerHeight;
+            },
+            onSubmit: function(evt) {
+                app.isSubmit = true;
+                evt.preventDefault();
+                var vm = this;
+
+                axios.post(vm.apiUrl, {
+                    uniformnumbers: vm.form.unifiedBusinessNo,
+                    phone: vm.form.account
+                })
+                    .then(function (response) {
+                        if (response.data.Result.ReturnCode === -1) {
+                            vm.modal.content = response.data.Result.Alert
+                            vm.modal.title = '密碼重新設定錯誤'
+                            vm.modal.statusClass = 'modal-custome modal-custome--error'
+                            vm.modal.isShow = true
+                            app.isSubmit = false;
+                            return false;
+                        }
+
+                        vm.message = response.data.Data;
+                        vm.forgetStaus = 2;
+                        app.isSubmit = false;
+                        console.log(response.data)
+                })
+                .catch(function(error){
+                    console.log(error)
+                    app.isSubmit = false;
+                });
+            },
+            hideModal: function() {
+                this.modal.isShow = false
+                this.modal.btnValue = 'cancel'
+            },
+            // 停機資訊
+            getDowntimeCheck: function () {
+                var vm = this;
+                axios.post(vm.apiDowntimeUrl)
+                    .then(function (response) {
+                        if (response.data.ReturnCode == 0) {
+                            if (response.data.ReturnMsg !== '') {
+                                vm.isSubmit = true;
+                            }
+                        }
+                    })
+                    .catch(function (error) {
+                    });
+            },
+            okModal: function() {
+                this.modal.isShow = false
+                this.modal.btnValue = 'ok'
+            }
+        }
+	});
+    </script>
+}

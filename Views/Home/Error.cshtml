@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewBag.Title = "Error";
+    Layout = "~/Views/Shared/_LayoutNotMenu.cshtml";
+}
+
+@section header {
+	@Styles.Render("~/Content/pages/home/error.min.css") 
+}
+
+<div class="page">
+    <div class="content">
+        <img src="@Url.Content("~/Content/images/img-cat-404.svg")" alt="" class="content-img">
+        <p class="content-text">抱歉！您所訪問的頁面不存在。</p>
+        <a href="@Url.Content("~/vendor/index")" class="btn-common btn-common-white content-btn">返回首頁</a>
+    </div>
+</div>

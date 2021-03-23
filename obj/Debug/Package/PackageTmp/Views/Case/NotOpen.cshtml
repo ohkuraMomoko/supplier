@@ -1,0 +1,29 @@
+﻿@{
+    ViewBag.Title = "尚未開通";
+}
+
+@section header {
+    @Styles.Render("~/Content/pages/case/notOpen.min.css")
+}
+
+<div class="page">
+    <div class="msg">
+        <img src="@Url.Content("~/Content/images/icon-confirm-none-authorize.svg")" alt="" class="center msg--pic">
+        <h3 class="msg--title">你尚未開通此功能</h3>
+        <p class="msg--desc">	
+            1.	【線上填單】可建立一張電子申請書，讓客戶在自己的手機或電腦上填寫申辦分期所需資料並上傳身分證及其他文件；而您可以透過【訂單/案件查詢】功能得知案件進度。
+            <br>2.	使用電子申請書除了能降低手寫文字錯誤，更可加速審核流程。
+            <br>3.	此功能仍在試行尚未全面開放，如果想瞭解更多，請洽詢仲信業務經辦。</p>
+    <p class="msg--desc mt-2">提醒您：無論客戶使用紙本、線上填單、零卡掃碼…等任何送件方式，商家皆須負對保責任，也就是必須確保本人申辦且知悉分期內容。</p>
+    </div>
+</div>
+@section scripts {
+<script type="text/babel">
+    var page = new Vue({
+        el: "#page",
+        created: function() {
+			app.currentPage.CaseInquiry = true
+		},
+    })
+</script>
+}

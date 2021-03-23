@@ -1,0 +1,1081 @@
+﻿
+@{
+    ViewBag.Title = "線上填單";
+}
+@section header {
+	@Styles.Render("~/Content/pages/case/fillIn.min.css") 
+}
+@using SupplierPlatform.Entities;
+@using SupplierPlatform.Services;
+@{ 
+    var session = DependencyResolver.Current.GetService<IOperatorContext>();
+    var inApp = ((VendorOperator)session.Operator).MobileType;
+}
+
+<div id="page" class="page">
+	<div class="page-container" >
+        <div class="page-top">
+			<p class="page-title">線上填單</p>
+		</div>
+        <div class="page-content" >
+            <b-form class="control-form"
+                :novalidate="true"
+                :validated="true">
+                <div class="block">
+                    <p class="block-title">訂單資訊</p>
+                        <div class="row mb-4">
+                            <div class="col-12 col-lg-6">
+                                <div class="fillin-input">
+                                    <label for="order_id">訂單編號</label>
+                                    <input type="text" id="order_id" name="order_id" 
+                                        placeholder="請輸入訂單編號"
+                                        v-model="form.OrderId" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-lg-6 mb-4">
+                                <div class="fillin-input">
+                                    <label for="manager">經辦人員</label>
+                                    <input type="text" id="manager" name="manager" placeholder="請輸入經辦人員"
+                                        v-model.trim="form.Manager" />
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6 mb-4">
+                                <div class="fillin-input"
+                                    v-bind:class="changeClassStatus(formElementControl.ManagerPhone, validation_ManagerPhone)">
+                                    <label for="manager_phone">經辦人員手機</label>
+                                    <input type="tel" id="manager_phone" name="manager_phone" 
+                                        :placeholder="formElementControl.ManagerPhone.placeholder"
+                                        v-bind:required="formElementControl.ManagerPhone.required"
+                                        v-model.lazy.trim="form.ManagerPhone" />
+                                </div>
+                                <b-form-invalid-feedback :state="validation_ManagerPhone" 
+                                    v-if="!formElementControl.ManagerPhone.isDefault" v-text="formElementControl.ManagerPhone.invalidFeedback">
+                                </b-form-invalid-feedback>
+                            </div>
+                        </div>
+                        <div class="row" 
+                            v-if="formElementControl.StoreId.isShow">
+                            <div class="col-12 col-lg-6 mb-4 inline-select"
+                                v-bind:class="changeClassStatus(formElementControl.StoreId, validation_StoreId)">
+                                <label for="store_id">門市</label>
+                                <div class="search-select select-fillin">
+                                    <select v-model="form.StoreId" id="store_id" >
+                                        <option value="" disabled>{{ formElementControl.StoreId.placeholder }}</option>
+                                        <option
+                                            v-for="option in formOptions.store"
+                                            v-bind:value="option.id"
+                                            v-text="option.name">
+                                        </option>
+                                    </select>
+                                </div>
+                                <b-form-invalid-feedback :state="validation_StoreId" 
+                                    v-if="!formElementControl.StoreId.isDefault"
+                                    v-text="formElementControl.StoreId.invalidFeedback">
+                                </b-form-invalid-feedback>
+                            </div>
+                            <div class="col-12 col-lg-6 mb-4 inline-select"
+                                v-bind:class="changeClassStatus(formElementControl.StrongholdId, validation_StrongholdId)"
+                                v-if="formElementControl.StrongholdId.isShow">
+                                <label for="stronghold_id">據點</label>
+                                <div class="search-select select-fillin"
+                                    v-bind:class="changeClassStatus(formElementControl.StrongholdId, validation_StrongholdId)">
+                                    <select v-model="form.StrongholdId" id="stronghold_id" >
+                                        <option value="" disabled>{{ formElementControl.StrongholdId.placeholder }}</option>
+                                        <option
+                                            v-for="option in formOptions.showStronghold"
+                                            v-bind:value="option.id"
+                                            v-text="option.name">
+                                        </option>
+                                    </select>
+                                </div>
+                                <b-form-invalid-feedback :state="validation_StrongholdId" 
+                                    v-if="!formElementControl.StrongholdId.isDefault"
+                                    v-text="formElementControl.StrongholdId.invalidFeedback">
+                                </b-form-invalid-feedback>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-lg-2 mb-2 mb-md-4 radio-label ">
+                                <label for="interest_rate_1" 
+                                v-bind:class="changeClassStatus(formElementControl.InterestRate, validtion_InterestRate)">利率別</label>
+                            </div>
+                            <div class="col-12 col-lg-8">
+                                <div class="row">
+                                    <div class="col-12 col-lg-6 mb-2 mb-md-4">
+                                        <div class="radioer">
+                                            <input type="radio" name="interest_rate" id="interest_rate_1"
+                                                v-model.number="form.InterestRate"
+                                                @@click="interestRateType(1)"
+                                                v-bind:value="1" />
+                                            <label for="interest_rate_1">零利率（商家負擔）</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-lg-6 mb-2 mb-md-4">
+                                        <div class="radioer">
+                                            <input type="radio" name="interest_rate" id="interest_rate_2"
+                                                v-model.number="form.InterestRate"
+                                                @@click="interestRateType(2)"
+                                                v-bind:value="2" />
+                                            <label for="interest_rate_2">低利率（消費者負擔）</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-lg-6 mb-4 inline-select"
+                                v-bind:class="changeClassStatus(formElementControl.ProductType, validation_ProductType)">
+                                <label for="product_type">商品類型</label>
+                                <div class="search-select select-fillin">
+                                    <select v-model.number="form.ProductType" id="product_type">
+                                        <option value="" disabled>{{ formElementControl.ProductType.placeholder }}</option>
+                                        <option
+                                            v-for="option in formOptions.ProductType"
+                                            :value="option.seqId"
+                                            v-text="option.name">
+                                        </option>
+                                    </select>
+                                </div>
+                                <b-form-invalid-feedback :state="validation_ProductType" 
+                                    v-if="!formElementControl.ProductType.isDefault"
+                                    v-text="formElementControl.ProductType.invalidFeedback">
+                                </b-form-invalid-feedback>
+                            </div>
+                            <div class="col-12 col-lg-6 mb-4">
+                                <div class="fillin-input"
+                                    v-bind:class="changeClassStatus(formElementControl.ProductName, validation_ProductName)" >
+                                    <label for="product_name">商品名稱</label>
+                                    <input type="text" id="product_name" name="product_name" 
+                                        :placeholder="formElementControl.ProductName.placeholder"
+                                        v-bind:required="formElementControl.ProductName.required"
+                                        v-model.lazy.trim="form.ProductName" />
+                                </div>
+                                <b-form-invalid-feedback :state="validation_ProductName" 
+                                    v-if="!formElementControl.ProductName.isDefault"
+                                    v-text="formElementControl.ProductName.invalidFeedback">
+                                </b-form-invalid-feedback>
+                                <!-- <b-form-valid-feedback :state="validation_ProductName">
+                                    {{ formElementControl.ProductName.validFeedback }}
+                                </b-form-valid-feedback> -->
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-lg-6 mb-4">
+                                <div class="fillin-input"
+                                    v-bind:class="changeClassStatus(formElementControl.TransAmt, validation_TransAmt)" >
+                                    <label for="trans_amt">交易金額</label>
+                                    <input type="number" id="trans_amt" name="trans_amt"
+                                        :placeholder="formElementControl.TransAmt.placeholder"
+                                        v-bind:required="formElementControl.TransAmt.required"
+                                        onkeydown="javascript: return event.keyCode == 69 ? false : true"
+                                        v-model.lazy.number="form.TransAmt" />
+                                </div>
+                                <b-form-invalid-feedback :state="validation_TransAmt" 
+                                    v-if="!formElementControl.TransAmt.isDefault"
+                                    v-text="formElementControl.TransAmt.invalidFeedback">
+                                </b-form-invalid-feedback>
+                            </div>
+                            <div class="col-12 col-lg-6 mb-4 inline-select"
+                                v-bind:class="changeClassStatus(formElementControl.PrdNum, validation_PrdNum)" >
+                                <label for="prd_num">分期期數</label>
+                                <div class="search-select select-fillin">
+                                    <select v-model.number="form.PrdNum" id="prd_num" >
+                                        <option value="" disabled>{{ formElementControl.PrdNum.placeholder }}</option>
+                                        <option
+                                            v-if="formOptions.installments[0].periodNum != ''"
+                                            v-for="option in formOptions.installments"
+                                            v-bind:value="option.periodNum"
+                                            v-text="option.periodNum+'期'">
+                                        </option>
+                                    </select>
+                                </div>
+                                <b-form-invalid-feedback :state="validation_PrdNum" 
+                                    v-if="!formElementControl.PrdNum.isDefault"
+                                    v-text="formElementControl.PrdNum.invalidFeedback">
+                                </b-form-invalid-feedback>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-lg-4 mb-4">
+                                <div class="fillin-input">
+                                    <label for="Initial_payment">首期金額</label>
+                                    <input type="text" id="Initial_payment" name="Initial_payment"
+                                        v-model="addDots_Initial_payment" readonly/>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4 mb-4">
+                                <div class="fillin-input">
+                                    <label for="other_installments">其他期款</label>
+                                    <input type="text" id="other_installments" name="other_installments"
+                                        v-model="addDots_OtherPrdAmount" readonly/>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <div class="fillin-input">
+                                    <label for="total_price">總價款</label>
+                                    <input type="text" id="total_price" name="total_price"
+                                        v-model="addDots_TotalAmount" readonly/>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="block">
+                    <p class="block-title">發送方式</p>
+                    <div class="row">
+                        <div class="col-12 col-lg-6 mb-4">
+                            <div class="radioer">
+                                <input type="radio" name="send_method" id="send_method_1"
+                                    v-bind:text="validtion_SendMethod"
+                                    v-model.number="form.SendMethod"
+                                    v-bind:value="1" />
+                                <label for="send_method_1">簡訊寄送</label>
+                            </div>
+                            <div class="fillin-input"
+                                v-if="changeSendInput === 1"
+                                v-bind:class="changeClassStatus(formElementControl.phone, validation_phone)">
+                                <label for="phone">手機號碼</label>
+                                <input type="text" id="phone" name="phone" 
+                                    :placeholder="formElementControl.phone.placeholder"
+                                    v-bind:required="formElementControl.phone.required"
+                                    v-model.lazy.trim="form.phone"  />
+                            </div>
+                            <b-form-invalid-feedback :state="validation_phone" 
+                                v-if="!formElementControl.phone.isDefault"
+                                v-text="formElementControl.phone.invalidFeedback">
+                            </b-form-invalid-feedback>
+                        </div>
+                        <div class="col-12 col-lg-6 mb-4">
+                            <div class="radioer">
+                                <input type="radio" name="send_method" id="send_method_2"
+                                    v-bind:text="validtion_SendMethod"
+                                    v-model.number="form.SendMethod"
+                                    v-bind:value="2" />
+                                <label for="send_method_2">Email寄送</label>
+                            </div>
+                            <div class="fillin-input"
+                                v-if="changeSendInput === 2"
+                                v-bind:class="changeClassStatus(formElementControl.email, validation_email)">
+                                <label for="email">Email</label>
+                                <input type="text" id="email" name="email" 
+                                    :placeholder="formElementControl.email.placeholder"
+                                    v-bind:required="formElementControl.email.required"
+                                    v-model.lazy.trim="form.email"   />
+                            </div>
+                            <b-form-invalid-feedback :state="validation_email" 
+                                v-if="!formElementControl.email.isDefault"
+                                v-text="formElementControl.email.invalidFeedback">
+                            </b-form-invalid-feedback>
+                        </div>
+                    </div>
+                </div>
+                <div id="fixdBtn" class="form-bottom">
+                    <span class="form-bottom--care">我們會依照您選擇的方式將此付款單傳送給客戶，之後您可以在【管理交易】→【訂單/案件查詢】中查詢相關進度及狀態</span>
+                    <button type="button"
+                        @@click="onSubmit"
+                        v-bind:disabled="hasSubmit"
+                        class="btn-common btn-common-pink form-bottom--btn">
+                        送出</button>
+                </div>
+            </b-form>
+        </div>
+    </div>
+
+    <transition name="fade">
+        <div class="fillin-fixed"
+            v-if="showFixedBar"
+            v-bind:class="[isMobile ? 'mobile' : 'desktop']">
+            <span class="fillin-fixed--title">線上填單</span>
+            <button type="button"
+                @@click="onSubmit"
+                v-bind:disabled="hasSubmit"
+                class="btn-common btn-common-pink form-bottom--btn">
+            送出</button>
+        </div>
+    </transition>
+    
+    <b-modal id="msgModal"
+        ref="msgmodal"
+        v-model="modal.isShow"
+        v-bind:centered="true"
+        v-bind:hide-footer="true"
+        v-bind:title="modal.title"
+        v-bind:hide-header-close="true"
+        v-bind:dialog-class="modal.statusClass">
+        <div class="modal-body--content">
+            <p v-html="modal.content"></p>
+        </div>
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--cancel"
+                v-if="modal.hasCancel"
+                @@click="hideModal">取消</div>
+            <div class="modal-custome-btn btn--ok"
+                v-if="modal.hasOk && inApp == 0"
+                @@click="okModal()">確定</div>
+            <div class="modal-custome-btn btn--ok"
+                v-if="modal.hasOk && inApp != 0"
+                @@click="okAppModal()">返回APP</div>
+        </div>
+    </b-modal>
+</div>
+
+@section scripts {
+<script type="text/babel">
+    var page = new Vue({
+        el: "#page",
+        mixins: [myMixin],
+        store: store,
+        data: {
+            hasSubmit: false,
+            inApp: @inApp, /*若為在APP開啟網頁的情況: 1為IOS，2為android，0為網頁 */
+            apiUrl: "@Url.Action("FillIn", "Case")",
+            apiStoreUrl: "@Url.Action("GetStoreInformation", "Case")",
+            apiProductUrl: "@Url.Action("GetProductInformation", "Case")",
+            apiPeriodNumUrl: "@Url.Action("GetPeriodNumInformation", "Case")",
+            apiAmountCalculationUrl: "@Url.Action("Calculator", "Case")",
+            userAccountType: @Html.Raw((ViewBag.IsBranch)?2:1), // 2:分公司 1:總公司
+            iscreated: false,
+            formElementControl: {
+                ManagerPhone: {
+                    isDefault: true,
+                    required: false,
+                    isShow: true,
+                    invalidFeedback: '請輸入正確經辦人員手機',
+                    validFeedback: '輸入正確',
+                    placeholder: '請輸入手機號碼',
+                    isValidOk: false
+                },
+                ProductName: {
+                    isDefault: true,
+                    required: true,
+                    isShow: true,
+                    invalidFeedback: '請輸入正確商品名稱',
+                    validFeedback: '輸入正確',
+                    placeholder: '請輸入商品名稱',
+                    isValidOk: false
+                },
+                TransAmt: {
+                    isDefault: true,
+                    required: true,
+                    isShow: true,
+                    invalidFeedback: '請輸入交易金額',
+                    validFeedback: '輸入正確',
+                    placeholder: '請輸入交易金額',
+                    isValidOk: false
+                },
+                phone: {
+                    isDefault: true,
+                    required: false,
+                    isShow: true,
+                    invalidFeedback: '請輸入正確手機號碼',
+                    validFeedback: '輸入正確',
+                    placeholder: '請輸入手機號碼',
+                    isValidOk: false
+                },
+                email: {
+                    isDefault: true,
+                    required: false,
+                    isShow: true,
+                    invalidFeedback: '請輸入正確Email',
+                    validFeedback: '輸入正確',
+                    placeholder: '請輸入Email',
+                    isValidOk: false
+                },
+                StoreId: {
+                    isDefault: true,
+                    required: false,
+                    isShow: false,
+                    invalidFeedback: '請選擇門市',
+                    validFeedback: '',
+                    placeholder: '請選擇門市',
+                    isValidOk: false
+                },
+                StrongholdId: {
+                    isDefault: true,
+                    required: false,
+                    isShow: false,
+                    invalidFeedback: '請選擇據點',
+                    validFeedback: '',
+                    placeholder: '請選擇據點',
+                    isValidOk: false
+                },
+                InterestRate: {
+                    isDefault: true,
+                    required: true,
+                    isValidOk: false,
+                    invalidFeedback: '請選擇利率別'
+                },
+                SendMethod: {
+                    isDefault: true,
+                    required: true,
+                    isValidOk: false,
+                    invalidFeedback: '請選擇發送方式'
+                },
+                ProductType: {
+                    isDefault: true,
+                    required: true,
+                    isShow: true,
+                    invalidFeedback: '請選擇商品類型',
+                    validFeedback: '',
+                    placeholder: '請選擇商品類型',
+                    isValidOk: false
+                },
+                PrdNum: {
+                    isDefault: true,
+                    required: true,
+                    isShow: true,
+                    invalidFeedback: '請選擇分期期數',
+                    validFeedback: '',
+                    placeholder: '請選擇分期期數',
+                    isValidOk: false
+                }
+            },
+            formOptions: {
+                store: [
+                    {
+                        "id":  "",
+                        "name":  "",
+                    }
+                ],
+                stronghold: [
+                ],
+                showStronghold: [],
+                installments: [
+                    {
+                        interestRate: 0.0,
+                        periodNum: ''
+                    }
+                ],
+                ProductType: [
+                    {
+                        id: 0,
+                        name: '',
+                        type: 0,
+                        update: '',
+                        seqId: 0
+                    }
+                ],
+            },
+            calcResult: {
+                "Initial_payment": null,
+                "OtherPrdAmount": null,
+                "TotalAmount": null,
+            },
+            ok_orderId: "",
+            form: {
+                Id: "",
+                OrderId: "",
+                Manager: "",
+                ManagerPhone: "",
+                StoreId: "",
+                StoreName: "",
+                AppRate: "0.0",
+                StrongholdId: "",
+                StrongholdName: "",
+                InterestRate: null,
+                ProductType: null,
+                ProductName: "",
+                TransAmt: "",
+                FirstPrdAmount: null,
+                OtherPrdAmount: null,
+                TotalAmount: null,
+                PrdNum: null,
+                SendMethod: null,
+                phone: "",
+                email: ""
+            },
+            apiDatas: [],
+            modal: {
+                title: '',
+                content: '',
+                isShow: false,
+                btnValue: '',
+                hasCancel: true,
+                hasOk: true,
+                statusClass: 'modal-custome',
+                hasOk_reload: false,
+            },
+            isMobile: false,
+            showFixedBar: false,
+            allStore:[],
+            selectStore:[],
+        },
+        created: function() {
+            app.currentPage.FillIn = true;
+            this.getStore();
+            let vm = this;
+
+            // window.addEventListener('scroll', this.scrollEvent);
+            window.addEventListener('scroll', () => {
+                let scrollTop = document.documentElement.scrollTop ||
+                document.body.scrollTop ;
+                // console.log(scrollTop);
+                var fixdBtn = document.getElementById("fixdBtn");
+                if((scrollTop >= 100) && (scrollTop < 900)){
+                    this.showFixedBar = true;
+                }else {
+                    this.showFixedBar = false;
+                }
+
+                if(this.$store.getters.getWindowWidth <= this.$store.getters.getBreakpoint) {
+                    this.isMobile = true;
+                }else {
+                    this.isMobile = false;
+                }
+            }, true);
+
+            // 判斷是否為總店帳號，若是則隱藏門市&據點select
+            if(this.userAccountType == 1) {
+                this.formElementControl.StoreId.isShow = true;
+                this.formElementControl.StoreId.required = true;
+            }
+        },
+        mounted: function() {
+            console.log(this.$store.getters.getWindowWidth);
+        },
+        computed: {
+            changeSendInput: function() {
+                if(this.form.SendMethod === 1){
+                    this.formElementControl.email.required = false;
+                    this.formElementControl.phone.required = true;
+                    this.form.email = '';
+                    this.formElementControl.email.isDefault = true;
+                }else if(this.form.SendMethod === 2) {
+                    this.formElementControl.email.required = true;
+                    this.formElementControl.phone.required = false;
+                    this.form.phone = '';
+                    this.formElementControl.phone.isDefault = true;
+                }
+                return this.form.SendMethod
+            },
+            validtion_InterestRate: function() {
+                var temp;
+                if(this.form.InterestRate !== null) {
+                    temp = true
+                    this.formElementControl.InterestRate.isDefault = false
+                }else {
+                    temp = false
+                }
+                this.formElementControl.InterestRate.isValidOk = temp
+                return temp
+            },
+            validtion_SendMethod: function() {
+                var temp;
+                if(this.form.SendMethod !== null) {
+                    temp = true
+                    this.formElementControl.SendMethod.isDefault = false
+                }else {
+                    temp = false
+                }
+                this.formElementControl.SendMethod.isValidOk = temp
+                return temp
+            },
+            validation_ManagerPhone: function() {
+                if(this.formElementControl.ManagerPhone.isDefault && this.form.ManagerPhone.length !== 0) {
+                    this.formElementControl.ManagerPhone.isDefault = false
+                }
+                var req = new RegExp(/((?=(09))[0-9]{10})$/);
+                var temp;
+                if(req.test(this.form.ManagerPhone)) {
+                    temp = true
+                }else {
+                    temp = false
+                }
+                this.formElementControl.ManagerPhone.isValidOk = temp
+                return temp
+            },
+            validation_ProductName: function() {
+                if(this.formElementControl.ProductName.isDefault && this.form.ProductName.length !== 0) {
+                    this.formElementControl.ProductName.isDefault = false
+                }
+                var temp;
+                if(this.form.ProductName.length > 1) {
+                    temp = true
+                }else {
+                    temp = false
+                }
+                this.formElementControl.ProductName.isValidOk = temp
+                return temp
+            },
+            validation_TransAmt: function() {
+                if(this.formElementControl.TransAmt.isDefault && this.form.TransAmt.length !== 0) {
+                    this.formElementControl.TransAmt.isDefault = false
+                }
+                var temp;
+                this.formElementControl.TransAmt.invalidFeedback = '請輸入交易金額';
+
+                if(this.form.TransAmt < 0) {
+                    this.formElementControl.TransAmt.invalidFeedback = '交易金額不得為負';
+                }
+
+                if(this.form.TransAmt > 1) {
+                    temp = true
+                }else {
+                    temp = false
+                }
+                this.formElementControl.TransAmt.isValidOk = temp
+                this.changeCalc()
+                return temp
+            },
+            validation_phone: function() {
+                if(this.formElementControl.phone.isDefault && this.form.phone.length !== 0) {
+                    this.formElementControl.phone.isDefault = false
+                }
+                var req = new RegExp(/((?=(09))[0-9]{10})$/);
+                var temp;
+                if(req.test(this.form.phone)) {
+                    temp = true
+                }else {
+                    temp = false
+                }
+                this.formElementControl.phone.isValidOk = temp
+                return temp
+            },
+            validation_email: function() {
+                if(this.formElementControl.email.isDefault && this.form.email.length !== 0) {
+                    this.formElementControl.email.isDefault = false
+                }
+                var req = new RegExp(/^\w+((-\w+)|(\.\w+))*\@@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/);
+                var temp;
+                if(req.test(this.form.email)) {
+                    temp = true
+                }else {
+                    temp = false
+                }
+                this.formElementControl.email.isValidOk = temp
+                return temp
+            },
+            validation_StoreId: function() {
+                var temp;
+                if(this.form.StoreId !== null && this.form.StoreId !== '') {
+                    temp = true
+                    this.formElementControl.StoreId.isDefault = false
+                }else {
+                    temp = false
+                }
+                this.formElementControl.StoreId.isValidOk = temp
+                this.checkStronghold()
+                return temp
+            },
+            validation_StrongholdId: function() {
+                var temp;
+                if(this.form.StrongholdId !== null && this.form.showStronghold !== '') {
+                    temp = true
+                    this.formElementControl.StrongholdId.isDefault = false
+                }else {
+                    temp = false
+                }
+                this.formElementControl.StrongholdId.isValidOk = temp
+                return temp
+            },
+            validation_ProductType: function() {
+                var temp;
+                if(this.form.ProductType !== null && this.form.ProductType !== '') {
+                    temp = true
+                    this.formElementControl.ProductType.isDefault = false
+                }else {
+                    temp = false
+                }
+                this.formElementControl.ProductType.isValidOk = temp
+                return temp
+            },
+            validation_PrdNum: function() {
+                var temp;
+                if(this.form.PrdNum !== null && this.form.PrdNum !== '') {
+                    temp = true
+                    this.formElementControl.PrdNum.isDefault = false
+                }else {
+                    temp = false
+                }
+                this.formElementControl.PrdNum.isValidOk = temp
+                this.changeCalc()
+                return temp
+            },
+            addDots_Initial_payment: function() {
+                if(this.form.FirstPrdAmount === null) return 0
+                return this.calcResult.Initial_payment = this.amountAddDot(this.form.FirstPrdAmount)
+            },
+            addDots_OtherPrdAmount: function() {
+                if(this.form.OtherPrdAmount === null) return 0
+                return this.calcResult.OtherPrdAmount = this.amountAddDot(this.form.OtherPrdAmount)
+            },
+            addDots_TotalAmount: function() {
+                if(this.form.TotalAmount === null) return 0
+                return this.calcResult.TotalAmount = this.amountAddDot(this.form.TotalAmount)
+            }
+        },
+        methods: {
+            refresh: function() {
+                location.reload()
+            },
+            amountAddDot: function (num) {
+                var source = String(num).split(".");
+                source[0] = source[0].replace(
+                    new RegExp("(\\d)(?=(\\d{3})+$)", "ig"),
+                    "$1,"
+                );
+                return source.join(".");
+            },
+            changeClassStatus: function(targetRequired, targetValid) {
+                var requiredClass = targetRequired.required ? 'required' : ''
+                var validClass = targetValid ? 'success' : 'error'
+                var defaultClass = targetRequired.isDefault ? 'default' : ''
+                return [requiredClass, validClass, defaultClass]
+            },
+            checkStronghold: function() {
+                var temp = []
+                this.form.StrongholdId = ''
+                this.formElementControl.StrongholdId.isValidOk = false
+
+                @*temp = this.formOptions.stronghold.filter((item, index, arr) =>{
+                    return item.storeid == this.form.StoreId
+                })*@
+
+               @* this.formOptions.showStronghold = temp*@
+
+                if(this.formOptions.showStronghold.length != 0) {
+                    this.formElementControl.StrongholdId.isShow = true
+                    this.formElementControl.StrongholdId.required = false
+                }else {
+                    this.formElementControl.StrongholdId.isShow = false
+                    this.formElementControl.StrongholdId.required = false
+                }
+            },
+            changeCalc: function() {
+                let vm = this;
+                if(this.form.TransAmt == "" || this.form.TransAmt == null || this.form.PrdNum == "" || this.form.PrdNum == null) return;
+
+                let prdNum = this.form.PrdNum;
+                let transAmt = this.form.TransAmt;
+
+                let tempdata = this.formOptions.installments.filter(
+					c => c.periodNum == prdNum
+				);
+                if(tempdata.length == 0)
+                    return;
+                let interestRate = tempdata[0].interestRate;
+
+                vm.form.AppRate = interestRate;
+                axios.post(vm.apiAmountCalculationUrl,
+                {
+                    transAmt: transAmt,
+                    interestRate: interestRate,
+                    periodNum: prdNum
+                })
+                .then(function (response) {
+                    if (response.data.Result.ReturnCode == 0) {
+                        vm.calcResult.Initial_payment = response.data.Data.InitialPayment;
+                        vm.calcResult.OtherPrdAmount = response.data.Data.OtherInstallments;
+                        vm.calcResult.TotalAmount = response.data.Data.TotalPrice;
+                        vm.form.FirstPrdAmount = response.data.Data.InitialPayment;
+                        vm.form.OtherPrdAmount = response.data.Data.OtherInstallments;
+                        vm.form.TotalAmount = response.data.Data.TotalPrice;
+                    }
+                })
+                .catch(function(error){
+
+                });
+            },
+            onSubmit: function(evt) {
+                evt.preventDefault();
+                page.hasSubmit = true;
+                var keyValue = Object.keys(this.formElementControl);
+                var notValid= [];
+                this.content = '';
+                let vm = this;
+
+                for(var i =0 ; i< keyValue.length; i++){
+                    var temp = this.formElementControl[keyValue[i]];
+                    if(temp.required == true && temp.isValidOk == false) {
+                        notValid.push(temp);
+                    }
+                }
+
+                if(notValid.length == 0) {
+                    // 在這邊接API
+                    axios.post(vm.apiUrl,this.form)
+                    .then(function (response) {
+                        page.hasSubmit = false;
+                        console.log('response' ,response);
+                        // 成功之後到caseInquiry頁面查詢當日案件 url+參數
+                        if (response.data.ReturnCode == 0) {
+                            if(!vm.form.OrderId){
+                                vm.form.OrderId = response.data.ReturnMsg;
+                            }
+
+                            vm.iscreated = true;
+                            vm.modal.title = '案件已成功送出';
+                            if(vm.form.SendMethod === 2) {
+                                vm.modal.content = '稍後我們會將申請網頁連結Email至您填寫的信箱，請依指示填寫申請資料。';
+                            } else {
+                                vm.modal.content = '稍後我們會將申請網頁連結發送至您填寫的手機號碼，請依指示填寫申請資料。';
+                            }
+                            
+                            vm.modal.statusClass = 'modal-custome modal-custome--success';
+                            vm.modal.hasCancel = false;
+                            vm.modal.hasOk = true;
+                            vm.modal.hasOk_reload = false;
+                            vm.modal.isShow = true;
+
+                            vm.ok_orderId = page.form.OrderId;
+
+                            // 成功就清空表單
+                            page.form.Id= "";
+                            page.form.OrderId= "";
+                            page.form.Manager= "";
+                            page.form.ManagerPhone= "";
+                            page.form.StoreId= "";
+                            page.form.StoreName= "";
+                            page.form.StrongholdId= "";
+                            page.form.StrongholdName= "";
+                            page.form.InterestRate= null;
+                            page.form.ProductType= null;
+                            page.form.ProductName= "";
+                            page.form.TransAmt= "";
+                            page.form.FirstPrdAmount= null;
+                            page.form.OtherPrdAmount= null;
+                            page.form.TotalAmount= null;
+                            page.form.PrdNum= null;
+                            page.form.SendMethod= null;
+                            page.form.phone= "";
+                            page.form.email= "";
+
+                            page.formElementControl.ProductType.isDefault = true;
+                            page.formElementControl.PrdNum.isDefault = true;
+                            page.formElementControl.ProductName.isDefault = true;
+                            page.formElementControl.TransAmt.isDefault = true;
+                            page.formElementControl.email.isDefault = true;
+                            page.formElementControl.phone.isDefault = true;
+                        }
+                        else 
+                        {
+                            vm.modal.title = "錯誤";
+                            vm.modal.content = response.data.Alert;
+                            vm.modal.statusClass = 'modal-custome modal-custome--error';
+                            vm.modal.hasCancel = false;
+                            vm.modal.isShow = true;
+                        }
+                    })
+                    .catch(function(error){
+                        page.hasSubmit = false;
+                    });
+                }else {
+                    page.hasSubmit = false;
+                    this.modal.content = '';
+                    for(var i=0; i< notValid.length; i++) {
+                        this.modal.content += notValid[i].invalidFeedback + '<br>'
+                    }
+                    this.modal.title = '請將必填欄位填寫完成';
+                    this.modal.statusClass = 'modal-custome modal-custome--error';
+                    this.modal.isShow = true;
+                }
+            },
+            showModal: function() {
+                this.modal.isShow = true;
+            },
+            hideModal: function() {
+                this.modal.isShow = false;
+                this.modal.btnValue = 'cancel';
+            },
+            okModal: function() {
+                this.modal.isShow = false;
+                this.modal.btnValue = 'ok';
+                if(this.iscreated) {
+                    var _param = [];
+
+                    if(!!this.ok_orderId)
+                    {
+                        _param.push("order_sn="+encodeURIComponent(this.ok_orderId))
+                    }
+
+                    window.location.href = '@Url.Action("caseinquiry", "Case")'+"?"+_param.join("&");
+                }
+           },
+            okAppModal: function() {
+                if(page.inApp === 2) // ios
+                {
+                    location.href ="CCFAPPVENDER://";
+                }
+                else if(page.inApp === 1) // andorid
+                {
+                    window.close();
+                }
+                else
+                {
+                    location.reload();
+                }
+            },
+            getStore: function() {
+                let vm = this;
+                vm.formOptions.store = [];
+                   
+                // 在這邊接API
+                axios.post(vm.apiStoreUrl)
+                .then(function (response) {
+                    // 成功之後到caseInquiry頁面查詢當日案件 url+參數
+                    if (response.data.Result.ReturnCode == 0) {
+
+                        if(response.data.Data[0].Level == "2") {
+                            vm.formElementControl.StoreId.isShow = false;
+                            vm.formElementControl.StoreId.required = false;
+
+                            return false;
+                        }
+
+                           page.allStore = response.data.Data;
+                           // first 1 layer
+					       page.formOptions.store.push({
+							    "id":  response.data.Data[0].VenderId,
+							    "name":  response.data.Data[0].VenderName,
+					       }) 
+
+					       if(!!response.data.Data[0].Venders) {
+						       // first 2 layer
+                               response.data.Data[0].Venders.forEach(function(layerItem2) {
+						            page.formOptions.store.push({
+								        "id":  layerItem2.VenderId,
+								        "name":  layerItem2.VenderName,
+					   	            });
+                                });
+					       } else {
+                               //身份是總公司又是只有一個也沒有layer 2的資料
+                               if(page.userAccountType === 1) {
+                                    vm.formElementControl.StoreId.isShow = false;
+                                    vm.formElementControl.StoreId.required = false;
+                                    // 預設帶總公司的資訊
+                                    page.form.StoreId = response.data.Data[0].VenderId
+                                    page.from.StoreName = response.data.Data[0].VenderName;
+                               }
+                           }
+                        @*for (let index = 0; index < response.data.Data.length; index++) {
+                            vm.formOptions.store.push({
+                                id: response.data.Data[index].VenderId,
+                                name: response.data.Data[index].VenderName,
+                            });
+                        }*@
+                    }
+                })
+                .catch(function(error){
+
+                });
+            },
+            getProduct: function(interestRate) {
+                let vm = this;
+                vm.formOptions.ProductType = [];
+                   
+                // 在這邊接API
+                axios.post(vm.apiProductUrl,
+                    {
+                        interestRate: interestRate
+                    })
+                .then(function (response) {
+
+                    if(response.data.Result.ReturnCode != -1)
+                    {
+                        if (response.data.Data.RTN_CD == 0) {
+                            for (let index = 0; index < response.data.Data.Items.length; index++) {
+                                    vm.formOptions.ProductType.push({
+                                        id: response.data.Data.Items[index].MajSeqId,
+                                        name: response.data.Data.Items[index].ProductName,
+                                        type: response.data.Data.Items[index].ProductType,
+                                        update: response.data.Data.Items[index].UpdateDt,
+                                        seqId: response.data.Data.Items[index].SeqId
+                                    });
+                                }
+                        }
+                    }
+                    else
+                    {
+                        vm.modal.title = "提示訊息";
+                        vm.modal.content = response.data.Result.Alert;
+                        vm.modal.statusClass = 'modal-custome modal-custome--warring';
+                        vm.modal.hasCancel = false;
+                        vm.modal.isShow = true;
+                    }
+                })
+                .catch(function(error){
+
+                });
+            },
+            getPeriodNum: function(productType, updateDt, majSeqId, seqId) {
+                let vm = this;
+                vm.formOptions.installments = [];
+                   
+                // 在這邊接API
+                axios.post(vm.apiPeriodNumUrl,
+                    {
+                        productType: productType,
+                        updateDt: updateDt,
+                        majSeqId: majSeqId,
+                        seqId: seqId
+                    })
+                .then(function (response) {
+                    if (response.data.Data.RTN_CD == 0) {
+                        for (let index = 0; index < response.data.Data.Cases.length; index++) {
+                                vm.formOptions.installments.push({
+                                    interestRate: response.data.Data.Cases[index].InterestRate,
+                                    periodNum: response.data.Data.Cases[index].PeriodNum
+                                });
+                            }
+                    }
+                })
+                .catch(function(error){
+
+                });
+            },
+            interestRateType : function(type) {
+                this.getProduct(type);
+            }
+        },
+        watch:{
+            "form.StrongholdId": function(id) {
+                if(!!id) {
+                    var data = page.selectStore.Venders.filter(function(value){ return value.VenderId == id })[0];
+                    page.form.VenderId = id;
+                    page.form.VenderName = data.VenderName;
+                    page.form.StrongholdName = data.VenderName;
+                }
+            },
+            "form.StoreId": function(id) {
+                if(!!id) {
+                    // get 3 layer
+                    if(page.allStore[0].VenderId != id) {
+                        var data = page.allStore[0].Venders.filter(function(value){ return value.VenderId == id })[0];
+                        page.formOptions.showStronghold = [];
+                        page.form.VenderId = data.VenderId
+                        page.form.VenderName = data.VenderName;
+                        page.form.StoreName = data.VenderName;
+                        //data.Venders = [];
+                        @*data.Venders.push(page.allStore[0].Venders[2]); // test*@
+                        if(!!data.Venders) {
+                            page.selectStore = data;
+                            data.Venders.forEach(function(layerItem3) {
+                                page.formOptions.showStronghold.push({
+                                    "id": layerItem3.VenderId,
+                                    "name": layerItem3.VenderName,
+                                });
+                            });
+                        }
+                    } else if (page.allStore[0].VenderId == id) {
+                        page.form.VenderId = page.allStore[0].VenderId
+                        page.form.VenderName = page.allStore[0].VenderName;
+                        page.formOptions.showStronghold = [];
+                    }
+                }
+            },
+            "form.ProductType": function(seqId) {
+    
+                if(!!seqId) {
+                    let tempdata = this.formOptions.ProductType.filter(
+                        c => c.seqId == seqId
+                    );
+                    
+                    this.getPeriodNum(tempdata[0].type, tempdata[0].update, tempdata[0].id, tempdata[0].seqId);
+                }
+            }
+        }
+    });
+</script>
+}
+

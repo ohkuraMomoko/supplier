@@ -1,0 +1,45 @@
+﻿/* =Variables--------------------------*/
+
+/* font style ---*/
+$font-tw: '微軟正黑體', 'Noto Sans TC', Helvetica, Arial, '黑體-繁', 'Heiti TC', '儷黑', 'LiHei', 'Microsoft JhengHei', sans-serif;
+
+/* desktop & mobile size */
+$min-w: 1140px;
+$max-w: 1920px;
+$max-mac: 2560px;
+$content-w: 1290px;
+$ipad-pro: 1024px;
+$ipad: 768px;
+$i6: 375px;
+$i5: 320px;
+$i6p: 414px;
+$mobile-size: 480px;
+$template-w: 1440px;
+
+/* color */
+$colorPrimary: #FF6C7E;
+$colorPrimary2: #FF8997;
+$colorPrimary3: #FFBBBB;
+$colorSecondary: #FFB84A;
+$colorSecondary2: #FFC56C;
+$colorSecondary3: #FFEF97;
+$colorSecondary4: #FFF3B5;
+$colorSecondary5: #56C6D0;
+$colorSecondary6: #8CD8DF;
+$colorSecondary7: #AFEEE6;
+$colorText: #32322e;
+$colorText2: #7B7B7B;
+$colorText3: #959595;
+$colorText4: #A0A0A0;
+$colorText5: #D8D8D8;
+$colorText6: #ECECEC;
+$colorText7: #F5F5F5;
+$colorError: #F16F63;
+
+
+
+/*animation */
+$cb: cubic-bezier(.215, .61, .355, 1);
+$cb2: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+
+$desktopMenuWidth: 260px;

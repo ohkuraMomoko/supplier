@@ -1,0 +1,47 @@
+﻿@import "../../setting/_variables.scss";
+@import "../../setting/_reset.scss";
+@import "../../setting/_mixins.scss";
+
+.btn-common-white {
+    background-color: #fff;
+    color: $colorText;
+}
+
+.btn-common-pink {
+    background-color: $colorPrimary;
+    color: #ffffff;
+}
+.btn-common-warring {
+    background-color: $colorError;
+    color: #ffffff;
+}
+
+.page {
+    width: 90%;
+    min-height: 100vh;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.content-text{
+    font-size: 30px;
+    text-align: center;
+    color: $colorText;
+    margin-top: 30px;
+    margin-bottom: 80px;
+}
+.content-btn {
+    width: 275px;
+    margin: 0 auto;
+    display: block;
+}
+
+@include rwd(#{$ipad-pro - 1px }){
+    .content-text {
+        font-size: 20px;
+    }
+    .content-btn  {
+        width: 100%;
+    }
+}

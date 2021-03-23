@@ -1,0 +1,324 @@
+﻿@import "../../setting/_variables.scss";
+@import "../../setting/_reset.scss";
+@import "../../setting/_mixins.scss";
+
+.btn-common-white {
+    background-color: #fff;
+    color: $colorText;
+}
+
+.btn-common-pink {
+    background-color: $colorPrimary;
+    color: #ffffff;
+}
+
+
+.page {
+    width: 90%;
+    // max-width: 1100px;
+    margin: 0 auto;
+    min-height: 100vh;
+}
+.page-container {
+    padding-bottom: 40px;
+    min-height: calc(100vh - 68px);
+}
+@include rwd(#{$ipad-pro - 1px}){
+    .page {
+        width: 100%;
+    }
+    .page-container {
+        padding-bottom: 130px;
+    }
+}
+
+
+/* block: page-top ===================*/
+.page-top {
+    padding-top: 33px;
+    padding-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all linear 0.2s;
+    .page-title {
+        font-size: 30px;
+    }
+    &.fixed {
+        position: fixed;
+        z-index: 2;
+        width: calc(100vw - 260px);
+        background-color: rgba(#f5f5f5, 0.9);
+        right: 0;
+        padding: 0 40px;
+        height: 66px;
+        .page-title {
+            font-size: 14px;
+        }
+    }
+}
+
+.page-btn-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    >div {
+        width: 160px;
+        margin: 0 7.5px;
+    }
+}
+@include rwd(#{ $ipad-pro - 1px}){
+    .page-btn-container {
+        display: none;
+    }
+    .page-top {
+        width: 90%;
+        margin: 0 auto;
+        &.fixed {
+            position: static;
+            padding: unset;
+            width: 90%;
+            .page-title {
+                font-size: 30px;
+            }
+        }
+    }
+}
+
+/* block: .control ===================*/
+/* rwd: desktop -----*/
+.control {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px 40px;
+    margin-bottom: 20px; 
+    position: relative;
+    display: block;
+    &--title {
+        font-weight: 600;
+        font-weight: 14px;
+        margin-bottom: 20px;
+    }
+    .form-row {
+        margin-bottom: 20px;
+        &--title {
+            width: 100px;
+        }
+        &--content {
+            width: calc(100% - 100px);
+            display: flex;
+            flex-wrap: wrap;
+        }
+    }
+    
+    &.desktop {
+        .search-input {
+            width: 280px;
+        }
+        .search-select {
+            width: 150px;
+        }
+        .select-storename {
+            width: 280px;
+        }
+        .btn-search {
+            display: block;
+            width: 200px;
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+        }
+    }
+}
+
+@include rwd(#{$ipad-pro - 1px}) {
+
+    .control.desktop {
+        display: none;
+    }
+}
+/* rwd: desktop -----*/
+
+/* collapse ------*/
+/* rwd: mobile -----*/
+.collapse-btn {
+    background-image: url('../../images/icon-arrow-down-white-20-px.svg');
+    background-repeat: no-repeat;
+    background-position: 95% 20px;
+    background-size: 16px;
+    background-color: $colorPrimary2;
+    padding: 14px 16px;
+    color: #fff;
+    font-weight: 600;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s $cb;
+    display: none;
+    &.active {
+        background-color: #fff;
+        background-image: url('../../images/icon-arrow-top-black-20-px.svg');
+        border-bottom-color: $colorPrimary2;
+        color: $colorText;
+    }
+}
+.collapse-content {
+    background-color: #fff;
+    padding-bottom: 40px;
+    display: none;
+    .control-form {
+        width: 90%;
+        margin: 0 auto;
+        padding-top: 20px;
+    }
+    .form-row {
+        margin-bottom: 20px;
+        flex-direction: column;
+    }
+    .btn-search {
+        width: 100%;
+        margin-top: 40px;
+    }
+}   
+@include rwd(#{$ipad-pro - 1px}) {
+    .collapse-content,
+    .collapse-btn {
+        display: block;
+    }
+}
+/* rwd: mobile -----*/
+/* block: .control ===================*/
+
+/* block: .result ===================*/
+.result {
+    background-color: #fff;
+    border-radius: 10px;
+    margin-bottom: 20px; 
+    min-height: 350px;
+}
+
+.result--null {
+    padding: 52px 0;
+    text-align: center;
+    .title {
+        font-size: 24px;
+        margin-bottom: 7px;
+        margin-top: 16px;
+    }
+    .pic {
+        width: 100px;
+    }
+}
+
+.result--title {    
+    font-size: 24px;
+    padding: 18px 40px;
+}
+@include rwd(#{$ipad-pro - 1px}) {
+    .result {
+        width: 90%;
+        margin: 20px auto 0;
+        background-color: transparent;
+        &--title {
+            display: none;
+        }
+        &--null {
+            background-color: #fff;
+            border-radius: 10px;
+            .pic {
+                width: 80px;
+            }
+            .title {
+                font-size: 20px;
+                margin-top: 20px;
+                margin-bottom: 10px;
+            }
+            .desc{
+                font-size: 14px;
+            }
+        }
+    }
+}
+/* block: .result ===================*/
+
+.bottom-control {
+    height: 50px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    box-shadow: 0 4px 12px 0 #00000019;
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    &:after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 9px;
+        height: 32px;
+        width: 1px;
+        background-color: #ececec;
+    }
+    &--item {
+        width: 50%;
+        height: 100%;
+        text-align: center;
+        line-height: 50px;
+    }
+}
+
+
+.date-row {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    &--item {
+        display: flex;
+    }
+}
+@include rwd(#{$template-w - 1px}) {
+    .date-row {
+        flex-direction: column;
+        &--item {
+            &:first-child {
+                margin-bottom: 20px;
+            }
+        }
+    }
+}
+
+/* element: .mobile-tips-box ------*/
+.mobile-tips-box {
+    display: none;
+    z-index: 2;
+}
+@include rwd(#{$ipad-pro - 1px}) {
+    .mobile-tips-box {
+        display: block;
+    }
+}
+
+.case-item .case-footer {
+    position: relative;
+}
+.case-footer--time {
+    position: absolute;
+    right: 42px;
+}
+.case_type {
+    width: 58px;
+    height: 24px;
+    line-height: 24px;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    &--1 {
+        background-color: #ececec;
+        color: #7b7b7b;
+    }
+    &--2 {
+        background-color: #ffe9e9;
+        color: #ff8997;
+    }
+}

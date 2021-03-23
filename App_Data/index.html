@@ -1,0 +1,313 @@
+﻿<html>
+	<head>
+        <title>{{TITLE}}</title>
+		<meta http-equiv="Content-Language" content="zh-TW" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no" />
+		<meta name="author" content="chailease" />
+        <meta name="copyright" content="仲信資融股份有限公司" />
+        <link href="//fonts.googleapis.com/css?family=Noto+Sans+TC" rel="stylesheet">
+        <link type="text/css" rel="stylesheet" href="{{WEB_URL}}/Content/vendor/bootstrap.min.css" />
+        <link type="text/css" rel="stylesheet" href="{{WEB_URL}}/Content/pages/ecommerce/zerocardCommon.css" />
+		<link href="{{WEB_URL}}/Content/pages/ecommerce/storeContent.min.css" rel="stylesheet"/>
+
+	</head>
+    <body data-aos-easing="ease" data-aos-duration="400" data-aos-delay="0">
+        <header class="js-header header addbg" >
+            <a style="background-image: url({{LOGO_PATH}})"; class="header-logo" href="javascript:void(0)"></a>
+        </header>
+        <main id="app">
+            <h1 class="page-title" v-text="pageTitle"></h1>
+            <div class="wrapper">
+                <section class="block block-sale1 aos-init aos-animate"
+                         data-aos="fade-up"
+                         data-aos-easing="ease-in-out"
+                         data-aos-once="true">
+                    <!-- .block-title共兩種樣式.underline-yellow & .underline-red -->
+                    <p class="block-title underline-yellow" v-text="storeInfo.SubTitle"></p>
+                    <!-- TODO: 新增商品請增加在.product-container內 -->
+                    <div class="product-container">
+                        <div id="form1" method="post" v-for="(item, index) in products">
+                            <div class="product">
+                                <div class="product-img" v-bind:style="{backgroundImage: 'url('+item.productImg+')'}"></div>
+                                <p class="product-title"  style="word-break: break-word; height: 52.5px;" v-text="item.productTitle"></p>
+                                <div class="product-price">
+                                    <div class="price-box">
+                                        <div class="price-sale">NT$ <span v-text="amountAddDot(item.productPrice)"></span></div>
+                                    </div>
+                                </div>
+                                <div class="custom-select product-select">
+                                    <select name="ProductDesc" class="form-control" v-model="selectPeriod[index]">
+                                        <option value="" disable>請選擇分期期數</option>
+                                        <option v-bind:value="period.id" v-text="period.title" v-for="period in item.productPeriod"></option>
+                                    </select>
+                                </div>
+                                <div class="custom-select product-select">
+                                    <select name="ProductDesc" class="form-control" v-model="selectSpecs[index]">
+                                        <option value="" disable>請選擇</option>
+                                        <option v-bind:value="spec.id" v-text="spec.title" v-for="spec in item.productSpecs"></option>
+                                    </select>
+                                </div>
+                                <input name="Code" value="AES256加密字串" hidden="hidden">
+                                <button type="botton" class="btn--type btn--type-1 product-button" v-on:click="submitProduct(item.productId, selectPeriod[index], selectSpecs[index])">立即購買</button>
+                                <a v-bind:href="item.productLink" v-if="!!item.productLink" target="_blank" class="product-link">產品介紹</a>
+                                <span v-if="!item.productLink" style="height: 40px; display:block;"></span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <section class="block block-eventtime aos-init"
+                                 data-aos="fade-up"
+                                 data-aos-easing="ease-in-out"
+                                 data-aos-once="true">
+                            <p class="block-title-info">賣家資訊 &amp; 活動期間</p>
+                            <div class="block-content">
+                                名稱：<span v-text="storeName"></span> <br />
+                                地址：<span v-text="storeInfo.Address"></span><br />
+                                電話：<span v-text="storeInfo.Phone"></span><br />
+
+                                <!-- 標註紅字可用.font-red -->
+                               
+                            </div>
+                        </section>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <section class="block block-charge aos-init"
+                                 data-aos="fade-up"
+                                 data-aos-easing="ease-in-out"
+                                 data-aos-once="true">
+                            <p class="block-title-info">配送及其他費用說明</p>
+                            <div class="block-content" v-html="storeInfo.DeliveryNote.replace(/(?:\r\n|\r|\n)/g, '<br>')"></div>
+                            <p class="block-content" v-html="storeInfo.OtherInstructions.replace(/(?:\r\n|\r|\n)/g, '<br>')"></p>
+                        </section>
+                    </div>
+                </div>
+                <section class="block block-step aos-init"
+                         data-aos="fade-up"
+                         data-aos-easing="ease-in-out"
+                         data-aos-once="true">
+                    <p class="block-title-info">購買流程</p>
+                    <div class="block-content">
+                        <div class="step">
+                            <div class="step-item step-item--1">
+                                <img src="{{WEB_URL}}/Content/images/storePreview/icon_purchase_step01.svg" class="step-item-img" />
+                                <p class="step-item-point">STEP.1</p>
+                                <p class="step-item-title mb-0">
+                                    選好商品按下【立即購買】
+                                </p>
+                            </div>
+                            <div class="step-item step-item--2">
+                                <img src="{{WEB_URL}}/Content/images/storePreview/icon_purchase_step02.svg" class="step-item-img" />
+                                <p class="step-item-point">STEP.2</p>
+                                <p class="step-item-title">
+                                    非會員 → 填單 / 零卡會員 → 掃碼
+                                </p>
+                                <p class="step-item-desc">
+                                    會員請打開零卡分期掃描付款條碼 /
+                                    非會員則線上填寫申請資料並送出
+                                </p>
+                            </div>
+                            <div class="step-item step-item--3">
+                                <img src="{{WEB_URL}}/Content/images/storePreview/icon_purchase_step03.svg" class="step-item-img" />
+                                <p class="step-item-point">STEP.3</p>
+                                <p class="step-item-title">分期資格審核中</p>
+                                <p class="step-item-desc">
+                                    若頁面提示審核中則請您留意手機來電，專員會致電與您核對資料
+                                    <br /><span class="font-red">(審核標準為機密，恕不提供查詢原因)</span>
+                                </p>
+                            </div>
+                            <div class="step-item step-item--4">
+                                <img src="{{WEB_URL}}/Content/images/storePreview/icon_purchase_step04.svg" class="step-item-img" />
+                                <p class="step-item-point">STEP.4</p>
+                                <p class="step-item-title">審核通過後，商家會與您聯繫</p>
+                                <p class="step-item-desc">若審核通過，商家會撥給您再次確認機種、顏色、配送地址，並收取牌險費及身分證影本進行後續作業※最終訂單成立與否須由商家通知，審核通過不代表訂單一定成立</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="page-circle page-circle-1 page-circle-blue" data-parallax='{"y": 150, "smoothness": 5}'></div>
+            <div class="page-circle page-circle-2 page-circle-white" data-parallax='{"y": -20, "smoothness": 10}'></div>
+            <div class="page-circle page-circle-3 page-circle-yellow" data-parallax='{"y": -250, "smoothness": 10}'></div>
+            <div class="page-circle page-circle-4 page-circle-white" data-parallax='{"y": 250, "smoothness": 15}'></div>
+            <div class="page-circle page-circle-5 page-circle-blue" data-parallax='{"y": 150, "smoothness": 5}'></div>
+            <div class="page-circle page-circle-6 page-circle-yellow" data-parallax='{"y": -150, "smoothness": 5}'></div>
+            <div class="page-circle page-circle-7 page-circle-white" data-parallax='{"y": -250, "smoothness": 10}'></div>
+            <div class="page-circle page-circle-8 page-circle-blue" data-parallax='{"y": 80, "smoothness": 5}'></div>
+            <div class="page-circle page-circle-9 page-circle-yellow" data-parallax='{"y": -100, "smoothness": 10}'></div>
+            <footer class="ecommerce-footer">
+                <div class="copyright">
+                    <p class="copyright-info">© 2019 仲信資融股份有限公司 Chailease Consumer Finance Co., Ltd. All Right Reserved.</p>
+                    <a href="https://www.chailease.com.tw/0Card/Home/Privacy/" target="_blank" class="policy-link">隱私權保護政策</a>
+                </div>
+            </footer>
+            <form id="form2" action="{{ZerocardWebUrl}}" method="post" ref="form2">
+                <input ref="code" name="Code" value="" hidden="hidden">
+            </form>
+        </main>
+        <script src="{{WEB_URL}}/Scripts/vendor/jquery-3.3.1.min.js"></script>
+        <script src="{{WEB_URL}}/Scripts/vendor/aos.js"></script>
+        <script src="{{WEB_URL}}/Scripts/vendor/pageParallax.js"></script>
+        <script src="{{WEB_URL}}/Scripts/vendor/iframeResizer.contentWindow.min.js"></script>
+        <script src="{{WEB_URL}}/Scripts/vendor/vue.js"></script>
+        <script>
+            var storedata = {{STORE_INFO}};
+            var productlsitdata = {{PRODUCT_INFO}};
+
+            var productMap = function (data) {
+                if (!!data) {
+                    return data.map(function (e) {
+                        return {
+                            productId: e.ProductId,
+                            productImg: e.ProductImage,
+                            productLink: e.ProductLink,
+                            productTitle: e.ProductName,
+                            productPrice: e.ProductPrice,
+                            productPeriod: e.ProductPeriod.map(function (p) {
+                                if (!!p) {
+                                    return {
+                                        id: p.PeriodId,
+                                        type: p.PeriodType,
+                                        title: p.PeriodNum + '期 $' + p.PeriodDescription,
+                                        period: p.PeriodNum,
+                                    }
+                                } else {
+                                    return [];
+                                }
+                            }),
+                            productSpecs: e.ProductSpecs.map(function (x) {
+                                if (!!x) {
+                                    return {
+                                        id: x.SpecsId,
+                                            title: x.SpecsName
+                                    }
+                                } else {
+                                    return [];
+                                }
+                            }),
+                            code: {{TOKEN}},
+                        }
+                    })
+                } else {
+                    return [];
+                }
+            }
+
+                
+                var app = new Vue({
+                    el: '#app',
+				    data: {
+                        pageTitle: storedata["Title"],
+                        title: storedata["SubTitle"],
+                        storeInfo: storedata,
+                        storeName: "{{STORE_NAME}}",
+                        selectPeriod: productlsitdata.map(function () { return ""}),
+                        selectSpecs: productlsitdata.map(function () { return "" }),
+					    selectProduct: "",
+                        selectToken: "",
+                        products: productMap(productlsitdata),
+				    },
+				    methods: {
+                        submitProduct: function (id, _selectPeriod, _selectSpecs) {
+                            var self = this;
+                            var _product = self.products.filter(function (p) { return p.productId == id })[0]
+                            this.selectProduct = _product;
+                            _selectToken = _product.code.filter(function (x) { return x.Id === _selectPeriod + "_" + _selectSpecs })[0];
+                            if (!!_selectToken) {
+                                this.selectToken = _selectToken.Token;
+                                //alert(this.selectToken);
+
+                                app.$refs.code.value = this.selectToken;
+                                app.$refs.form2.submit();
+
+                            } else {
+                                alert("請選擇期數跟規格!");
+                            }
+                        },
+                        amountAddDot: function (num) {
+                            var source = String(num).split(".");
+                            source[0] = source[0].replace(
+                                new RegExp("(\\d)(?=(\\d{3})+$)", "ig"),
+                                "$1,"
+                            );
+                            return source.join(".");
+                        }
+				    }
+                })
+
+			$(document).ready(function() {
+                    AOS.init();
+                checkScroll();
+				$(window).scroll(function() {
+                    checkScroll();
+                });
+				function checkScroll() {
+					var top = $(window).scrollTop();
+					if (top > 30) {
+                    $(".js-header").addClass("addbg");
+                } else {
+                    $(".js-header").removeClass("addbg");
+					}
+				}
+			});
+
+			// $(function() {
+			// 	var postUrl = "https://www.chailease.com.tw/0card/Ecommerce/Redirect"; //User-defined : form post url
+            //     var jsonUrl = "https://api.chaileaseholding.com/Onepageshop/yamaha/yamaha201906.json"; //User-defined : json url
+
+			// 	//form編號
+			// 	$.each($("form"), function(i, v) {
+			// 		$(v).attr("id", "form" + (i + 1));
+			// 	});
+
+			// 	$("form").attr("action", postUrl);
+			// 	$("form").find("input[name=Code]").val("");
+			// 	$.ajaxSetup({ cache: false });
+			// 	$.getJSON(jsonUrl)
+			// 		.done(function(d) {
+			// 			if (d) {
+			// 				$.each(d, function(i, v) {
+			// 					var formId = "#form" + v.ID;
+			// 					$(formId).find("input[name=Code]").val(v.CODE);
+			// 				});
+			// 				if (
+			// 					(d.length != $("form").length) |
+			// 					($("form input[name=Code]").filter(function() {
+			// 						if (this.value == "")
+			// 							$(this).parents("form").submit(notSubmit);
+			// 						return this.value == "";
+			// 					}).length >
+			// 						0)
+			// 				) {
+			// 					alert("商品數量與JSON資料筆數不符!!!"); //form筆數和json資料筆數不符合顯示之訊息
+			// 				}
+			// 			} else {
+			// 				$("form").submit(notSubmit);
+			// 			}
+			// 		})
+			// 		.fail(function(jqxhr, textStatus, error) {
+			// 			$("form").submit(notSubmit);
+			// 			alert("JSON檔案無法取得 - ErrorMsg : " + error); //檔案無法取得顯示之訊息
+			// 		});
+			// });
+			// var notSubmit = function() {
+			// 	alert("查無此商品資訊!!!"); //form內input CODE欄位無資料顯示訊息
+			// 	return false;
+			// };
+        </script>
+    
+<!-- Visual Studio Browser Link -->
+<script type="application/json" id="__browserLink_initializationData">
+    {"appName":"Chrome","requestId":"8cf5c216ff86489db1e0c68150978e12"}
+</script>
+<script type="text/javascript" src="https://localhost:44398/bcc9418acebb4fbea8b13983e6a6fe1c/browserLink" async="async"></script>
+<!-- End Browser Link -->
+
+</body>
+</html>
+
+

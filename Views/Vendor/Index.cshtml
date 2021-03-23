@@ -1,0 +1,358 @@
+﻿@{
+    ViewBag.Title = "首頁";
+}
+@section header {
+    @Styles.Render("~/Content/pages/vendor/index.min.css")
+}
+<div id="page" class="page">
+    <div class="announcement" v-if="announcementShow" v-cloak>
+        <p class="announcement--content" v-text="announcementText"></p>
+    </div>
+    <div class="table-container">
+        <p class="table-title">最新案件</p>
+        <!-- resultStatus: 0(loading) / 1(查詢無資料/尚未查詢) / 2(正常返回結果) -->
+        <div class="result">
+            <div class="result--null" v-if="resultStatus === 0">
+                <img src="@Url.Content("~/Content/images/icon-searchlist-loading.gif")" alt="" class="center pic">
+                <p class="desc">正在為您努力載入...</p>
+            </div>
+            <div class="result--null" style="display: none;" v-bind:style="{'display': resultStatus === 1?'block':'none'}" v-else-if="resultStatus === 1">
+                <img src="@Url.Content("~/Content/images/icon-searchlist-none-result.svg")" alt="" class="center pic">
+                <p class="title">尚未有最新案件</p>
+            </div>
+            <div class="result--ok" style="display: none;"  v-bind:style="{'display': resultStatus === 2?'block':'none'}"  v-else-if="resultStatus === 2">
+                <!-- mobile -->
+                <div class="mobile-box"
+                     v-if="this.$store.getters.getWindowWidth < this.$store.getters.getBreakpoint">
+                    <case-item v-for="data in apiDatas"
+                               v-bind:case_data="data"></case-item>
+                </div>
+                <!-- desktop -->
+                <div class="table-box"
+                     v-else>
+                    <div class="table-control">
+                        <div class="table-control--item"
+                             v-bind:style="{ width: columnWidth.update_date }">
+                            更新日期
+                        </div>
+                        <div class="table-control--item"
+                             v-bind:style="{ width: columnWidth.application_date }">
+                            申請日期
+                        </div>
+                        <div class="table-control--item"
+                             v-bind:style="{ width: columnWidth.store_name }">
+                            門市名稱
+                        </div>
+                        <div class="table-control--item"
+                             v-bind:style="{ width: columnWidth.name }">
+                            姓名
+                        </div>
+                        <div class="table-control--item"
+                             v-bind:style="{ width: columnWidth.price }">
+                            交易金額
+                        </div>
+                        <div class="table-control--item"
+                             v-bind:style="{ width: columnWidth.period }">
+                            期數
+                        </div>
+                        <div class="table-control--item"
+                             v-bind:style="{ width: columnWidth.status }">
+                            狀態
+                        </div>
+                        <div class="table-control--item"
+                             v-bind:style="{ width: columnWidth.action }">
+                            &nbsp;
+                        </div>
+                    </div>
+                    <div class="table-content">
+                        <table-row v-for="data in apiDatas"
+                                   v-bind:case_data="data"
+                                   v-bind:colume_width="columnWidth"></table-row>
+                    </div>
+                </div>
+
+                <div class="table-footer">
+                    <a href="@Url.Content("~/case/caseinquiry")" class="table-footer--link">
+                        <span>更多訂單/案件</span>
+                        <img src="@Url.Content("~/Content/images/icon-arrow-right-black-20-px.svg")" alt="">
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="mobile-tips">
+        更全面、完整功能的供應商平台管理系統請從桌面瀏覽
+    </div>
+    <!-- modal: 通用訊息 -->
+    <b-modal id="model_Common"
+             v-model="model_Common.isShow"
+             v-bind:centered="true"
+             v-bind:hide-footer="true"
+             v-bind:title="model_Common.title"
+             v-bind:hide-header-close="true"
+             v-bind:dialog-class="'modal-custome ' + model_Common.statusClass">
+        <div class="modal-body--content">
+            <p v-html="model_Common.content"></p>
+        </div>
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--cancel"
+                 v-if="model_Common.hasCancel"
+                 @@click="model_Common.isShow = false">取消</div>
+            <div class="modal-custome-btn btn--ok"
+                 v-if="model_Common.hasOk"
+                 @@click="model_Common.isShow = false">確定</div>
+        </div>
+    </b-modal>
+</div>
+@section scripts {
+    <script type="text/babel">
+        // 區分桌手機component: tableRow (desktop) / caseItem (mobile)
+        const tableRow = Vue.component("table-row", {
+            props: [
+                "case_data",
+                "colume_width"
+            ],
+            data: function() {
+                return {
+                };
+            },
+            created: function() {
+            },
+            template:
+            `<transition name="fade">
+                <div class="table-row"
+                    v-bind:id="'row'+case_data.id">
+                    <div class="table-row--item"
+                        v-bind:style="{ width: colume_width.update_date }">
+                        {{ case_data.update_date }}
+                    </div>
+                    <div class="table-row--item"
+                        v-bind:style="{ width: colume_width.application_date }">
+                        {{ case_data.application_date }}
+                    </div>
+                    <div class="table-row--item "
+                        v-bind:style="{ width: colume_width.store_name }">
+                        <p class="limit-6">{{ case_data.store_name }}</p>
+                    </div>
+                    <div class="table-row--item"
+                        v-bind:style="{ width: colume_width.name }">
+                        <p class="limit-3">{{ case_data.name }}</p>
+                    </div>
+                    <div class="table-row--item"
+                        v-bind:style="{ width: colume_width.price }">
+                        <div class="case-money">
+                            <img src="@Url.Content("~/Content/images/icon-case-amounts.svg")" alt="">
+                            {{ $options.filters.amountAddDot(case_data.price) }}
+                        </div>
+                    </div>
+                    <div class="table-row--item"
+                        v-bind:style="{ width: colume_width.period }">
+                        {{ case_data.period }}
+                    </div>
+                    <div class="table-row--item"
+                        v-bind:style="{ width: colume_width.status }">
+                        <div class="case-status"
+                            style="width: 114px;"
+                            v-bind:class="'case-status--' + case_data.status.type ">
+                            {{ case_data.status.description }}
+                        </div>
+                    </div>
+                    <div class="table-row--item"
+                        v-bind:style="{ width: colume_width.action }">
+                        <div class="case-detail"
+                            v-if="(case_data.case_sn != null) || (case_data.order_sn != null) || (case_data.merchant_id != null)"
+                            v-bind:id="'caseDetail'+case_data.id"
+                            v-on:click="goCaseDetail(case_data.case_sn, case_data.order_sn, case_data.merchant_id)">
+                            <img src="@Url.Content("~/Content/images/icon-nav-more-grey.svg")" />
+                        </div>
+                        <b-tooltip v-bind:target="'caseDetail'+case_data.id" placement="left">檢視案件明細</b-tooltip>
+                    </div>
+                </div>
+            </transition>`
+            ,
+            methods: {
+                goCaseDetail: function(case_number, order_sn, merchant_id) {
+                    var _param = [];
+                    if(!!case_number)
+                    {
+                        _param.push("case_number="+case_number)
+                    }
+
+                    if(!!order_sn)
+                    {
+                        _param.push("order_sn="+encodeURIComponent(order_sn))
+                    }
+
+                    if(!!merchant_id)
+                    {
+                        _param.push("merchant_id="+merchant_id)
+                    }
+                    window.location.href = '@Url.Action("CaseDetail", "Case")'+"?"+_param.join("&");
+                }
+            }
+        });
+
+        const caseItem = Vue.component("case-item", {
+            props: [
+                "case_data",
+            ],
+            data: function() {
+                return {
+                };
+            },
+            created: function() {
+            },
+            template:
+            `<transition name="fade">
+                <div class="case-item">
+                    <div class="case-content">
+                        <div class="case-content-row">
+                            <span class="case-name">
+                                <img src="@Url.Content("~/Content/images/icon-user-pink.svg")" alt="">
+                                {{ case_data.name }}
+                            </span>
+                            <div class="case-status"
+                                v-bind:class="'case-status--' + case_data.status.type ">
+                                {{ case_data.status.description }}
+                            </div>
+                        </div>
+                        <div class="case-content-row">
+                            <span class="case-shop">
+                                <img src="@Url.Content("~/Content/images/icon-store-pink.svg")" alt="">
+                                {{ case_data.store_name }}
+                            </span>
+                            <span class="case-money">
+                                <img src="@Url.Content("~/Content/images/icon-case-amounts-pink.svg")" alt="">
+                                {{ $options.filters.amountAddDot(case_data.price) }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="case-footer">
+                        <span class="case-footer--time">申請日期：{{ case_data.application_date }}</span>
+                        <div class="case-footer--link"
+                            v-on:click="goCaseDetail(case_data.case_sn, case_data.order_sn, case_data.merchant_id)">
+                            <img src="@Url.Content("~/Content/images/icon-nav-more-grey.svg")" />
+                        </div>
+                    </div>
+                </div>
+            </transition>`
+            ,
+            methods: {
+                goCaseDetail: function(case_number, order_sn, merchant_id) {
+                    var _param = [];
+                    if(!!case_number)
+                    {
+                        _param.push("case_number="+case_number)
+                    }
+
+                    if(!!order_sn)
+                    {
+                        _param.push("order_sn="+encodeURIComponent(order_sn))
+                    }
+
+                    if(!!merchant_id)
+                    {
+                        _param.push("merchant_id="+merchant_id)
+                    }
+                    window.location.href = '@Url.Action("CaseDetail", "Case")'+"?"+_param.join("&");
+                }
+            }
+        });
+
+        var page = new Vue({
+            el: "#page",
+            mixins: [ myMixin ],
+            store: store,
+            component: {
+                tableRow,
+                caseItem
+            },
+            data: {
+				apiUrl: '@Url.Action("LatestCase", "Case")',
+				apiNotificationUrl: '@Url.Action("SystemNotification", "Home")',
+                announcementShow: false,
+                announcementText:"",
+                columnWidth: {
+                    update_date: '15%',
+                    application_date: '15%',
+                    store_name: '15%',
+                    name: '10%',
+                    price: '13%',
+                    period: '7%',
+                    status: '15%',
+                    action: '15%',
+                },
+                apiDatas: [],
+                sortKey: '',
+                sortOrders: {},
+                resultStatus: 0,
+                model_Common: {
+                    title: '提示訊息',
+                    content: '',
+                    isShow: false,
+                    btnValue: '',
+                    hasCancel: false,
+                    hasOk: true,
+                    statusClass: 'modal-custome',
+                },
+            },
+            created: function() {
+                var vm = this;
+                app.currentPage.VendorIndex = true
+                vm.resultStatus = 0;
+
+				axios.post(vm.apiNotificationUrl)
+                    .then(function (response) {
+                        if (response.data.ReturnCode == 0) {
+                            vm.announcementText = response.data.Alert;
+                            vm.announcementShow = true;
+                        }
+                    })
+                    .catch(function(error){
+                        vm.model_Common.title = "發生錯誤"
+                        vm.model_Common.statusClass = "modal-custome--error"
+                        vm.model_Common.content = error.Alert
+                        vm.model_Common.isShow = true
+                    });
+
+                axios.post(vm.apiUrl)
+                    .then(function (response) {
+                        console.log(response);
+
+                        if (response.data.Result.ReturnCode == 0 &&  response.data.Data.CASE_LIST.length !== 0) {
+                            // 案件狀態: 1:尚未操作 2:審核中 3:婉拒(未通過) 4:取消案件 5:已核准未請款 6:請款中 7:已撥款 8:已核准處理中 9:退貨 10:調降金額處理中
+                            for (let index = 0; index < response.data.Data.CASE_LIST.length; index++) {
+                                vm.apiDatas.push({
+                                    "id": response.data.Data.CASE_LIST[index].AppNo,
+                                    "update_date": response.data.Data.CASE_LIST[index].UpdateDt,
+                                    "application_date": response.data.Data.CASE_LIST[index].CreateDt,
+                                    "store_name": response.data.Data.CASE_LIST[index].StoreName,
+                                    "name": response.data.Data.CASE_LIST[index].CustName,
+                                    "price":  response.data.Data.CASE_LIST[index].TransactionAmount,
+                                    "period": response.data.Data.CASE_LIST[index].Period,
+                                    "order_sn": response.data.Data.CASE_LIST[index].OrderId,
+                                    "case_sn": response.data.Data.CASE_LIST[index].AppNo,
+                                    "status": {
+                                        "type": response.data.Data.CASE_LIST[index].Status,
+                                        "description":response.data.Data.CASE_LIST[index].StatusName
+                                    },
+                                    case_type: {
+                                        "type": 1,
+                                        "description" : response.data.Data.CASE_LIST[index].ApplyType
+                                    },
+                                    "merchant_id": response.data.Data.CASE_LIST[index].MerchantId
+                                });
+                            }
+                            console.log(vm.apiDatas);
+                            vm.resultStatus = 2
+                            return
+                        } else {
+                            vm.resultStatus = 1
+                        }
+                });
+            }
+        });
+    </script>
+}

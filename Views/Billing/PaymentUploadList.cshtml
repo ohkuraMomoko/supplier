@@ -1,0 +1,328 @@
+﻿@{
+    ViewBag.Title = "上傳請款案件清單";
+}
+@section header {
+    @Styles.Render("~/Content/pages/billing/PaymentUploadList.min.css")
+}
+
+<div id="page" class="page">
+    <div class="page-container">
+        <div class="payment"
+             v-if="!showResult">
+            <div class="page-back"
+                 v-bind:class="changeFixed ? 'fixed' : ''"
+                 v-if="isMobile"
+                 @@click="pageBack">
+                <img src="@Url.Content("~/Content/images/icon-back-arrow.svg")" alt="">
+                <span>返回</span>
+            </div>
+            <div class="payment-top">
+                <p class="payment-top-title">上傳請款案件清單</p>
+                <div class="payment-top-btn">
+                    <div class="btn-common btn-common-white"
+                         @@click="model_law_isShow = true">注意事項和條款</div>
+                    <div class="btn-common btn-common-pink"
+                         @@click="sendPayment">同意送出請款</div>
+                </div>
+            </div>
+            <transition name="fade">
+                <div class="btn-common btn-common-pink mobile-request-btn"
+                     v-if="changeFixed && isMobile"
+                     @@click="sendPayment">同意送出請款</div>
+            </transition>
+            <!-- rwd: 查詢結果 mobile -->
+            <div class="mobile-box"
+                 v-if="isMobile">
+                <case-item v-for="data in userPaymentList"
+                           :key="data.case_sn"
+                           v-bind:case_data="data"></case-item>
+            </div>
+            <!-- rwd: 查詢結果 desktop -->
+            <div class="payment-content"
+                 v-else>
+                <table-row v-for="data in userPaymentList"
+                           :key="data.case_sn"
+                           v-bind:case_data="data"
+                           v-bind:colume_width="columnWidth"></table-row>
+            </div>
+        </div>
+        <div class="result"
+             v-else>
+            <div class="result-content">
+                <img src="@Url.Content("~/Content/images/icon-confirm-success.svg")" alt="" class="result-pic">
+                <p class="result-title">請款成功</p>
+                <p class="result-text">已經成功送交請款清單</p>
+                <a href="@Url.Content("~/billing/askpayment")" class="result-link">重新刷新列表</a>
+            </div>
+        </div>
+    </div>
+    <!-- modal: 通用訊息 -->
+    <b-modal id="model_Common"
+             v-model="model_Common.isShow"
+             v-bind:centered="true"
+             v-bind:hide-footer="true"
+             v-bind:title="model_Common.title"
+             v-bind:hide-header-close="true"
+             v-bind:dialog-class="'modal-custome ' + model_Common.statusClass">
+        <div class="modal-body--content">
+            <p v-html="model_Common.content"></p>
+        </div>
+        <div class="modal-custome--footer">
+            <div class="modal-custome-btn btn--cancel"
+                 v-if="model_Common.hasCancel"
+                 @@click="model_Common.isShow = false">取消</div>
+            <div class="modal-custome-btn btn--ok"
+                 v-if="model_Common.hasOk"
+                 @@click="model_Common.isShow = false">確定</div>
+        </div>
+    </b-modal>
+    <!-- modal: 取消案件 -->
+    <b-modal id="model_law"
+             v-model="model_law_isShow"
+             v-bind:centered="true"
+             v-bind:hide-footer="true"
+             v-bind:title="'注意事項和條款'"
+             v-bind:hide-header-close="true"
+             v-bind:dialog-class="'modal-law'">
+        <div class="modal-body--content">
+            <div class="modal_law_close"
+                 @@click="model_law_isShow = false">
+                <img src="@Url.Content("~/Content/images/icon-navigation-close-black.svg")" alt="">
+            </div>
+            <div class="law-content">
+                一. 點選同意送出請款，即表示同意將所選擇請款案件之應收帳款債權轉讓予本公司(本公司仍保留是否收買的權利)；並保證送出之資料均真實無誤、債權均合法有效存在且已確實完成交貨。
+            </div>
+        </div>
+    </b-modal>
+</div>
+
+@section scripts {
+<script type="text/babel">
+	const tableRow = Vue.component("table-row", {
+		props: ["case_data", "colume_width"],
+		data: function() {
+			return {
+				
+			};
+		},
+		template: 
+			`<transition name="fade">
+				<div class="table-row" 
+                    v-bind:id="'row'+case_data.case_sn">
+                    <div class="table-row--item" 
+                        v-bind:style="{ width: colume_width.date + '%' }">
+                        {{ case_data.date }}
+                    </div>
+					<div class="table-row--item" 
+                        v-bind:style="{ width: colume_width.order_sn + '%' }">
+                        {{ case_data.order_sn }}
+                    </div>
+					<div class="table-row--item" 
+                        v-bind:style="{ width: colume_width.case_sn + '%' }">
+                        {{ case_data.case_sn }}
+                    </div>
+                    <div class="table-row--item" 
+                        v-bind:style="{ width: colume_width.store + '%' }">
+                        {{ case_data.store }}
+                    </div>
+                    <div class="table-row--item" 
+                        v-bind:style="{ width: colume_width.customer + '%' }">
+                        {{ case_data.customer }}
+                    </div>
+                    <div class="table-row--item" 
+                        v-bind:style="{ width: colume_width.price + '%' }">
+                        <div class="case-money">
+                            <img src="@Url.Content("~/Content/images/icon-case-amounts.svg")" alt="">
+                            {{ $options.filters.amountAddDot(case_data.price) }}
+                        </div>
+                    </div>
+                    <div class="table-row--item" 
+                        v-bind:style="{ width: colume_width.period + '%' }">
+                        {{ case_data.period }}
+                    </div>
+					<div class="table-row--item" 
+                        v-bind:style="{ width: colume_width.appropriation_price + '%' }">
+                        <div class="case-money">
+                            <img src="@Url.Content("~/Content/images/icon-case-amounts.svg")" alt="">
+                            {{ $options.filters.amountAddDot(case_data.appropriation_price) }}
+                        </div>
+                    </div>
+                </div>
+			</transition>`
+	});
+
+	const caseItem = Vue.component("case-item", {
+		props: ["case_data"],
+		data: function() {
+			return {
+				isOpen: false
+			};
+		},
+		created: function() {},
+		template: 
+			`<transition name="fade">
+				<div v-bind:id="'row'+case_data.case_sn">
+					<div class="case-item appropriant"
+						v-bind:class="[case_data.isCancel ? 'cancel' : '' ,
+							isOpen ? 'open' : '']"
+						@@click="changeDetailShow">
+						<div class="case-content">
+							<div class="case-content--item">
+								<div class="case-content-row">
+									<span class="case-name">
+										<img src="@Url.Content("~/Content/images/icon-user-pink.svg")" alt="">
+										{{ case_data.customer }}
+									</span>
+								</div>
+								<div class="case-content-row">
+									<span class="case-money">
+										<img src="@Url.Content("~/Content/images/icon-case-amounts-red.svg")" alt=""
+											v-if="case_data.isCancel">
+										<img src="@Url.Content("~/Content/images/icon-case-amounts-pink.svg")" alt=""
+											v-else>
+										{{ $options.filters.amountAddDot(case_data.price) }}
+									</span>
+								</div>
+							</div>
+						</div>
+						<div class="case-detail" v-if="isOpen">
+							<div class="detail-item">
+								<div class="detail-item--title">
+									<p>申請日期</p>
+									<p>訂單編號</p>
+									<p>案件編號</p>
+									<p>門市</p>
+									<p>期數</p>
+									<p>撥款金額</p>
+								</div>
+								<div class="detail-item--data">
+									<p v-text="case_data.date"></p>
+									<p v-text="case_data.order_sn"></p>
+									<p v-text="case_data.case_sn"></p>
+									<p v-text="case_data.store"></p>
+									<p v-text="case_data.period"></p>
+									<p v-text="$options.filters.amountAddDot(case_data.appropriation_price)"></p>
+								</div>
+							</div>
+						</div>
+						<div class="case-footer" v-else >
+							<span class="case-footer--time">
+								<img src="@Url.Content("~/Content/images/icon-date-pink.svg")" alt="">
+								{{ case_data.date }}
+							</span>
+							<span class="case-shop">
+								<img src="@Url.Content("~/Content/images/icon-order-num-pink.svg")" alt="">
+								{{ case_data.order_sn }}
+							</span>
+						</div>
+					</div>
+				</div>
+			</transition>`,
+		methods: {
+			changeDetailShow: function() {
+				this.isOpen = !this.isOpen
+			},
+		}
+	});
+
+    var page = new Vue({
+		el: "#page",
+		mixins: [myMixin],
+		store: store,
+		component: {
+
+		},
+		data: {
+    	    apiUrl_AskPaymentList: '@Url.Action("SendAskPayment", "Billing")',
+			showResult: false,
+			model_law_isShow: false,
+			changeFixed: false,
+			isMobile: false,
+			model_Common: {
+                title: '提示訊息',
+				content: '',
+                isShow: false,
+                btnValue: '',
+                hasCancel: false,
+                hasOk: true,
+                statusClass: 'modal-custome',
+            },
+			columnWidth: {
+				date: "12.5",
+				order_sn: "12.5",
+				case_sn: "12.5",
+				store: "12.5",
+				customer: "12.5",
+				price: "12.5",
+				period: "12.5",
+				appropriation_price: "12.5",
+			},
+            userPaymentList: []
+        },
+        created: function() {
+            app.showBackBtn = true
+			app.currentPage.AskPayment = true
+			this.checkSize()
+			window.addEventListener('scroll', () => {
+                this.checkSize()
+			}, true);
+
+            this.userPaymentList = JSON.parse(
+                sessionStorage.getItem("paymentList")
+            );
+            
+		},
+        methods: {
+            checkSize: function() {
+				let scrollTop = document.documentElement.scrollTop ||
+							document.body.scrollTop ||
+							document.querySelector('body').scrollTop;
+				if(scrollTop >= 100){
+					this.changeFixed = true;
+				}else {
+					this.changeFixed = false;
+				}
+
+				if(this.$store.getters.getWindowWidth <= this.$store.getters.getBreakpoint) {
+					this.isMobile = true;
+				}else {
+					this.isMobile = false;
+				}
+			},
+			sendPayment: function() {
+				let vm = this
+				let temp = []
+				vm.userPaymentList.forEach(element => {
+					temp.push({
+						AppNo: element.case_sn,
+						OrderId: element.order_sn,
+						Channel: element.channel,
+						MerchantId: element.merchant_id,
+					})
+				});
+			
+				axios.post(vm.apiUrl_AskPaymentList, {
+					models: temp
+				})
+				.then(function (response) {
+        
+                    if (response.data.ReturnCode == -1) {
+                        page.model_Common.title = "錯誤";
+                        page.model_Common.statusClass = "modal-custome--error"
+                        page.model_Common.content = response.data.Alert;
+                        page.model_Common.hasCancel = false;
+                        page.model_Common.isShow = true;
+
+                        return false;
+                    }
+
+                    vm.showResult = true
+				})
+				.catch(function(error){
+
+				});
+			}
+        }
+    });
+</script>
+}

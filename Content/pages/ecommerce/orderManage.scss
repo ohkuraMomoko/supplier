@@ -1,0 +1,267 @@
+﻿@import "../../setting/_variables.scss";
+@import "../../setting/_reset.scss";
+@import "../../setting/_mixins.scss";
+.btn-common-white {
+    background-color: #fff;
+    color: $colorText;
+}
+
+.btn-common-pink {
+    background-color: $colorPrimary;
+    color: #ffffff;
+}
+
+.page {
+    width: 90%;
+    // max-width: 1100px;
+    margin: 0 auto;
+    min-height: 100vh;
+}
+.page-container {
+    padding-bottom: 40px;
+    min-height: calc(100vh - 68px);
+}
+@include rwd(#{$ipad-pro - 1px}){
+    .page {
+        width: 100%;
+    }
+    .page-container {
+        // padding-bottom: 30px;
+    }
+}
+
+
+/* block: page-top ===================*/
+.page-top {
+    padding-top: 33px;
+    padding-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all linear 0.2s;
+    .page-title {
+        font-size: 30px;
+    }
+    &.fixed {
+        position: fixed;
+        z-index: 2;
+        width: calc(100vw - 260px);
+        background-color: rgba(#f5f5f5, 0.9);
+        right: 0;
+        padding: 0 40px;
+        height: 66px;
+        .page-title {
+            font-size: 14px;
+        }
+    }
+}
+
+@include rwd(#{ $ipad-pro - 1px}) {
+    .page-top {
+        width: 90%;
+        margin: 0 auto;
+        flex-direction: column;
+        align-items: flex-start;
+        &.fixed {
+            position: static;
+            padding: unset;
+            width: 90%;
+            .page-title {
+                font-size: 30px;
+            }
+        }
+    }
+}
+
+/* Block: .page-body ----*/
+.page-body {
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+/* Block: .order-tabs -----*/
+.order-tabs {
+    padding-top: 40px;
+    margin: 0 40px 20px;
+    border-bottom: 3px solid #ececec;
+    display: flex;
+    .tab {
+        color: #7b7b7b;
+        font-weight: bold;
+        border-bottom: 3px solid transparent;
+        padding-bottom: 20px;
+        padding-right: 50px;
+        cursor: pointer;
+        transition: all 0.3s linear;
+        &.active,
+        &:hover {
+            color: $colorPrimary;
+            border-color: $colorPrimary;
+        }
+    }
+}
+
+/* block: .result ===================*/
+.result {
+    background-color: #fff;
+    border-radius: 10px;
+    margin-bottom: 20px; 
+    clear: both;
+}
+
+.result--null {
+    padding: 52px 0;
+    text-align: center;
+    .title {
+        font-size: 24px;
+        margin-bottom: 7px;
+        margin-top: 16px;
+    }
+    .pic {
+        width: 100px;
+    }
+}
+
+
+@include rwd(#{$ipad-pro - 1px}) {
+    .result {
+        width: 90%;
+        margin: 20px auto 0;
+        background-color: transparent;
+        &--null {
+            background-color: #fff;
+            border-radius: 10px;
+            .pic {
+                width: 80px;
+            }
+            .title {
+                font-size: 20px;
+                margin-top: 20px;
+                margin-bottom: 10px;
+            }
+            .desc{
+                font-size: 14px;
+            }
+        }
+    }
+}
+
+/* block: .result ===================*/
+
+/* Block: .order-list -----*/
+.order-list {
+}
+
+
+
+
+.detail-item--data p,
+.detail-item--title p{
+    margin-bottom: 15px;
+}
+.detail-item--data .case-status {
+    margin-bottom: 11px;
+}
+.item-orderer {
+    position: relative;
+    .icon-arrow {
+        position: absolute;
+        right: 26px;
+        top: 0;
+        width: 24px;
+        height: 24px;
+        background-image: url('../../images/icon-expand-liner-pink.svg');
+        display: inline-block;
+        &.open {
+            background-image: url('../../images/icon-fold-hardpink.svg');
+        }
+    }
+}
+
+
+/* mobile: .case-item */
+.mobile-box {
+    width: 90%;
+    margin: 0 auto;
+}
+.filter-order {
+    width: 100%;
+    margin-bottom: 15px;
+    padding-left: 16px;
+    line-height: 50px;
+    font-weight: bold;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.1);
+    background-repeat: no-repeat;
+    background-position: 95% center;
+    background-image: url('../../images/icon-arrow-down-grey-20-px.svg');
+}
+.case-item .case-content {
+    padding-bottom: 22px;
+}
+.case-date {
+    font-size: 12px;
+    color: #a0a0a0;
+}
+.case-detail {
+    padding: 19px 16px 0;
+    .detail-link {
+        font-size: 14px;
+        color: #7b7b7b;
+        text-align: center;
+        background-color: #f5f5f5;
+        line-height: 50px;
+        border-radius: 0 0 10px 10px;
+        cursor: pointer;
+    }
+    .row {
+        margin-bottom: 15px;
+    }
+    &--title {
+        font-size: 14px;
+        color: #7b7b7b;
+    }
+    &--data {
+        font-size: 14px;
+        
+    }
+}
+
+/* Block: .modal-tabs -------*/
+.modal-tabs {
+    width: 100vw;
+    height: 100vh;
+    background-color: #fff;
+    padding-top: 40px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 5;
+    display: none;
+    &--close {
+        width: 60px;
+        height: 60px;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 20px;
+        background-image: url('../../images/icon-navigation-close-black.svg');
+        position: absolute;
+        right: 0;
+        top: 0;
+        cursor: pointer;
+    }
+    &--title {
+        font-size: 30px;
+        font-weight: bold;
+        padding-left: 20px;
+        margin-bottom: 40px;
+    }
+    .tab {
+        line-height: 80px;
+        padding-left: 20px;
+        &.active {
+            color: #ffffff;
+            background-color: $colorPrimary;
+        }
+    }
+}

@@ -1,0 +1,41 @@
+﻿
+@{
+    ViewBag.Title = "Error";
+    Layout = "~/Views/Shared/_LayoutNotMenu.cshtml";
+}
+
+@section header {
+    @Styles.Render("~/Content/pages/home/error.min.css")
+}
+
+<div id="page" class="page">
+    <div class="content">
+        <img src="@Url.Content("~/Content/images/img-cat-500.svg")" alt="" class="content-img">
+        <p class="content-text">
+            抱歉！系統忙碌中，<br />
+            請稍後再試。
+        </p>
+        <a class="btn-common btn-common-white content-btn"
+            v-if="inApp == 1 || inApp == 2"
+            v-bind:href="inApp == 1 ? 'javascript:window.close()' : 'CCFAPPVENDER://'">
+            返回APP</a>
+        <a href="@Url.Content("~/vendor/index")" class="btn-common btn-common-white content-btn"
+            v-else>返回首頁</a>
+    </div>
+</div>
+
+@section scripts {
+<script type="text/babel">
+    var page = new Vue({
+        el: "#page",
+        mixins: [myMixin],
+        data: {
+            inApp: 0,/*若為在APP開啟網頁的情況: 1為IOS，2為android，0為網頁 */
+        },
+        created: function() {
+            let temp = this.getUrlParameter('inapp') 
+            this.inApp = temp == "" ? 0 : temp
+        }
+    })
+</script>
+}

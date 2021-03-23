@@ -1,0 +1,12 @@
+2020-11-24 14:58:04.4979 TRACE fmykpzfp0130kv0xlfa5rpy1 LogRequestFilter OnActionExcuting：{}  ::1
+2020-11-24 14:58:04.7446 TRACE fmykpzfp0130kv0xlfa5rpy1 LogRequestFilter OnActionExcuted：  ::1
+2020-11-24 14:58:10.2030 TRACE lyp54shmugq4xtngtxv2irrz LogRequestFilter OnActionExcuting：{}  ::1
+2020-11-24 14:58:10.6923 TRACE lyp54shmugq4xtngtxv2irrz LogRequestFilter OnActionExcuted：  ::1
+2020-11-24 14:58:11.2336 TRACE b30ogwhwpecpwhj21dfbuvpl LogRequestFilter OnActionExcuting：{}  ::1
+2020-11-24 14:58:11.2336 TRACE 4i2vgcsrv1kfr0vulychqnay LogRequestFilter OnActionExcuting：{}  ::1
+2020-11-24 14:58:11.4601 INFO 4i2vgcsrv1kfr0vulychqnay requestMethod=/Announcement/v1/DownTime,Post Json={"AppId":"CCFAPP_VENDER"} ::1
+2020-11-24 14:58:11.4611 INFO b30ogwhwpecpwhj21dfbuvpl requestMethod=/EP_APP_FORM_LOGIN/GET_LOGIN_INFO,Post Json={"PUSH_OBJ":"1"} ::1
+2020-11-24 14:58:12.1123 TRACE 4i2vgcsrv1kfr0vulychqnay requestMethod=/Announcement/v1/DownTime,StatusCode=OK,responseBody={"Data":{"DownTimeMessage":null},"Result":{"ReturnCode":0,"ReturnMsg":null,"Alert":null,"Count":0}} ::1
+2020-11-24 14:58:12.2745 TRACE 4i2vgcsrv1kfr0vulychqnay LogRequestFilter OnActionExcuted：{"ReturnCode":0,"ReturnMsg":"","Alert":null,"Count":0}  ::1
+2020-11-24 14:58:19.2969 TRACE b30ogwhwpecpwhj21dfbuvpl requestMethod=/EP_APP_FORM_LOGIN/GET_LOGIN_INFO,StatusCode=OK,responseBody={"Data":{"LOGIN_INFO":"【電話客服暫停通知】：公司因配合台電設備更換，於4/18(六)下午1點至下午5點電話服務系統全面停用，若有案件處理問題請電洽仲信業務。 "},"Result":{"ReturnCode":0,"ReturnMsg":"成功","Alert":"取得登入頁系統訊息成功","Count":16}} ::1
+2020-11-24 14:58:19.3363 TRACE b30ogwhwpecpwhj21dfbuvpl LogRequestFilter OnActionExcuted：{"ReturnCode":0,"ReturnMsg":null,"Alert":"【電話客服暫停通知】：公司因配合台電設備更換，於4/18(六)下午1點至下午5點電話服務系統全面停用，若有案件處理問題請電洽仲信業務。 ","Count":0}  ::1

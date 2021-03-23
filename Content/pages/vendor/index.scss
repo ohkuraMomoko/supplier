@@ -1,0 +1,131 @@
+﻿@import "../../setting/_variables.scss";
+@import "../../setting/_reset.scss";
+@import "../../setting/_mixins.scss";
+
+body {
+    background-color: #f5f5f5;
+}
+.page {
+    width: 90%;
+    margin: 0 auto;
+    padding-bottom: 40px;
+    min-height: 100vh;
+}
+
+/* block: .result ===================*/
+.result {
+    background-color: #fff;
+    border-radius: 10px;
+    margin-bottom: 20px; 
+}
+
+.result--null {
+    padding: 52px 0;
+    text-align: center;
+    .title {
+        font-size: 24px;
+        margin-bottom: 7px;
+        margin-top: 16px;
+    }
+    .pic {
+        width: 100px;
+    }
+}
+
+
+@include rwd(#{$ipad-pro - 1px}) {
+    .result {
+        width: 90%;
+        margin: 20px auto 0;
+        background-color: transparent;
+        &--null {
+            background-color: #fff;
+            border-radius: 10px;
+            .pic {
+                width: 80px;
+            }
+            .title {
+                font-size: 20px;
+                margin-top: 20px;
+                margin-bottom: 10px;
+            }
+            .desc{
+                font-size: 14px;
+            }
+        }
+    }
+}
+/* block: .result ===================*/
+
+
+/* block: .announcement ---------------------*/
+.announcement {
+    margin-top: 23px;
+    &--content {
+        width: 100%;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 19px 5%;
+        background-color: #ffbbbb;
+        border-radius: 20px;
+        line-height: 1.5;
+    }
+}
+@include rwd($min-w) {
+    .announcement {
+        &--content {
+            border-radius: 10px;
+        }
+    }
+}
+
+/* block: .table-container --------*/
+.table-container {
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px 0 #00000019;
+    background-color: #ffffff;
+    margin-top: 23px;
+    .table-title {
+        font-size: 24px;
+        padding: 20px 40px;
+    }
+    .table-content {
+
+    }
+    .table-footer {
+        padding: 29px 40px;
+        display: flex;
+        justify-content: flex-end;
+        &--link {
+            color: #32322e;
+            font-size: 1rem;
+            margin-right: 7px;
+            >img {
+                display: inline-block;
+            }
+        }
+    }
+}
+@include rwd($min-w) {
+    .table-container{
+        background-color: transparent;
+        box-shadow: none;
+        .table-title {
+            font-size: 20px;
+            line-height: 28px;
+            padding: 0;
+            margin-bottom: 6px;
+        }
+        .table-footer {
+            width: 100%;
+            padding: 0;
+            padding-bottom: 29px;
+            padding-top: 15px;
+        }
+    }
+}
+
+
+
+

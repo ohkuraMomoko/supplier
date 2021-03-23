@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1440" height="900" viewBox="0 0 1440 900">
+    <defs>
+        <linearGradient id="prefix__b" x1="50%" x2="50%" y1="-72.389%" y2="91.858%">
+            <stop offset="0%" stop-color="#FBB"/>
+            <stop offset="100%" stop-color="#FF6C7E"/>
+        </linearGradient>
+        <path id="prefix__a" d="M0 0H1440V900H0z"/>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <mask id="prefix__c" fill="#fff">
+            <use xlink:href="#prefix__a"/>
+        </mask>
+        <use fill="url(#prefix__b)" fill-rule="nonzero" xlink:href="#prefix__a"/>
+        <g mask="url(#prefix__c)" opacity=".2">
+            <g stroke="#FFF">
+                <g>
+                    <path stroke-dasharray="5.574 6.968" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.09" d="M107.52 215.04c59.382 0 107.52-48.138 107.52-107.52S166.902 0 107.52 0 0 48.138 0 107.52s48.138 107.52 107.52 107.52z" transform="translate(-243 -333) rotate(88 -70.523 345.686)"/>
+                    <path stroke-width="4.181" d="M0 107.52c0 59.382 48.138 107.52 107.52 107.52s107.52-48.138 107.52-107.52S166.902 0 107.52 0" transform="translate(-243 -333) rotate(88 -70.523 345.686)"/>
+                </g>
+                <g>
+                    <path stroke-dasharray="5.574 6.968" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.09" d="M31.68 63.36c17.496 0 31.68-14.184 31.68-31.68C63.36 14.184 49.176 0 31.68 0 14.184 0 0 14.184 0 31.68c0 17.496 14.184 31.68 31.68 31.68z" transform="translate(-243 -333) rotate(-162 246.72 485.67)"/>
+                    <path stroke-width="4.181" d="M0 31.68c0 17.496 14.184 31.68 31.68 31.68 17.496 0 31.68-14.184 31.68-31.68C63.36 14.184 49.176 0 31.68 0" transform="translate(-243 -333) rotate(-162 246.72 485.67)"/>
+                </g>
+                <g>
+                    <path stroke-dasharray="5.574 6.968" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.09" d="M226.08 452.16c124.86 0 226.08-101.22 226.08-226.08C452.16 101.22 350.94 0 226.08 0 101.22 0 0 101.22 0 226.08c0 124.86 101.22 226.08 226.08 226.08z" transform="translate(-243 -333) rotate(-34 871.233 -1295.747)"/>
+                    <path stroke-width="4.181" d="M0 226.08c0 124.86 101.22 226.08 226.08 226.08 124.86 0 226.08-101.22 226.08-226.08C452.16 101.22 350.94 0 226.08 0" transform="translate(-243 -333) rotate(-34 871.233 -1295.747)"/>
+                </g>
+                <g>
+                    <path stroke-dasharray="5.574 6.968" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.09" d="M20.64 41.28c11.4 0 20.64-9.24 20.64-20.64S32.04 0 20.64 0 0 9.24 0 20.64s9.24 20.64 20.64 20.64z" transform="translate(-243 -333) rotate(-74 1212.553 -53.797)"/>
+                    <path stroke-width="4.181" d="M0 20.64c0 11.4 9.24 20.64 20.64 20.64s20.64-9.24 20.64-20.64S32.04 0 20.64 0" transform="translate(-243 -333) rotate(-74 1212.553 -53.797)"/>
+                </g>
+                <g>
+                    <path stroke-dasharray="5.574 6.968" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.09" d="M329.28 658.56c181.856 0 329.28-147.424 329.28-329.28C658.56 147.424 511.136 0 329.28 0 147.424 0 0 147.424 0 329.28c0 181.856 147.424 329.28 329.28 329.28z" transform="translate(-243 -333) rotate(61 -422.979 927.162)"/>
+                    <path stroke-width="4.181" d="M0 329.28c0 181.856 147.424 329.28 329.28 329.28 181.856 0 329.28-147.424 329.28-329.28C658.56 147.424 511.136 0 329.28 0" transform="translate(-243 -333) rotate(61 -422.979 927.162)"/>
+                </g>
+                <g>
+                    <path stroke-dasharray="5.574 6.968" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.09" d="M96.48 192.96c53.284 0 96.48-43.196 96.48-96.48C192.96 43.196 149.764 0 96.48 0 43.196 0 0 43.196 0 96.48c0 53.284 43.196 96.48 96.48 96.48z" transform="translate(-243 -333) rotate(-19 3912.02 -2712.408)"/>
+                    <path stroke-width="4.181" d="M0 96.48c0 53.284 43.196 96.48 96.48 96.48 53.284 0 96.48-43.196 96.48-96.48C192.96 43.196 149.764 0 96.48 0" transform="translate(-243 -333) rotate(-19 3912.02 -2712.408)"/>
+                </g>
+                <g>
+                    <path stroke-dasharray="5.574 6.968" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.09" d="M50.88 101.76c28.1 0 50.88-22.78 50.88-50.88S78.98 0 50.88 0 0 22.78 0 50.88s22.78 50.88 50.88 50.88z" transform="translate(-243 -333) rotate(-127 491.497 -3.415)"/>
+                    <path stroke-width="4.181" d="M0 50.88c0 28.1 22.78 50.88 50.88 50.88s50.88-22.78 50.88-50.88S78.98 0 50.88 0" transform="translate(-243 -333) rotate(-127 491.497 -3.415)"/>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

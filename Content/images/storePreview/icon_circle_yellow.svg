@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="320px" height="320px" viewBox="0 0 320 320" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.1 (57501) - http://www.bohemiancoding.com/sketch -->
+    <title>icon_circle_yellow</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="icon_circle_yellow" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M160,307 C241.185858,307 307,241.185858 307,160 C307,78.8141418 241.185858,13 160,13 C78.8141418,13 13,78.8141418 13,160 C13,241.185858 78.8141418,307 160,307 Z" id="Oval-5" stroke="#FFF892" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="8,10"></path>
+        <path d="M160.5,307 C241.409716,307 307,241.409716 307,160.5 C307,79.5902842 241.409716,14 160.5,14 C79.5902842,14 14,79.5902842 14,160.5" id="Oval-4" stroke="#FFF892" stroke-width="15" transform="translate(160.500000, 160.500000) rotate(-270.000000) translate(-160.500000, -160.500000) "></path>
+    </g>
+</svg>
